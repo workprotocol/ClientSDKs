@@ -1,0 +1,74 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.coordinatorlayout.widget.CoordinatorLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context=".VPTFinder">
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+       >
+
+    <com.google.android.material.appbar.AppBarLayout
+        android:id="@+id/appbar"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        >
+
+        <androidx.appcompat.widget.Toolbar
+            android:id="@+id/toolbar"
+            android:layout_width="match_parent"
+            android:layout_height="?attr/actionBarSize"
+            android:background="#FFFFFF" />
+
+    </com.google.android.material.appbar.AppBarLayout>
+
+
+        <TextView
+            android:id="@+id/heading"
+            style="@style/Widget.AppCompat.TextView"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_below="@id/appbar"
+            android:padding="10dp"
+            android:text="Your dedicated physical therapists available via video and messaging."
+            android:textSize="19sp"></TextView>
+
+
+        <androidx.recyclerview.widget.RecyclerView
+            android:id="@+id/recycler_view"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_below="@id/heading"
+            android:padding="4dp"
+            tools:listitem="@layout/specialist_list_item" />
+
+
+
+    </RelativeLayout>
+
+    <ProgressBar
+        android:id="@+id/progressBar"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+
+        android:layout_centerHorizontal="true"
+        android:layout_centerVertical="true"
+        android:layout_gravity="center"
+        android:indeterminate="true"
+
+        />
+
+    <TextView
+        android:id="@+id/tvResultMessage"
+        style="@style/Widget.AppCompat.TextView"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center|center_horizontal|center_vertical"
+        android:gravity="center"
+        android:padding="10dp"
+        android:text="No specialist available"
+        android:visibility="gone"></TextView>
+</androidx.coordinatorlayout.widget.CoordinatorLayout>

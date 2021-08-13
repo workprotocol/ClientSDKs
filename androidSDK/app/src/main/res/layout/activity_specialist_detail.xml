@@ -1,0 +1,156 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.coordinatorlayout.widget.CoordinatorLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context=".SpecialistDetail">
+
+    <com.google.android.material.appbar.AppBarLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        >
+
+        <androidx.appcompat.widget.Toolbar
+            android:id="@+id/toolbar"
+            android:layout_width="match_parent"
+            android:layout_height="?attr/actionBarSize"
+            android:background="?attr/colorPrimary"
+            />
+
+    </com.google.android.material.appbar.AppBarLayout>
+    <ProgressBar
+        android:id="@+id/progressBar"
+        style="?android:attr/progressBarStyleLarge"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+
+        android:layout_centerHorizontal="true"
+        android:layout_centerVertical="true"
+        android:layout_gravity="center"
+        android:indeterminate="true"
+
+        />
+    <LinearLayout
+        android:id="@+id/rootLayout"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="?attr/actionBarSize"
+        android:orientation="vertical">
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="10dp"
+            android:layout_marginLeft="80dp"
+            android:id="@+id/name"
+            android:text="Anne Wachsmann"
+            android:textSize="20dp"
+            android:textStyle="bold"
+            />
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="80dp"
+            android:id="@+id/designation"
+            android:text="DPT"
+            android:textSize="20dp"
+            android:textStyle=""
+            />
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="80dp"
+            android:id="@+id/specialty"
+            android:text="Physical Therpist"
+            android:textSize="20dp"
+            android:textStyle=""
+            />
+        <View
+            android:layout_width="match_parent"
+            android:layout_height="2dp"
+            android:background="#c0c0c0"/>
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="50dp"
+            android:layout_marginTop="10dp"
+            android:textStyle="bold"
+            android:text="Detail"
+            android:textAlignment="center"
+            android:textSize="30dp"
+            android:background="@color/cardview_shadow_start_color"
+            />
+        <View
+            android:layout_width="match_parent"
+            android:layout_height="1dp"
+            android:background="#c0c0c0"/>
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:id="@+id/genderLabel"
+            android:layout_marginTop="10dp"
+            android:text="GENDER"
+            android:textSize="15dp"
+            />
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:id="@+id/gender"
+            android:text="Female"
+            android:textSize="20dp"
+            />
+        <View
+            android:layout_width="match_parent"
+            android:layout_height="1dp"
+            android:background="#c0c0c0"/>
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:id="@+id/qualificationLabel"
+            android:layout_marginTop="10dp"
+            android:text="QUALIFICATION"
+            android:textSize="15dp"
+            />
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:id="@+id/qualification"
+            android:text="DPT"
+            android:textSize="20dp"
+            />
+        <View
+            android:layout_width="match_parent"
+            android:layout_height="1dp"
+            android:background="#c0c0c0"/>
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:id="@+id/educationLabel"
+            android:layout_marginTop="10dp"
+            android:text="EDUCATION"
+            android:textSize="15dp"
+            />
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:id="@+id/education"
+            android:text="BPT from Trinity Collage, Austin in 1998\nMPT from Austin Regional College, Austin in 2003"
+            android:textSize="20dp"
+            />
+        <View
+            android:layout_width="match_parent"
+            android:layout_height="1dp"
+            android:background="#c0c0c0"/>
+
+
+    </LinearLayout>
+    <Button
+        android:layout_width="match_parent"
+        android:layout_height="50dp"
+        android:text="Back to Parent APP"
+        android:onClick="backClick"
+        android:layout_marginBottom="50dp"
+        android:layout_gravity="bottom"
+        />
+
+</androidx.coordinatorlayout.widget.CoordinatorLayout>

@@ -172,7 +172,7 @@ class Location{
 
 class VendorDescription{
     var description: String? = null
-    var vendorDescriptionType: String? = null
+    var vendorDescriptionType: VendorDescriptionTypeEnum? = null
 }
 
 
@@ -184,4 +184,32 @@ class TimePeriodConverter{
 class Speciality{
     var name:String?=null
     var value:Int?=null
+}
+
+
+
+
+
+
+
+enum class VendorDescriptionTypeEnum(val value: String) {
+    BASIC("Basic"), PASSION("Passion"), DIFFERENTIATOR("Differentiator"), TRAINING("Training"), SHORT_DESCRIPTION(
+        "ShortDescription"
+    ),
+    SPECIALIZATION(
+        "Specialization"
+    ),
+    EDUCATION("Education"), PROFESSIONAL_EXPERIENCE("ProfessionalExperience"), LANGUAGES("Languages"), REGISTRATION(
+        "Registration"
+    ),
+    AWARDS_AND_RECOGNITIONS("AwardsAndRecognitions"), MEMBERSHIPS("Memberships"), QUALIFICATION("Qualification"), BUSINESS_DESCRIPTION(
+        "BusinessDescription"
+    ),
+    DENTAL_EXAMINATION("DentalExmination"), REMARKS("Remarks"), FOOD_ALLERGIES("FoodAllergies"), DRUG_ALLERGIES(
+        "DrugAllergies"
+    ),
+    AIRBORNE_ALLERGIES("AirborneAllergies"), HISTORICAL_MEDICATION_DATA("HistoricalMedicationData"), HISTORICAL_HOSPITALIZATION_DATA(
+        "HistoricalHospitalizationData"
+    );
+
 }

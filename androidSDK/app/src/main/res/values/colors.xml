@@ -7,4 +7,27 @@
     <color name="teal_700">#FF018786</color>
     <color name="black">#FF000000</color>
     <color name="white">#FFFFFFFF</color>
+    <color name="primary">#007aff</color>
+    <color name="bgColor">#f7f7f7</color>
+
+    /*
+    brand:  '#007aff',//'#91a8d0',
+    white: '#fefefe',
+    black: '#201e1e',
+    greyRegular: '#f3f4f6',
+    lightBlue: '#4bb0fe',
+    darkGreen: '#3eca61',
+    lightGreen: '#7ed995',
+    navyBlue: '#022350',
+    blue: '#007aff',
+    glaucousBlue: '#859DC8',
+    darkGrey: '#4e5261',
+    lightGrey: '#e6e7e8',
+    grey: '#727376',
+    yellow: '#fae693',
+    pink: '#fd084b',
+    orange: '#ff9900',
+    red: '#d12c48',
+    */
+
 </resources>

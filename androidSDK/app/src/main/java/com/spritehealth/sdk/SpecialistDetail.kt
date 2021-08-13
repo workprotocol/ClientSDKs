@@ -1,29 +1,25 @@
 
 package com.spritehealth.sdk
-
-
-import android.content.Context
+import android.content.Intent
 import android.os.Bundle
-import android.util.Log
 import android.view.View
 import android.widget.ProgressBar
 import android.widget.TextView
-
 import androidx.appcompat.app.AppCompatActivity
-import com.android.volley.Request
-import com.android.volley.Response
-import com.android.volley.toolbox.StringRequest
-import com.android.volley.toolbox.Volley
 import com.google.gson.Gson
 import com.google.gson.GsonBuilder
 import com.google.gson.reflect.TypeToken
 import com.spritehealth.sdk.model.User
-import org.json.JSONArray
+import com.spritehealth.sdk.model.VendorDescriptionTypeEnum
+import com.squareup.picasso.Picasso
+import kotlinx.android.synthetic.main.activity_specialist_detail.*
 import org.json.JSONObject
-import java.time.LocalDateTime
-import java.time.format.DateTimeFormatter
+
 
 internal class SpecialistDetail : AppCompatActivity() {
+
+    private var specialistWithAvailability:User?=null;
+    private lateinit var specialistUser:User;
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -31,26 +27,24 @@ internal class SpecialistDetail : AppCompatActivity() {
         setSupportActionBar(findViewById(R.id.toolbar))
 
         var id = intent.getStringExtra("id")
-        val specialistJSON = intent.getStringExtra("specialistJSON")
-        //val specialityNames = intent.getStringExtra("specialityNames")
-        //var startTime = intent.getStringExtra("startTime");
 
+        if(intent.hasExtra("specialistWithAvailabilityJSON")) {
+            val specialistWithAvailabilityJSON = intent.getStringExtra("specialistWithAvailabilityJSON")
 
-        var builder: GsonBuilder = GsonBuilder();
-        var gson: Gson =builder.create()
-        val specialistType = object : TypeToken<User>() {}.type
-        var specialist:User = gson.fromJson(specialistJSON.toString(), specialistType);
+            var builder: GsonBuilder = GsonBuilder();
+            var gson: Gson = builder.create()
+            val specialistType = object : TypeToken<User>() {}.type
+            specialistWithAvailability = gson.fromJson(specialistWithAvailabilityJSON.toString(), specialistType);
 
-        // Capture the layout's TextView and set the string as its text
-        /* val textView = findViewById<TextView>(R.id.name).apply {
-             text = name
-         }
+            if (specialistWithAvailability != null) {
+                tvName.text = specialistWithAvailability!!.name
 
-         val idView = findViewById<TextView>(R.id.uniqueId)
-         idView.text = id;
-         val availSlotView = findViewById<TextView>(R.id.availSlot)
-         availSlotView.text = startTime;
-         */
+                if (specialistWithAvailability!!.specializationNames != null) {
+                    tvSpeciality.text = specialistWithAvailability!!.specializationNames
+                }
+            }
+        }
+
         val objCommon = SpriteHealthClient()
 
         var response="";
@@ -72,21 +66,139 @@ internal class SpecialistDetail : AppCompatActivity() {
         } )
     }
 
-    fun displaySpecailistDetail(specialistJson:JSONObject?) {
+    fun displaySpecailistDetail(specialistJSON:JSONObject?) {
+        
+        var builder: GsonBuilder = GsonBuilder();
+        var gson: Gson =builder.create()
+        val specialistType = object : TypeToken<User>() {}.type
+        specialistUser= gson.fromJson(specialistJSON.toString(), specialistType);
 
-        val textView = findViewById<TextView>(R.id.name)
-        textView.text = specialistJson!!.getString("name");
+        if(specialistUser!=null) {
 
-        val genderView = findViewById<TextView>(R.id.gender)
-        genderView.text = specialistJson!!.getString("gender");
+            val textView = findViewById<TextView>(R.id.tvName)
+            textView.text = specialistUser.name
+
+
+            if (specialistUser.imageIds != null && specialistUser.imageIds!!.isNotEmpty()) {
+                var imageId = specialistUser.imageIds!!.iterator().next()
+
+                var imageUrl =
+                    SpriteHealthClient.apiRoot + "/resources/images/" + imageId.toString()
+                Picasso.get().load(imageUrl).into(imgvUser)
+            }
+
+            var specialityNames: String? = ""
+            if (specialistUser.specialization!!.isNotEmpty()) {
+
+                var speciality = SpriteHealthClient.specialities.find {
+                    if (it.value != null && specialistUser.specialization != null) {
+                        it.value!! == specialistUser.specialization!![0];
+                    } else {
+                        false
+                    }
+                }
+
+                if (speciality != null) {
+                    specialityNames = speciality.name
+                    //save it for later use
+                    specialistUser.specializationNames = specialityNames;
+                    tvSpeciality.text = specialityNames;
+                };
+            }
+
+
+            val genderView = findViewById<TextView>(R.id.tvGender)
+            genderView.text = specialistUser.gender
+
+            if (specialistUser.prefferedLanguage != null) {
+                lloLanguage.visibility = View.VISIBLE
+                tvLanguage.text = specialistUser.prefferedLanguage
+            }
+
+
+            for (vendorDescription in specialistUser.descriptions!!) {
+                if (vendorDescription.vendorDescriptionType == VendorDescriptionTypeEnum.PROFESSIONAL_EXPERIENCE && vendorDescription.description != null && !vendorDescription.description!!.isEmpty()) {
+                    lloProfExp.visibility = View.VISIBLE
+                    tvProfExp.text = vendorDescription.description
+                }
+                if (vendorDescription.vendorDescriptionType == VendorDescriptionTypeEnum.EDUCATION && vendorDescription.description != null && !vendorDescription.description!!.isEmpty()) {
+                    lloEducation.visibility = View.VISIBLE
+                    val allEducation = vendorDescription.description
+                    val educationBuffer = StringBuffer()
+
+                    if (allEducation!!.contains("%%")) {
+                        for (education: String in allEducation!!.split("%%".toRegex())
+                            .toTypedArray()) {
+                            educationBuffer.append(education.replace("$$", " ").toString())
+                            educationBuffer.append(", ")
+                        }
+                    } else if (allEducation!!.contains("$$")) {
+                        educationBuffer.append(allEducation!!.replace("$$", " "))
+                    } else {
+                        educationBuffer.append(allEducation)
+                    }
+                    if (educationBuffer.isNotEmpty()) {
+                        var qualification =
+                            educationBuffer.toString().trim { it <= ' ' }
+                        if (qualification.contains(",")) {
+                            qualification =
+                                qualification.substring(0, qualification.lastIndexOf(","))
+                        }
+                        lloEducation.visibility = View.VISIBLE
+                        tvEducation.text = qualification
+                    }
+                }
+                if (vendorDescription.vendorDescriptionType == VendorDescriptionTypeEnum.SHORT_DESCRIPTION && vendorDescription.description != null && !vendorDescription.description!!.isEmpty()) {
+                    lloProfStatement.visibility = View.VISIBLE
+                    tvProfStatement.text = vendorDescription.description
+                }
+
+                if (vendorDescription.vendorDescriptionType == VendorDescriptionTypeEnum.LANGUAGES && vendorDescription.description != null && !vendorDescription.description!!.isEmpty()) {
+                    lloLanguage.visibility = View.VISIBLE
+                    tvLanguage.text = vendorDescription.description
+                }
+                if (vendorDescription.vendorDescriptionType != VendorDescriptionTypeEnum.REGISTRATION && vendorDescription.description != null && !vendorDescription.description!!.isEmpty()) {
+                    lloRegistration.visibility = View.VISIBLE
+                    tvRegistration.text = vendorDescription.description
+                }
+
+                if (vendorDescription.vendorDescriptionType == VendorDescriptionTypeEnum.AWARDS_AND_RECOGNITIONS && vendorDescription.description != null && !vendorDescription.description!!.isEmpty()) {
+                    lloAwards.visibility = View.VISIBLE
+                    tvAwards.setText(vendorDescription.description)
+                }
+                if (vendorDescription.vendorDescriptionType == VendorDescriptionTypeEnum.MEMBERSHIPS && vendorDescription.description != null && !vendorDescription.description!!.isEmpty()) {
+                    lloMemberships.visibility = View.VISIBLE
+                    tvMemberships.text = vendorDescription.description
+                }
+                if (vendorDescription.vendorDescriptionType == VendorDescriptionTypeEnum.QUALIFICATION) {
+                    val qualification = vendorDescription.description
+                    tvQualification.text = qualification
+                    tvQualification.visibility = View.VISIBLE
+                }
+            }
+
+        }
+
     }
 
 
-    fun backClick(view: View){
-        var intent = SpriteHealthClient.storedIntent.apply {}
-        startActivity(intent)
+    fun bookVisit(view: View){
+        var builder:GsonBuilder = GsonBuilder()
+        var gson:Gson =builder.create()
 
-        //val shObject: SpriteHealth  = SpriteHealth();
-        //shObject.callMain();
+        val intent = Intent(this, BookAppointment::class.java).apply {
+            putExtra("specialistWithAvailabilityJSON", gson.toJson(specialistWithAvailability))
+            if(specialistUser!=null) {
+                putExtra("specialistJSON", gson.toJson(specialistUser))
+            }
+            if(specialistWithAvailability!=null && specialistWithAvailability!!.serviceId!=null) {
+                putExtra("serviceId", specialistWithAvailability!!.serviceId)
+            }
+
+        }
+        this.startActivity(intent)
     }
+
+
+
 }

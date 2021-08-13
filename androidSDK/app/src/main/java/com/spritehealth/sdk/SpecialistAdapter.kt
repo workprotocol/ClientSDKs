@@ -31,14 +31,14 @@ interface CellClickListener {
 */
 
 class SpecialistAdapter(private val specialistList: List<User>, private val context: Context) :
-    RecyclerView.Adapter<SpecialistAdapter.ExampleViewHolder>() {
+    RecyclerView.Adapter<SpecialistAdapter.ItemViewHolder>() {
 
-    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ExampleViewHolder {
+    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ItemViewHolder {
         val itemView = LayoutInflater.from(parent.context).inflate(R.layout.specialist_list_item,
             parent, false)
-        return ExampleViewHolder(itemView)
+        return ItemViewHolder(itemView)
     }
-    override fun onBindViewHolder(holder: ExampleViewHolder, position: Int) {
+    override fun onBindViewHolder(holder: ItemViewHolder, position: Int) {
         val currentItem = specialistList[position]
 
         var firstSlot:String? =null
@@ -92,17 +92,15 @@ class SpecialistAdapter(private val specialistList: List<User>, private val cont
         holder.itemView.setOnClickListener {
             val intent = Intent(context, SpecialistDetail::class.java).apply {
                 putExtra("id", currentItem.id.toString())
-                putExtra("specialistJSON", currentItemJSON)
-
+                putExtra("specialistWithAvailabilityJSON", currentItemJSON)
             }
            context.startActivity(intent)
-           // cellClickListener.onCellClickListener()
         }
     }
     override fun getItemCount() = specialistList.size
 
-    class ExampleViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
-        val imageView: ImageView = itemView.image_view
+    class ItemViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
+        val imageView: ImageView = itemView.imgvUser
         val name: TextView = itemView.tvName
         val speciality: TextView = itemView.tvSpeciality
         val firstSlot: TextView = itemView.tvFirstSlot

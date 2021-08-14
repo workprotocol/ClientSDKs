@@ -26,7 +26,7 @@ import kotlin.collections.ArrayList
 internal class VPTFinder : AppCompatActivity() {
 
     val specialists: MutableList<Map<String, String>> = ArrayList()
-    val objCommon = SpriteHealthClient()
+    val sdkClientInstance = SpriteHealthClient()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -38,7 +38,7 @@ internal class VPTFinder : AppCompatActivity() {
         var progressBar: ProgressBar = findViewById(R.id.progressBar);
         progressBar.visibility = View.VISIBLE
 
-        objCommon.createAccessToken(this, object : SpriteHealthClient.Callback {
+        sdkClientInstance.createAccessToken(this, object : SpriteHealthClient.Callback {
             override fun onSuccess(response: String?) {
                 var builder: GsonBuilder = GsonBuilder();
                 var gson: Gson =builder.create()
@@ -60,7 +60,7 @@ internal class VPTFinder : AppCompatActivity() {
     }
 
     fun fetchSpecialities(){
-        objCommon.fetchSpecialities(this, object : SpriteHealthClient.Callback {
+        sdkClientInstance.fetchSpecialities(this, object : SpriteHealthClient.Callback {
             override fun onSuccess(response: String?) {
                 var builder: GsonBuilder = GsonBuilder();
                 var gson: Gson =builder.create()
@@ -79,7 +79,7 @@ internal class VPTFinder : AppCompatActivity() {
     }
 
     fun fetchMemberDetails(){
-        objCommon.memberDetail(this, object : SpriteHealthClient.Callback {
+        sdkClientInstance.memberDetail(this, object : SpriteHealthClient.Callback {
             override fun onSuccess(response: String?) {
                 var builder: GsonBuilder = GsonBuilder();
                 var gson: Gson =builder.create()
@@ -98,8 +98,7 @@ internal class VPTFinder : AppCompatActivity() {
     }
 
     fun fetchSpecialists(){
-
-        objCommon.specialistAvailable(this, object : SpriteHealthClient.Callback {
+        sdkClientInstance.specialistAvailable(this, object : SpriteHealthClient.Callback {
             override fun onSuccess(response: String?) {
                 // do stuff here
                 val responseJsonArray = JSONArray(response)
@@ -116,7 +115,6 @@ internal class VPTFinder : AppCompatActivity() {
 
 
     fun displayVPT(jsonarray_info:JSONArray?) {
-        var i: Int = 0
         var size: Int = jsonarray_info!!.length()
         if(size>0){
             var builder: GsonBuilder = GsonBuilder();
@@ -131,20 +129,6 @@ internal class VPTFinder : AppCompatActivity() {
         }
 
 
-
     }
 
-
-
-    companion object {
-
-    }
-
-/*
-    override fun onCellClickListener() {
-        Toast.makeText(this,"Cell clicked", Toast.LENGTH_SHORT).show()
-    }
-
-    *
- */
 }

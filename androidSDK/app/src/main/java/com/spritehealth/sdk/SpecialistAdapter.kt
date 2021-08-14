@@ -91,7 +91,7 @@ class SpecialistAdapter(private val specialistList: List<User>, private val cont
 
         holder.itemView.setOnClickListener {
             val intent = Intent(context, SpecialistDetail::class.java).apply {
-                putExtra("id", currentItem.id.toString())
+                putExtra("id", currentItem.id)
                 putExtra("specialistWithAvailabilityJSON", currentItemJSON)
             }
            context.startActivity(intent)

@@ -4,32 +4,31 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:background="@drawable/border_top_touch"
     tools:context=".SpecialistDetail">
 
     <RelativeLayout
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        >
-    <com.google.android.material.appbar.AppBarLayout
-        android:id="@+id/appbar"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        >
+        android:layout_height="wrap_content">
 
-        <androidx.appcompat.widget.Toolbar
-            android:id="@+id/toolbar"
+        <com.google.android.material.appbar.AppBarLayout
+            android:id="@+id/appbar"
             android:layout_width="match_parent"
-            android:layout_height="?attr/actionBarSize"
-            android:background="#ffffff"
-            />
+            android:layout_height="wrap_content">
 
-    </com.google.android.material.appbar.AppBarLayout>
+            <androidx.appcompat.widget.Toolbar
+                android:id="@+id/toolbar"
+                android:layout_width="match_parent"
+                android:layout_height="?attr/actionBarSize"
+                android:background="#ffffff" />
+
+        </com.google.android.material.appbar.AppBarLayout>
 
         <androidx.core.widget.NestedScrollView
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:layout_marginBottom="60dp"
-            android:layout_below="@id/appbar">
+            android:layout_below="@id/appbar"
+            android:layout_marginBottom="60dp">
 
             <RelativeLayout
                 android:layout_width="match_parent"
@@ -377,16 +376,12 @@
     </RelativeLayout>
 
     <Button
-        style="@style/Widget.MaterialComponents.Button.TextButton"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
+        android:id="@+id/btnBookVisit"
+        style="@style/wpStickyButton"
         android:layout_gravity="bottom"
-        android:background="@drawable/border_top_touch"
         android:onClick="bookVisit"
-        android:padding="10dp"
         android:text="Book Virtual Visit"
-        android:textColor="@color/primary"
-        android:textSize="22sp" />
+        android:visibility="gone"/>
 
     <ProgressBar
         android:id="@+id/progressBar"

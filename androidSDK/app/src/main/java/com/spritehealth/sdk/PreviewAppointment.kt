@@ -48,19 +48,7 @@ internal class PreviewAppointment : AppCompatActivity() {
         var progressBar: ProgressBar = findViewById(R.id.progressBar);
         progressBar.visibility = View.VISIBLE
 
-        objCommon.specialistDetail(id, this, object : SpriteHealthClient.Callback {
-            override fun onSuccess(response: String?) {
-                // do stuff here
-                var responseJson = JSONObject(response)
-                displaySpecailistDetail(responseJson)
-                progressBar.visibility = View.GONE
-            }
-            override fun onError(error: String?)
-            {
-                var errorMsg = error
-                progressBar.visibility = View.GONE
-            }
-        } )
+
     }
 
     fun displaySpecailistDetail(specialistJSON:JSONObject?) {

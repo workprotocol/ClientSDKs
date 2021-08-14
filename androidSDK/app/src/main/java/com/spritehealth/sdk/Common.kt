@@ -183,13 +183,13 @@ class SpriteHealthClient(): AppCompatActivity(){
 
     fun memberDetail( context:Context,callback :Callback  )
     {
-        val url = apiRoot +  "/resources/user?withCoverage=true"
+        val url = "$apiRoot/resources/user?withCoverage=true"
         callGetRequest(context, url, callback )
     }
 
     fun familyMembers(familyId:String?, context:Context,callback :Callback  )
     {
-        val url = apiRoot + "/resources/user/family/members?familyId=" + familyId;
+        val url = "$apiRoot/resources/user/family/members?familyId=$familyId";
         callGetRequest(context, url, callback )
     }
 
@@ -206,39 +206,53 @@ class SpriteHealthClient(): AppCompatActivity(){
     }
 
 
-    fun specialistDetail(specialistId:String?, context:Context,callback :Callback  )
+    fun specialistDetail(specialistId:Long?, context:Context,callback :Callback  )
     {
-        val url = apiRoot + "/resources/user/specialists/"+specialistId + "?slim=HIGH";
+        val url = "$apiRoot/resources/user/specialists/$specialistId?slim=HIGH";
+        callGetRequest(context, url, callback )
+    }
+
+
+    fun serviceDetail(serviceId:Long?, context:Context,callback :Callback  )
+    {
+        val url = "$apiRoot/resources/services/$serviceId?slim=HIGH";
         callGetRequest(context, url, callback )
     }
 
     fun fetchSpecialities(context:Context,callback :Callback ){
-        val url= apiRoot+"/resources/file/JSON/specialities.json";
+        val url= "$apiRoot/resources/file/JSON/specialities.json";
         callGetRequest(context, url, callback )
     }
 
     fun reasonList( context:Context,callback :Callback  )
     {
-        val url = apiRoot +  "/resources/reasons?specialities=26"
+        val url = "$apiRoot/resources/reasons"
         callGetRequest(context, url, callback )
     }
 
-    fun specialistAvailableSlot(specialistId:String?, context:Context,callback :Callback  )
+
+    fun fetchReasonsBySpecialities(specialities: String, context: Context, callback: SpriteHealthClient.Callback) {
+        val url = "$apiRoot/resources/reasons?specialities=$specialities"
+        callGetRequest(context, url, callback )
+    }
+
+    fun specialistAvailableSlot(specialistId:Long?,serviceId:Long?,weeks:Int, context:Context,callback :Callback  )
     {
-        val url = apiRoot + "/resources/specialists/available?serviceId=6207822929854464&vendorUserId=" + specialistId + "&weeks=1"
+        val url =
+            "$apiRoot/resources/specialists/available?serviceId=$serviceId&vendorUserId=$specialistId&weeks=$weeks"
         callGetRequest(context, url, callback )
     }
 
     fun listOfServiceByReason(reasonId: String?,specialistId:String?, context:Context,callback :Callback  )
     {
-        val url = apiRoot + "/resources/reasons/"+reasonId+"/services?vendorId=" + specialistId
+        val url = "$apiRoot/resources/reasons/$reasonId/services?vendorId=$specialistId"
         callGetRequest(context, url, callback )
     }
 
     fun appointmentBooking( context:Context,appointmentCriteria:JSONObject,callback :Callback  )
     {
 
-        var url = apiRoot+ "/resources/appointment"
+        var url = "$apiRoot/resources/appointment"
         var bd = appointmentCriteria
         callPostRequest(context,appointmentCriteria, url, callback )
     }
@@ -254,6 +268,11 @@ class SpriteHealthClient(): AppCompatActivity(){
             context.startActivity(intent)
         }
     }
+
+    fun fetchServiceCoverage(id: Long?, serviceId: Long, i: Int, context: Context, callback: SpriteHealthClient.Callback) {
+
+    }
+
 
     companion object {
         var storedIntent: Intent = Intent();

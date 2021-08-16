@@ -21,6 +21,8 @@ internal class SpecialistDetail : AppCompatActivity() {
     private var specialistWithAvailability:User?=null;
     private lateinit var specialistUser:User;
 
+    val clientSdkInstance = SpriteHealthClient()
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_specialist_detail)
@@ -43,20 +45,16 @@ internal class SpecialistDetail : AppCompatActivity() {
                     tvSpeciality.text = specialistWithAvailability!!.specializationNames
                 }
 
-                //if NO AVAILABILITY, then hide BOOK Visit Button
-                if(specialistWithAvailability!!.availableSlots?.size ?: 0>0) {
-                    btnBookVisit.visibility = View.VISIBLE
-                }
             }
         }
 
-        val objCommon = SpriteHealthClient()
+     
 
         var response="";
         var progressBar: ProgressBar = findViewById(R.id.progressBar);
         progressBar.visibility = View.VISIBLE
 
-        objCommon.specialistDetail(id, this, object : SpriteHealthClient.Callback {
+        clientSdkInstance.specialistDetail(id, this, object : SpriteHealthClient.Callback {
             override fun onSuccess(response: String?) {
                 // do stuff here
                 var responseJson = JSONObject(response)
@@ -184,6 +182,10 @@ internal class SpecialistDetail : AppCompatActivity() {
 
         }
 
+        //if NO AVAILABILITY, then hide BOOK Visit Button
+        if(specialistWithAvailability!!.availableSlots?.size ?: 0>0) {
+            btnBookVisit.visibility = View.VISIBLE
+        }
     }
 
 

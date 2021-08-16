@@ -28,7 +28,6 @@
         <androidx.core.widget.NestedScrollView
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:layout_marginBottom="60dp"
             android:layout_below="@id/appbar">
 
             <ScrollView
@@ -89,8 +88,19 @@
                         android:paddingLeft="8dp"
                         android:paddingRight="5dp"
                         android:paddingTop="8dp"
-                        android:background="@drawable/border_bottom"
                         android:visibility="visible">
+
+                        <LinearLayout
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:layout_gravity="center_horizontal"
+                            android:orientation="vertical"
+                            android:paddingBottom="10dp"
+                            android:paddingLeft="8dp"
+                            android:paddingRight="5dp"
+                            android:paddingTop="8dp"
+                            android:background="@drawable/border_bottom"
+                            android:visibility="visible">
 
                         <LinearLayout
                             android:id="@+id/loTypeOfCareWrapper"
@@ -114,7 +124,7 @@
                         </LinearLayout>
 
                         <LinearLayout
-                            android:id="@+id/loServiceWrapper"
+                            android:id="@+id/lloServiceWrapper"
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
                             android:orientation="vertical"
@@ -139,7 +149,7 @@
                                         android:layout_width="wrap_content"
                                         android:layout_height="wrap_content"
                                         android:gravity="center_vertical"
-                                        android:text="Service Name " />
+                                        android:text="..." />
 
                                     <TextView
                                         android:id="@+id/tvDuration"
@@ -175,8 +185,6 @@
                                         android:layout_gravity="right"
                                         android:text="(Est)" />
 
-
-                                    />
                                 </LinearLayout>
 
                             </LinearLayout>
@@ -184,68 +192,64 @@
 
                         </LinearLayout>
 
+                        </LinearLayout>
 
 
-                    </LinearLayout>
-
-                    <LinearLayout
-                        android:id="@+id/loAvailabilityWrapper"
-                        android:layout_width="match_parent"
-                        android:layout_height="fill_parent"
-                        android:layout_gravity="center_horizontal"
-                        android:orientation="vertical"
-                        android:layout_marginTop="0dp"
-                        android:layout_marginBottom="0dp"
-                        android:visibility="gone"
-                        >
-
-                        <TextView
-                            android:id="@+id/tvNoSlotMessage"
-                            android:layout_width="wrap_content"
+                        <LinearLayout
+                            android:id="@+id/lloSlotGroupedByDateWrapper"
+                            android:layout_width="match_parent"
                             android:layout_height="wrap_content"
-                            android:layout_gravity="center_horizontal|center"
-                            android:layout_marginBottom="15dp"
-                            android:paddingTop="15dp"
-                            android:text="No slots available for this week."
-                            android:visibility="visible" />
-
-                        <ListView
-                            android:id="@+id/lvAvailability"
-                            android:layout_width="match_parent"
-                            android:layout_height="fill_parent"
-                            android:background="@drawable/border_bottom"
                             android:orientation="vertical"
-                            android:layout_marginBottom="35dp"
-                            android:visibility="visible"></ListView>
-
-                        <ProgressBar
-                            android:id="@+id/pbAvailability"
-                            android:layout_width="match_parent"
-                            android:layout_height="30dp"
-                            android:layout_centerHorizontal="true"
-                            android:layout_marginTop="-35dp"
-                            android:layout_gravity="center_horizontal"
+                            android:paddingTop="20dp"
                             android:visibility="visible">
-                        </ProgressBar>
 
-                        <Button
-                            android:id="@+id/btnShowMoreSlots"
+
+
+                        </LinearLayout>
+
+
+                        <LinearLayout
+                            android:id="@+id/loAvailabilityWrapper"
                             android:layout_width="match_parent"
-                            android:layout_height="30dp"
-                            android:layout_gravity="center_horizontal"
-                            android:layout_marginTop="-35dp"
-                            android:background="@android:color/transparent"
-                            android:padding="4dp"
-                            android:text="Check Next Availability"
-                            android:onClick="loadNextAvailability"
-                            android:textColor="@color/accentPrimary"
-                            android:textSize="15sp"
-                            android:visibility="gone"
-                            />
+                            android:layout_height="wrap_content"
+                            android:orientation="vertical"
+                            android:layout_marginTop="10dp"
+                            android:layout_marginBottom="0dp"
+                            android:visibility="visible"
+                            >
+
+
+                            <Button
+                                android:id="@+id/btnShowMoreSlots"
+                                android:layout_width="match_parent"
+                                android:layout_height="50dp"
+                                android:onClick="loadNextAvailability"
+                                android:padding="4dp"
+                                android:text="Check Next Availability"
+                                android:textColor="@color/accentPrimary"
+                                android:textSize="15sp"
+                                android:visibility="gone" />
+
+                            <TextView
+                                android:id="@+id/tvNoSlotMessage"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:layout_gravity="center_horizontal|center"
+                                android:layout_marginBottom="15dp"
+                                android:paddingTop="15dp"
+                                android:text="No slots available for this week."
+                                android:visibility="gone" />
+                        </LinearLayout>
+
+
                     </LinearLayout>
 
 
-                </LinearLayout>
+
+                    </LinearLayout>
+
+
+
 
             </ScrollView>
 

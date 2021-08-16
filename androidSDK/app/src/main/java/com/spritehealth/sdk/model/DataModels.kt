@@ -1,6 +1,7 @@
 package com.spritehealth.sdk.model
 
 import java.util.*
+import kotlin.collections.ArrayList
 
 
 class AccessTokenResponse{
@@ -205,9 +206,12 @@ class Reason(var id: Long, var name: String) {
 
 class Service {
     var id: Long = 0
+
     var createdDate: String? = null
-    //var metaDataInstance: String? = null
-    //var htmlTemplate: String? = null
+
+    var metaDataInstance: String? = null
+
+    var htmlTemplate: String? = null
 
     // common attributes
     var wpServiceDefinitionId: Long = 0
@@ -218,33 +222,35 @@ class Service {
     var wpName: String? = null
     var wpProjectName: String? = null
     var wpStatus: String? = null
-    var wpCostPerHour = 0.0
-    var wpFixedCost = 0.0
-    var wpOpenToQuote = false
-    var wpOpenToOrder = false
-    var wpOpenToAppointment = false
+    var wpCostPerHour:Double = 0.0
+    var wpFixedCost:Double = 0.0
+    var wpOpenToQuote:Boolean = false
+    var wpOpenToOrder:Boolean = false
+    var wpOpenToAppointment:Boolean = false
     var wpServicePaymentType: String? = null
 
     //public long wpLocationId;//deprecated in favor of wpLocationIds
     var wpLocationIds: Set<Long>? = null
-    var wpDuration = 0
+    var wpDuration:Int = 0
     var wpImageIds: ArrayList<Long>? = null
-    var wpIsDefault = false
-    var wpNumberOfAppointments = 0
+    var wpIsDefault:Boolean = false
+    var wpNumberOfAppointments :Int= 0
     var wpMRP: Double? = null
     var wpLeadTime: Double? = null
     var wpOverview: String? = null
     var wpSubType: List<String>? = null
-    var wpIsOmniPresent = false
+    var wpIsOmniPresent:Boolean = false
     var serviceDefinitionName: String? = null
+
     var vendorLocations: List<Location>? = null
     //var columns: List<ColumnConverter>? = null
     var distance: Double? = null
+
     var vendorUserId: String? = null
+
     var wpCode: String? = null
     var wpUnits: Int? = null
     var wpSetting: String? = null
-
 }
 
 class Appointment {
@@ -325,6 +331,37 @@ class AmountDetail  {
 
 
 class AvailabilityGroupedByDate {
+    var availableDate: String? = null
+    var slots: List<TimePeriodConverter> = ArrayList()
+}
+
+class CostBreakUp {
+    var negotiated: Double? = null
+    var insured: Double? = null
+    var sponsor: Double? = null
+    var coverageId : Long? = null
+}
+internal class CalendarEvent {
+    private val id: String? = null
+    private val vendorUserId: Long = 0
+    private val serviceId: Long = 0
+    var eventSummary: String? = null
+    var timezone: String? = null
+    var appointment: Appointment? = null
+    var vendorEventId: String? = null
+    var errors: List<WPError>? = ArrayList()
+
+}
+
+class WPError {
+    var errorCode = 0
+    var fieldName: String? = null
+    var message: String? = null
+    var description: String? = null
+    var errorType: String? = null
+}
+
+internal class Availability {
     var availableDate: String? = null
     var slots: List<TimePeriodConverter> = ArrayList()
 }

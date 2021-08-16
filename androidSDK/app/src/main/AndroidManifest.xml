@@ -15,7 +15,9 @@
         <activity
             android:name=".SpecialistDetail"
             android:label="@string/title_activity_specialist_detail"
-            android:theme="@style/Theme.SDK.NoActionBar"></activity>
+            android:theme="@style/Theme.SDK.NoActionBar">
+
+        </activity>
 
         <activity
             android:name=".VPTFinder"
@@ -24,7 +26,6 @@
             >
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
-
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>

@@ -29,11 +29,11 @@
                     <viewLayoutGuide key="frameLayoutGuide" id="tVq-CJ-djD"/>
                 </scrollView>
                 <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Your dedicated physical therapists available via video and messaging." textAlignment="natural" lineBreakMode="tailTruncation" numberOfLines="3" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="BYF-oz-fyU">
-                    <rect key="frame" x="15" y="104" width="384" height="50"/>
+                    <rect key="frame" x="10" y="104" width="394" height="50"/>
                     <constraints>
                         <constraint firstAttribute="height" constant="50" id="bdz-Po-42q"/>
                     </constraints>
-                    <fontDescription key="fontDescription" type="system" pointSize="20"/>
+                    <fontDescription key="fontDescription" type="system" pointSize="17"/>
                     <color key="textColor" systemColor="systemGrayColor"/>
                     <nil key="highlightedColor"/>
                     <variation key="heightClass=regular-widthClass=compact">
@@ -87,8 +87,8 @@
             <constraints>
                 <constraint firstItem="caM-xp-eJ6" firstAttribute="top" secondItem="BYF-oz-fyU" secondAttribute="bottom" constant="10" id="1hC-9A-aAI"/>
                 <constraint firstItem="krD-AV-fSL" firstAttribute="top" secondItem="fnl-2z-Ty3" secondAttribute="top" id="G3r-TM-Bg7"/>
-                <constraint firstItem="fnl-2z-Ty3" firstAttribute="trailing" secondItem="BYF-oz-fyU" secondAttribute="trailing" constant="15" id="TEd-p7-pqU"/>
-                <constraint firstItem="BYF-oz-fyU" firstAttribute="leading" secondItem="fnl-2z-Ty3" secondAttribute="leading" constant="15" id="XXY-Cu-yFg"/>
+                <constraint firstItem="fnl-2z-Ty3" firstAttribute="trailing" secondItem="BYF-oz-fyU" secondAttribute="trailing" constant="10" id="TEd-p7-pqU"/>
+                <constraint firstItem="BYF-oz-fyU" firstAttribute="leading" secondItem="fnl-2z-Ty3" secondAttribute="leading" constant="10" id="XXY-Cu-yFg"/>
                 <constraint firstItem="krD-AV-fSL" firstAttribute="trailing" secondItem="fnl-2z-Ty3" secondAttribute="trailing" id="maM-ew-Mzw"/>
                 <constraint firstItem="krD-AV-fSL" firstAttribute="leading" secondItem="fnl-2z-Ty3" secondAttribute="leading" id="slV-Rs-BnC"/>
             </constraints>

@@ -117,7 +117,7 @@ class AppointmentBookingViewController: UIViewController {
             } else {
             // do stuff with the result
             let resultConverted = result.replacingOccurrences(of: "\\", with: "")
-            if let json = SpriteHealthClient.convertToDictionary(text: resultConverted) as? AnyObject {
+            if let json = SpriteHealthClient.convertToDictionary(text: resultConverted) as? [String: Any] {
 
                print(json);
                 print(type(of: json))
@@ -182,7 +182,7 @@ class AppointmentBookingViewController: UIViewController {
                             } else {
                                 // do stuff with the result
                                 let resultConverted = result.replacingOccurrences(of: "\\", with: "")
-                                if let json = SpriteHealthClient.convertToDictionary(text: resultConverted) as? AnyObject {
+                                if let json = SpriteHealthClient.convertToDictionary(text: resultConverted) as? [String:Any] {
 
                                    print(json);
                                     print(type(of: json))
@@ -224,9 +224,9 @@ class AppointmentBookingViewController: UIViewController {
                 print(error)
             } else {
             let resultConverted = result.replacingOccurrences(of: "\\", with: "")
-            if let json = SpriteHealthClient.convertToDictionary(text: resultConverted) as? AnyObject {
+            if let json = SpriteHealthClient.convertToDictionary(text: resultConverted) as? AnyObject? {
 
-               print(json);
+                print(json as Any);
                 print(type(of: json))
                 DispatchQueue.main.async {
                 self.pushReasons(json: json)
@@ -273,8 +273,8 @@ class AppointmentBookingViewController: UIViewController {
  */
     }
     
-    func pushReasons(json:AnyObject) {
-        print(json)
+    func pushReasons(json:AnyObject?) {
+        print(json as Any)
         if let reasons = json as? [NSDictionary] {
             for reason in reasons
             {
@@ -282,7 +282,7 @@ class AppointmentBookingViewController: UIViewController {
             }
         }
     }
-    func displayDetails(json: AnyObject) {
+    func displayDetails(json: [String: Any]) {
         print(json)
         
         var count = 0;

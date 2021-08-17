@@ -143,7 +143,7 @@ public class SpriteHealthClient {
             if let data = data, let dataString = String(data: data, encoding: .utf8) {
                 print("Response data string:\n \(dataString)")
                 
-                if let list = SpriteHealthClient.convertToDictionary(text:dataString)as? AnyObject {
+                if let list = SpriteHealthClient.convertToDictionary(text:dataString)as? [String: Any] {
                     if let expires_in = list["expires_in"] as? Int {
                         SpriteHealthClient.token_expires_in = expires_in;
                         }

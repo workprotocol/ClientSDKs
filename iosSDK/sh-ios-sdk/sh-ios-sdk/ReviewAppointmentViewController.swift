@@ -120,8 +120,8 @@ class ReviewAppointmentViewController: UIViewController, SFSafariViewControllerD
         }
         */
         
-        let attributedString = NSMutableAttributedString(string: "Want to learn iOS? You should visit the best source of free iOS tutorials!")
-                attributedString.addAttribute(.link, value: "https://www.hackingwithswift.com", range: NSRange(location: 19, length: 55))
+     //   let attributedString = NSMutableAttributedString(string: "Want to learn iOS? You should visit the best source of free iOS tutorials!")
+                //attributedString.addAttribute(.link, value: "https://www.hackingwithswift.com", range: NSRange(location: 19, length: 55))
 
         //        policyText.attributedText = attributedString
         
@@ -134,12 +134,67 @@ class ReviewAppointmentViewController: UIViewController, SFSafariViewControllerD
         serviceNameLabel.text = InfoArr?["serviceName"]
         servicePriceLabel.text = InfoArr?["servicePrice"]
         
-        visitDescriptionText.text = "At the time of your visit, you and " + specialistName! + "will meet at the address above. If you would like to change your appointment, you can do that via Slette app or website. By confirming your appointment you are agreeinleto abide by the Terms of Use, Privacy Policy, onsent to Care via Telehealth, and the Sprite Health’s Cancellation policy."
+        //visitDescriptionText.text =
+        let termAndPolicyTxt = "At the time of your visit, you and " + specialistName! + "will meet at the address above. If you would like to change your appointment, you can do that via Slette app or website. By confirming your appointment you are agreeinleto abide by the Terms of Use, Privacy Policy, Consent to Care via Telehealth, and the Sprite Health’s Cancellation policy."
         
+        
+        let attributedString = NSMutableAttributedString(string: termAndPolicyTxt, attributes: [NSAttributedString.Key.font : UIFont.systemFont (ofSize: 20)])
+        var  url = URL(string: "https://spritehealth.com/about-sprite-health/disclaimer-and-terms-of-use/")!
+        var termOdUseRange = termAndPolicyTxt.range(of: "Terms of Use")
+        
+        var convertedRange = NSRange(termOdUseRange!, in: termAndPolicyTxt)
+        
+        // Set the 'click here' substring to be the link
+        attributedString.setAttributes([.link: url,.font : UIFont.systemFont (ofSize: 20)], range: convertedRange)
+        
+        
+        url = URL(string: "https://spritehealth.com/sprite-health-digital-platform-privacy-policy/")!
+        termOdUseRange = termAndPolicyTxt.range(of: "Privacy Policy")
+        
+        convertedRange = NSRange(termOdUseRange!, in: termAndPolicyTxt)
+        
+        // Set the 'click here' substring to be the link
+        attributedString.setAttributes([.link: url,.font : UIFont.systemFont (ofSize: 20)], range: convertedRange)
+        
+        url = URL(string: "https://spritehealth.com/consent-to-use-of-telehealth/")!
+        termOdUseRange = termAndPolicyTxt.range(of: "Consent to Care via Telehealth")
+        
+        convertedRange = NSRange(termOdUseRange!, in: termAndPolicyTxt)
+        
+        // Set the 'click here' substring to be the link
+        attributedString.setAttributes([.link: url,.font : UIFont.systemFont (ofSize: 20)], range: convertedRange)
+        
+
+        self.visitDescriptionText.attributedText = attributedString
+        self.visitDescriptionText.isUserInteractionEnabled = true
+        self.visitDescriptionText.isEditable = false
+
+        // Set how links should appear: blue and underlined
+        self.visitDescriptionText.linkTextAttributes = [
+            .foregroundColor: UIColor.blue
+               
+        ]
+       
+        let currentPosition = visitDescriptionText.frame
+        
+        let yForTextView = currentPosition.height + currentPosition.origin.y + 15
+        let label = UILabel()
+        label.numberOfLines=7
+        label.textAlignment = .left;//.center
+        label.textColor = .darkGray
+        label.font.withSize(20)
+        label.text = "Sprite Health isn't a replacement for your doctor or emergency services. If you think you are having an emergency, immediately contact 911 or your country's emergency services number."
+        label.backgroundColor = .systemGray6
+        label.frame = CGRect(x:10, y: yForTextView, width: currentPosition.width , height: 150)
+        
+        mainScrollBar.addSubview(label)
         let startTimeArr = startTime!.components(separatedBy: "##")
         let endTimeArr = endTime!.components(separatedBy: "##")
+        
         LabelChooseTimeSlot.text = startTimeArr[0] + " " + startTimeArr[1] + " - " + endTimeArr[1]
-        mainScrollBar.contentSize = CGSize(width: Int(mainScrollBar.frame.size.width), height: Int(self.view.frame.size.height) + 100)
+        mainScrollBar.isUserInteractionEnabled = true;
+        let height = Int(self.view.frame.size.height) + 230
+        mainScrollBar.contentSize = CGSize(width: Int(mainScrollBar.frame.size.width), height: height)
         
         /*
         var lineView = UIView(frame: CGRect(x: 0, y: 225 , width: mainScrollBar.frame.size.width, height: 1))
@@ -236,7 +291,7 @@ class ReviewAppointmentViewController: UIViewController, SFSafariViewControllerD
                 // do stuff with the result
                 //print(result)
                     let resultConverted = result.replacingOccurrences(of: "\\", with: "")
-                    if let json = SpriteHealthClient.convertToDictionary(text: resultConverted) as? AnyObject
+                    if let json = SpriteHealthClient.convertToDictionary(text: resultConverted) as? [String:Any]
                         {
 
                           // print(json);
@@ -251,11 +306,11 @@ class ReviewAppointmentViewController: UIViewController, SFSafariViewControllerD
                                 var InfoArr : [String : String]? = [ : ]
                                 InfoArr!["appointmentId"] = String(appointmentId!)
                                 var authToken =  shObject.getToken()
-                                let requestParameters: [String: Any] = [
+                                /*let requestParameters: [String: Any] = [
                                     "accessToken": authToken,
                                         "ssoLandingURL": "https://oauth-dot-wpfrontendqa.appspot.com/globals/appointments/"+String(appointmentId!)
                                         
-                                    ]
+                                    ]*/
                                 
                                
                                
@@ -266,7 +321,9 @@ class ReviewAppointmentViewController: UIViewController, SFSafariViewControllerD
                                     urlString = urlString.replacingOccurrences(of: "<appointmentId>", with: String(appointmentId!))
                                     print(urlString)
                                     if let url = URL(string: urlString) {
-                                        let vc = SFSafariViewController(url: url, entersReaderIfAvailable: true)
+                                        let vc = SFSafariViewController(url: url)
+                                        vc.preferredBarTintColor = SpriteHealthClient.hexStringToUIColor(hex:SpriteHealthClient.primaryColor)
+                                        vc.preferredControlTintColor = SpriteHealthClient.hexStringToUIColor(hex:SpriteHealthClient.primaryTextColor)
                                         vc.delegate = self
 
                                         self.present(vc, animated: true)

@@ -99,10 +99,10 @@ struct buttonViewModel {
        
         primaryLabel.frame = CGRect(x: frame.size.width/4, y: 0, width: frame.size.width*3/4, height: frame.size.height*0.35)
         secondaryLabel.frame = CGRect(x: frame.size.width/4, y: frame.size.height*0.35, width: frame.size.width*3/4, height: frame.size.height*0.35)
-        slotTimeLabel.frame = CGRect(x:frame.size.width/4 , y: frame.size.height*0.75, width: frame.size.width*0.6, height: frame.size.height*0.2)
+        slotTimeLabel.frame = CGRect(x:frame.size.width/4 , y: frame.size.height*0.75, width: frame.size.width*0.7, height: frame.size.height*0.2)
         slotTimeLabel.layer.addWaghaBorder(edge: .top, color: UIColor.white, thickness: 1)
         
-        var height = frame.size.height*3/4
+        let height = frame.size.height*3/4
         var width = frame.size.width/4
         var startX: CGFloat = 0.0
         if(height < width) {
@@ -170,9 +170,9 @@ public class VPTFinderViewController: UIViewController {
             } else {
             print(result)
                 let resultConverted = result.replacingOccurrences(of: "\\", with: "")
-                if let list = self.convertToDictionary(text: resultConverted) as? [AnyObject] {
+                if let list = SpriteHealthClient.convertToDictionary(text: resultConverted) as? [AnyObject] {
                     for json in list {
-                        specialities[json["value"] as! Int] = json["name"] as! String
+                        specialities[json["value"] as! Int] = json["name"] as? String
                     }
                     
                 }
@@ -184,7 +184,7 @@ public class VPTFinderViewController: UIViewController {
                     print(result)
                     //JSONArray jsonArray = jsnobject.getJSONArray(result);
                     let resultConverted = result.replacingOccurrences(of: "\\", with: "")
-                    if let list = self.convertToDictionary(text: resultConverted) as? [AnyObject] {
+                    if let list = SpriteHealthClient.convertToDictionary(text: resultConverted) as? [AnyObject] {
 
                        print(list);
                         print(type(of: list))
@@ -212,7 +212,7 @@ public class VPTFinderViewController: UIViewController {
     @IBAction func navigationBack(_ sender: Any) {
         self.presentingViewController?.dismiss(animated: true, completion: nil)
     }
-    func convertToDictionary(text: String) -> Any? {
+    /*func convertToDictionary(text: String) -> Any? {
 
      if let data = text.data(using: .utf8) {
          do {
@@ -226,7 +226,7 @@ public class VPTFinderViewController: UIViewController {
      }
 
      return nil
-    }
+    }*/
     
     
     @IBAction func backBtnClick(_ sender: Any) {

@@ -9,10 +9,8 @@
 /* Begin PBXBuildFile section */
 		B898C94726C4096800402B37 /* sh_ios_sdk.h in Headers */ = {isa = PBXBuildFile; fileRef = B898C94526C4096800402B37 /* sh_ios_sdk.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		B898C95826C409E600402B37 /* AppointmentBookingViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = B898C94E26C409E600402B37 /* AppointmentBookingViewController.swift */; };
-		B898C95A26C409E600402B37 /* AppointmentDetailViewController.xib in Resources */ = {isa = PBXBuildFile; fileRef = B898C95026C409E600402B37 /* AppointmentDetailViewController.xib */; };
 		B898C95C26C409E600402B37 /* AppointmentBookingViewController.xib in Resources */ = {isa = PBXBuildFile; fileRef = B898C95226C409E600402B37 /* AppointmentBookingViewController.xib */; };
 		B898C95D26C409E600402B37 /* ReviewAppointmentViewController.xib in Resources */ = {isa = PBXBuildFile; fileRef = B898C95326C409E600402B37 /* ReviewAppointmentViewController.xib */; };
-		B898C95F26C409E600402B37 /* AppointmentDetailViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = B898C95526C409E600402B37 /* AppointmentDetailViewController.swift */; };
 		B898C96126C409E600402B37 /* SpecialistDetailViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = B898C95726C409E600402B37 /* SpecialistDetailViewController.swift */; };
 		B898C96526C429BF00402B37 /* WebKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B898C96426C429BF00402B37 /* WebKit.framework */; };
 		B898C96C26C42AAA00402B37 /* SpecialistDetailViewController.xib in Resources */ = {isa = PBXBuildFile; fileRef = B898C96826C42AAA00402B37 /* SpecialistDetailViewController.xib */; };
@@ -27,10 +25,8 @@
 		B898C94526C4096800402B37 /* sh_ios_sdk.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = sh_ios_sdk.h; sourceTree = "<group>"; };
 		B898C94626C4096800402B37 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		B898C94E26C409E600402B37 /* AppointmentBookingViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = AppointmentBookingViewController.swift; sourceTree = "<group>"; };
-		B898C95026C409E600402B37 /* AppointmentDetailViewController.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = AppointmentDetailViewController.xib; sourceTree = "<group>"; };
 		B898C95226C409E600402B37 /* AppointmentBookingViewController.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = AppointmentBookingViewController.xib; sourceTree = "<group>"; };
 		B898C95326C409E600402B37 /* ReviewAppointmentViewController.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = ReviewAppointmentViewController.xib; sourceTree = "<group>"; };
-		B898C95526C409E600402B37 /* AppointmentDetailViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = AppointmentDetailViewController.swift; sourceTree = "<group>"; };
 		B898C95726C409E600402B37 /* SpecialistDetailViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SpecialistDetailViewController.swift; sourceTree = "<group>"; };
 		B898C96426C429BF00402B37 /* WebKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = WebKit.framework; path = Platforms/MacOSX.platform/Developer/SDKs/MacOSX11.1.sdk/System/iOSSupport/System/Library/Frameworks/WebKit.framework; sourceTree = DEVELOPER_DIR; };
 		B898C96826C42AAA00402B37 /* SpecialistDetailViewController.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = SpecialistDetailViewController.xib; sourceTree = "<group>"; };
@@ -79,8 +75,6 @@
 				B898C96B26C42AAA00402B37 /* VPTFinderViewController.xib */,
 				B898C94E26C409E600402B37 /* AppointmentBookingViewController.swift */,
 				B898C95226C409E600402B37 /* AppointmentBookingViewController.xib */,
-				B898C95526C409E600402B37 /* AppointmentDetailViewController.swift */,
-				B898C95026C409E600402B37 /* AppointmentDetailViewController.xib */,
 				B898C95326C409E600402B37 /* ReviewAppointmentViewController.xib */,
 				B898C95726C409E600402B37 /* SpecialistDetailViewController.swift */,
 				B898C94526C4096800402B37 /* sh_ios_sdk.h */,
@@ -168,7 +162,6 @@
 			files = (
 				B898C95C26C409E600402B37 /* AppointmentBookingViewController.xib in Resources */,
 				B898C96C26C42AAA00402B37 /* SpecialistDetailViewController.xib in Resources */,
-				B898C95A26C409E600402B37 /* AppointmentDetailViewController.xib in Resources */,
 				B898C95D26C409E600402B37 /* ReviewAppointmentViewController.xib in Resources */,
 				B898C96F26C42AAA00402B37 /* VPTFinderViewController.xib in Resources */,
 			);
@@ -182,7 +175,6 @@
 			buildActionMask = 2147483647;
 			files = (
 				B898C97626C42B1300402B37 /* ReviewAppointmentViewController.swift in Sources */,
-				B898C95F26C409E600402B37 /* AppointmentDetailViewController.swift in Sources */,
 				B898C96126C409E600402B37 /* SpecialistDetailViewController.swift in Sources */,
 				B898C95826C409E600402B37 /* AppointmentBookingViewController.swift in Sources */,
 				B898C96D26C42AAA00402B37 /* VPTFinderViewController.swift in Sources */,
@@ -318,6 +310,7 @@
 		B898C94B26C4096800402B37 /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+				BUILD_LIBRARY_FOR_DISTRIBUTION = YES;
 				CLANG_ENABLE_MODULES = YES;
 				CODE_SIGN_STYLE = Automatic;
 				DEFINES_MODULE = YES;
@@ -325,6 +318,8 @@
 				DYLIB_COMPATIBILITY_VERSION = 1;
 				DYLIB_CURRENT_VERSION = 1;
 				DYLIB_INSTALL_NAME_BASE = "@rpath";
+				ENABLE_BITCODE = YES;
+				EXCLUDED_ARCHS = "";
 				INFOPLIST_FILE = "sh-ios-sdk/Info.plist";
 				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Frameworks";
 				LD_RUNPATH_SEARCH_PATHS = (
@@ -338,12 +333,14 @@
 				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
 				SWIFT_VERSION = 5.0;
 				TARGETED_DEVICE_FAMILY = "1,2";
+				VALIDATE_WORKSPACE = YES;
 			};
 			name = Debug;
 		};
 		B898C94C26C4096800402B37 /* Release */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+				BUILD_LIBRARY_FOR_DISTRIBUTION = YES;
 				CLANG_ENABLE_MODULES = YES;
 				CODE_SIGN_STYLE = Automatic;
 				DEFINES_MODULE = YES;
@@ -351,6 +348,8 @@
 				DYLIB_COMPATIBILITY_VERSION = 1;
 				DYLIB_CURRENT_VERSION = 1;
 				DYLIB_INSTALL_NAME_BASE = "@rpath";
+				ENABLE_BITCODE = YES;
+				EXCLUDED_ARCHS = "";
 				INFOPLIST_FILE = "sh-ios-sdk/Info.plist";
 				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Frameworks";
 				LD_RUNPATH_SEARCH_PATHS = (
@@ -358,11 +357,13 @@
 					"@executable_path/Frameworks",
 					"@loader_path/Frameworks",
 				);
+				ONLY_ACTIVE_ARCH = YES;
 				PRODUCT_BUNDLE_IDENTIFIER = "com.spritehealth.sh-ios-sdk";
 				PRODUCT_NAME = "$(TARGET_NAME:c99extidentifier)";
 				SKIP_INSTALL = YES;
 				SWIFT_VERSION = 5.0;
 				TARGETED_DEVICE_FAMILY = "1,2";
+				VALIDATE_WORKSPACE = YES;
 			};
 			name = Release;
 		};

@@ -120,21 +120,19 @@ class SpecialistDetailViewController: UIViewController {
         
         super.init(nibName: "SpecialistDetailViewController", bundle: Bundle(for: SpecialistDetailViewController.self))
     }
-    func convertToDictionary(text: String) -> Any? {
+    /*func convertToDictionary(text: String) -> Any? {
 
      if let data = text.data(using: .utf8) {
-         do {
+         
             // return try JSONSerialization.jsonObject(with: data, options: []) as? Any
          
-            let json = try? JSONSerialization.jsonObject(with: data as Data, options: []) as? Any
+            let json = try? JSONSerialization.jsonObject(with: data as Data, options: []) as? [String:Any]
             return json
-         } catch {
-             print(error.localizedDescription)
-         }
+        
      }
 
      return nil
-    }
+    }*/
     
     
     @IBOutlet weak var navigationLabel: UILabel!
@@ -185,7 +183,7 @@ class SpecialistDetailViewController: UIViewController {
                 print(error)
             } else {
             let resultConverted = result.replacingOccurrences(of: "\\", with: "")
-            if let json = SpriteHealthClient.convertToDictionary(text: resultConverted) as? AnyObject {
+                if let json = SpriteHealthClient.convertToDictionary(text: resultConverted) as? [String: Any] {
 
               // print(json);
                // print(type(of: json))
@@ -215,7 +213,9 @@ class SpecialistDetailViewController: UIViewController {
                 }
             }
             }
-            self.view.isUserInteractionEnabled = true;
+            DispatchQueue.main.async {
+                self.view.isUserInteractionEnabled = true;
+            }
         }
         specialistLabel.text = specialistName
         //let cmObj = SpriteHealthClient()
@@ -225,7 +225,7 @@ class SpecialistDetailViewController: UIViewController {
             } else {
             // do stuff with the result
             let resultConverted = result.replacingOccurrences(of: "\\", with: "")
-            if let json = self.convertToDictionary(text: resultConverted) as? AnyObject {
+                if let json = SpriteHealthClient.convertToDictionary(text: resultConverted) as? [String: Any] {
 
                print(json);
                 print(type(of: json))
@@ -246,10 +246,10 @@ class SpecialistDetailViewController: UIViewController {
     }
     
     
-    func displayDetails(json: AnyObject) {
+    func displayDetails(json: [String: Any]) {
         detailScrollView.isScrollEnabled = true
         detailScrollView.isUserInteractionEnabled = true
-        let screenSize: CGRect = UIScreen.main.bounds
+        //let screenSize: CGRect = UIScreen.main.bounds
         let xTopLeft = 0
         
         let topmargin = 0
@@ -258,11 +258,18 @@ class SpecialistDetailViewController: UIViewController {
         var genderTxt = "";
         var educationTxt = ""
         var qualificationTxt = ""
+        var professionalExperienceTxt = ""
+        var languageTxt = ""
+        var registrationTxt = ""
+        var awardTxt = ""
+        var membershipTxt = "";
         if let gender = json["gender"] as? String {
             //genderLabel.text = gender
             //AddLebelAndDescInScrollView(labelTxt:"GENDER", desc:gender)
             genderTxt = gender;
             }
+    
+        var educationCount = 0;
         if let descriptions = json["descriptions"] as? [NSDictionary] {
            
             
@@ -271,83 +278,170 @@ class SpecialistDetailViewController: UIViewController {
                 if (description["vendorDescriptionType"] as! String == "EDUCATION"){
                     let education =  description["description"] as! String
                     
+                    let multieducationArr: [String] = education.components(separatedBy: "%%")
                     
-                    let educationArr: [String] = education.components(separatedBy: "$$")
-                    print(type(of: educationArr))
-                    if(educationArr.count > 0)
+                    if(multieducationArr.count > 0)
                     {
-                        var educationLabeltxt = "";
-                        if(educationArr.count == 3)
-                        {
-                            educationLabeltxt = educationArr[0] + " from " + educationArr[1] + " in " + educationArr[2]
-                            
-                        }
-                        
-                        else if(educationArr.count == 2)
-                        {
-                            educationLabeltxt = educationArr[0] + " from " + educationArr[1]
-                        }
-                        educationTxt = educationLabeltxt
-                        
-                        
-                        //qualificationLabel.text = educationArr[0]
-                        qualificationTxt = educationArr[0]
-                       
- 
+                          for education in multieducationArr
+                          {
+                            let educationArr: [String] = education.components(separatedBy: "$$")
+                            print(type(of: educationArr))
+                            if(educationArr.count > 0)
+                            {
+                                var educationLabeltxt = "";
+                                if(educationArr.count == 3)
+                                {
+                                    educationLabeltxt = educationArr[0] + " from " + educationArr[1] + " in " + educationArr[2]
+                                    
+                                }
+                                
+                                else if(educationArr.count == 2)
+                                {
+                                    educationLabeltxt = educationArr[0] + " from " + educationArr[1]
+                                }
+                                if(educationTxt  == "")
+                                {
+                                    educationTxt = educationLabeltxt
+                                    educationCount =  educationCount + 1
+                                }
+                                else {
+                                    educationTxt = educationTxt + "\n" + educationLabeltxt
+                                    educationCount = educationCount +  1
+                                }
+                                
+                            }
+                          }
                     }
                 }
                 if (description["vendorDescriptionType"] as! String == "SHORT_DESCRIPTION"){
                    briefSummary = description["description"] as! String
-                    /*  briefSummaryLabel.sizeToFit()
-                    briefSummaryLabel.text = briefSummary
-                    briefSummaryLabel.textAlignment = .justified
-                    */
                    
-
                 }
+                if (description["vendorDescriptionType"] as! String == "QUALIFICATION"){
+                    qualificationTxt = description["description"] as! String
+                  
+                }
+                if (description["vendorDescriptionType"] as! String == "PROFESSIONAL_EXPERIENCE"){
+                    professionalExperienceTxt = description["description"] as! String
+                  
+                }
+                if (description["vendorDescriptionType"] as! String == "LANGUAGES"){
+                    languageTxt = description["description"] as! String
+                  
+                }
+                if (description["vendorDescriptionType"] as! String == "REGISTRATION"){
+                    registrationTxt = description["description"] as! String
+                  
+                }
+                if (description["vendorDescriptionType"] as! String == "AWARDS_AND_RECOGNITIONS"){
+                    awardTxt = description["description"] as! String
+                  
+                }
+                
+                if (description["vendorDescriptionType"] as! String == "MEMBERSHIPS"){
+                    membershipTxt = description["description"] as! String
+                  
+                }
+                
             }
          
           
         }
         
+        let detailScrollViewWidth = Int(detailScrollView.frame.size.width)
+        var currentHeight = 0;
         if(genderTxt != "")
         {
             let yTopLeft = topmargin + count*70
-            let button = detailLabel(frame: CGRect(x: xTopLeft, y: yTopLeft, width: Int(screenSize.width-40), height: 60))
+            let button = detailLabel(frame: CGRect(x: xTopLeft, y: yTopLeft, width: detailScrollViewWidth, height: 60))
             button.configure(with: detailViewModel(primaryText: "GENDER", secondaryText: genderTxt, numberOfLines:1))
             viewInsideScrollView.addSubview(button)
             count += 1
+            currentHeight = topmargin + count*70
         }
         if(qualificationTxt != ""){
-            let yTopLeft = topmargin + count*70
-            let qualLabel = detailLabel(frame: CGRect(x: xTopLeft, y: yTopLeft, width: Int(screenSize.width-40), height: 60))
+            let yTopLeft = currentHeight
+            let qualLabel = detailLabel(frame: CGRect(x: xTopLeft, y: yTopLeft, width: detailScrollViewWidth, height: 60))
             qualLabel.configure(with: detailViewModel(primaryText: "QUALIFICATION", secondaryText: qualificationTxt,numberOfLines:1))
             viewInsideScrollView.addSubview(qualLabel)
             count += 1
+            currentHeight = currentHeight + 70
         }
-        var offset = 0;
+        //var offset = 0;
+        var textHeight:CGFloat = 0
         if(educationTxt != "") {
-            let yTopLeft = topmargin + count*70
-            let eduLabel = detailLabel(frame: CGRect(x: xTopLeft, y: yTopLeft, width: Int(screenSize.width-40), height: 90))
-            eduLabel.configure(with: detailViewModel(primaryText: "EDUCATION", secondaryText: educationTxt,numberOfLines : 2))
+            let yTopLeft = currentHeight
+            textHeight = educationTxt.height(constraintedWidth: CGFloat(detailScrollViewWidth), font: UIFont.systemFont(ofSize: 22)) + CGFloat((educationCount - 1) * 30);
+           
+            let eduLabel = detailLabel(frame: CGRect(x: xTopLeft, y: yTopLeft, width: detailScrollViewWidth, height: Int(textHeight)))
+            eduLabel.configure(with: detailViewModel(primaryText: "EDUCATION", secondaryText: educationTxt,numberOfLines : 0))
             viewInsideScrollView.addSubview(eduLabel)
             count += 1
-            offset = 30
-        }
-        var textHeight:CGFloat = 30
-        if(briefSummary != "") {
-         
-            // find number of lines
             
-            textHeight = briefSummary.height(constraintedWidth: screenSize.width-14, font: UIFont.systemFont(ofSize: 20)) + 60;
+            currentHeight = currentHeight + Int(textHeight) + 10
+        }
+        
+        
+        if(briefSummary != "") {
+            
+            textHeight = briefSummary.height(constraintedWidth: CGFloat(detailScrollViewWidth), font: UIFont.systemFont(ofSize: 22));
            
-            let yTopLeft = topmargin + count*70 + offset
-            let briefSummaryLabel = detailLabel(frame: CGRect(x: xTopLeft, y: yTopLeft, width: Int(screenSize.width-40), height: 30 + Int(textHeight)))
+            let yTopLeft = currentHeight
+            let briefSummaryLabel = detailLabel(frame: CGRect(x: xTopLeft, y: yTopLeft, width: detailScrollViewWidth, height: Int(textHeight)))
             briefSummaryLabel.configure(with: detailViewModel(primaryText: "BRIEF SUMMARY", secondaryText: briefSummary,numberOfLines:0))
             viewInsideScrollView.addSubview(briefSummaryLabel)
-             
+            currentHeight = currentHeight + Int(textHeight)
         }
-        let height = topmargin + count*70 + 30 + Int(textHeight) + 20
+       
+        if(professionalExperienceTxt != "") {
+            let yTopLeft = currentHeight
+            textHeight = professionalExperienceTxt.height(constraintedWidth: CGFloat(detailScrollViewWidth), font: UIFont.systemFont(ofSize: 22));
+            let eduLabel = detailLabel(frame: CGRect(x: xTopLeft, y: yTopLeft, width: detailScrollViewWidth, height: Int(textHeight)))
+            eduLabel.configure(with: detailViewModel(primaryText: "PROFESSIONAL_EXPERIENCE", secondaryText: professionalExperienceTxt,numberOfLines : 0))
+            viewInsideScrollView.addSubview(eduLabel)
+            currentHeight = currentHeight + Int(textHeight) + 10
+           
+        }
+        if(languageTxt != "") {
+            let yTopLeft = currentHeight
+            textHeight = languageTxt.height(constraintedWidth: CGFloat(detailScrollViewWidth), font: UIFont.systemFont(ofSize: 22)) + 30 ;
+            let eduLabel = detailLabel(frame: CGRect(x: xTopLeft, y: yTopLeft, width: detailScrollViewWidth, height:  Int(textHeight)))
+            eduLabel.configure(with: detailViewModel(primaryText: "LANGUAGES", secondaryText: languageTxt,numberOfLines : 0))
+            viewInsideScrollView.addSubview(eduLabel)
+            currentHeight = currentHeight + Int(textHeight) + 10
+           
+        }
+        
+        if(registrationTxt != "") {
+            let yTopLeft = currentHeight
+            textHeight = registrationTxt.height(constraintedWidth: CGFloat(detailScrollViewWidth), font: UIFont.systemFont(ofSize: 22)) ;
+            let eduLabel = detailLabel(frame: CGRect(x: xTopLeft, y: yTopLeft, width: detailScrollViewWidth, height: Int(textHeight)))
+            eduLabel.configure(with: detailViewModel(primaryText: "REGISTRATION", secondaryText: registrationTxt,numberOfLines : 0))
+            viewInsideScrollView.addSubview(eduLabel)
+            currentHeight = currentHeight + Int(textHeight) + 10
+           
+        }
+        
+        if(awardTxt != "") {
+            let yTopLeft = currentHeight
+            textHeight = awardTxt.height(constraintedWidth: CGFloat(detailScrollViewWidth), font: UIFont.systemFont(ofSize: 22)) ;
+            let eduLabel = detailLabel(frame: CGRect(x: xTopLeft, y: yTopLeft, width: detailScrollViewWidth, height: Int(textHeight)))
+            eduLabel.configure(with: detailViewModel(primaryText: "AWARDS_AND_RECOGNITIONS", secondaryText: awardTxt,numberOfLines : 0))
+            viewInsideScrollView.addSubview(eduLabel)
+            currentHeight = currentHeight + Int(textHeight) + 10
+           
+        }
+        if(membershipTxt != "") {
+            let yTopLeft = currentHeight
+            textHeight = membershipTxt.height(constraintedWidth: CGFloat(detailScrollViewWidth), font: UIFont.systemFont(ofSize: 22)) ;
+            let eduLabel = detailLabel(frame: CGRect(x: xTopLeft, y: yTopLeft, width: detailScrollViewWidth, height: Int(textHeight)))
+            eduLabel.configure(with: detailViewModel(primaryText: "MEMBERSHIPS", secondaryText: membershipTxt,numberOfLines : 0))
+            viewInsideScrollView.addSubview(eduLabel)
+            currentHeight = currentHeight + Int(textHeight) + 10
+           
+        }
+        
+        let height = currentHeight + 50
         //detailScrollView.contentSize = CGSize(width: Int(screenSize.width), height: 1000)
         detailScrollView.contentSize = CGSize(width: Int(detailScrollView.frame.size.width), height: height)
         

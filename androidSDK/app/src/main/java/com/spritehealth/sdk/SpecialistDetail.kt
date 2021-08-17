@@ -1,6 +1,6 @@
 
 package com.spritehealth.sdk
-import android.content.Intent
+import android.content .Intent
 import android.os.Bundle
 import android.view.View
 import android.widget.ProgressBar
@@ -21,12 +21,14 @@ internal class SpecialistDetail : AppCompatActivity() {
     private var specialistWithAvailability:User?=null;
     private lateinit var specialistUser:User;
 
+    val clientSdkInstance = SpriteHealthClient()
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_specialist_detail)
         setSupportActionBar(findViewById(R.id.toolbar))
 
-        var id = intent.getStringExtra("id")
+        var id:Long = intent.getLongExtra("id",0)
 
         if(intent.hasExtra("specialistWithAvailabilityJSON")) {
             val specialistWithAvailabilityJSON = intent.getStringExtra("specialistWithAvailabilityJSON")
@@ -42,16 +44,17 @@ internal class SpecialistDetail : AppCompatActivity() {
                 if (specialistWithAvailability!!.specializationNames != null) {
                     tvSpeciality.text = specialistWithAvailability!!.specializationNames
                 }
+
             }
         }
 
-        val objCommon = SpriteHealthClient()
+     
 
         var response="";
         var progressBar: ProgressBar = findViewById(R.id.progressBar);
         progressBar.visibility = View.VISIBLE
 
-        objCommon.specialistDetail(id, this, object : SpriteHealthClient.Callback {
+        clientSdkInstance.specialistDetail(id, this, object : SpriteHealthClient.Callback {
             override fun onSuccess(response: String?) {
                 // do stuff here
                 var responseJson = JSONObject(response)
@@ -179,6 +182,10 @@ internal class SpecialistDetail : AppCompatActivity() {
 
         }
 
+        //if NO AVAILABILITY, then hide BOOK Visit Button
+        if(specialistWithAvailability!!.availableSlots?.size ?: 0>0) {
+            btnBookVisit.visibility = View.VISIBLE
+        }
     }
 
 
@@ -187,18 +194,18 @@ internal class SpecialistDetail : AppCompatActivity() {
         var gson:Gson =builder.create()
 
         val intent = Intent(this, BookAppointment::class.java).apply {
-            putExtra("specialistWithAvailabilityJSON", gson.toJson(specialistWithAvailability))
+
             if(specialistUser!=null) {
                 putExtra("specialistJSON", gson.toJson(specialistUser))
             }
             if(specialistWithAvailability!=null && specialistWithAvailability!!.serviceId!=null) {
+                putExtra("specialistWithAvailabilityJSON", gson.toJson(specialistWithAvailability))
                 putExtra("serviceId", specialistWithAvailability!!.serviceId)
             }
 
         }
         this.startActivity(intent)
     }
-
 
 
 }

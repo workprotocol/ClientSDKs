@@ -1,6 +1,7 @@
 package com.spritehealth.sdk.model
 
 import java.util.*
+import kotlin.collections.ArrayList
 
 
 class AccessTokenResponse{
@@ -185,6 +186,208 @@ class Speciality{
     var name:String?=null
     var value:Int?=null
 }
+
+
+class Reason(var id: Long, var name: String) {
+    var synonyms: List<String>? = null
+    var description: String? = null
+    var imageIds: Set<Long>? = null
+    var serviceDefinitionIds: Set<Long>? = null
+    var diagnosisCodes: Set<String>? = null
+    var serviceSettings: Set<String>? = null
+    var episodes: Set<String>? = null
+    var episodeCodes: Set<String>? = null
+    var concernCategories: Set<String>? = null
+    //var specialities: List<ReasonSpecialityMap>? = null
+    var severity: String? = null
+    var displayToMembers: Boolean? = null
+    var demography: String? = null
+}
+
+class Service {
+    var id: Long = 0
+
+    var createdDate: String? = null
+
+    var metaDataInstance: String? = null
+
+    var htmlTemplate: String? = null
+
+    // common attributes
+    var wpServiceDefinitionId: Long = 0
+    var wpVendorId: Long = 0
+    var wpVendorUserId: Long = 0
+    var vendorImageIds: Set<Long>? = null
+    var vendorName: String? = null
+    var wpName: String? = null
+    var wpProjectName: String? = null
+    var wpStatus: String? = null
+    var wpCostPerHour:Double = 0.0
+    var wpFixedCost:Double = 0.0
+    var wpOpenToQuote:Boolean = false
+    var wpOpenToOrder:Boolean = false
+    var wpOpenToAppointment:Boolean = false
+    var wpServicePaymentType: String? = null
+
+    //public long wpLocationId;//deprecated in favor of wpLocationIds
+    var wpLocationIds: Set<Long>? = null
+    var wpDuration:Int = 0
+    var wpImageIds: ArrayList<Long>? = null
+    var wpIsDefault:Boolean = false
+    var wpNumberOfAppointments :Int= 0
+    var wpMRP: Double? = null
+    var wpLeadTime: Double? = null
+    var wpOverview: String? = null
+    var wpSubType: List<String>? = null
+    var wpIsOmniPresent:Boolean = false
+    var serviceDefinitionName: String? = null
+
+    var vendorLocations: List<Location>? = null
+    //var columns: List<ColumnConverter>? = null
+    var distance: Double? = null
+
+    var vendorUserId: String? = null
+
+    var wpCode: String? = null
+    var wpUnits: Int? = null
+    var wpSetting: String? = null
+}
+
+class Appointment {
+    var isVendor = false
+    var vendorId: Long = 0
+    var vendorName: String? = null
+    var userEmail: String? = null
+    var serviceId: Long = 0
+    var serviceName: String? = null
+    var startTime: String? = null
+    var endTime: String? = null
+    var customerName: String? = null
+    var customerEmail: String? = null
+    var customerPhone: String? = null
+    var id: Long = 0
+    var userId: String? = null
+    var vendorUserId: String? = null
+    var patientId: Long = 0
+    var specialistId: Long = 0
+    var specialistName: String? = null
+    var status: String? = null
+    var caseId: Long = 0
+    var orderId: Long = 0
+    var appointmentTrigger: String? = null
+    var specialistGoogleUserId: String? = null
+    var specialistImageId: Set<Long>? = null
+    var specialistMobilePhone: String? = null
+    var bookedAmount: Double? = null
+    var reasonId: Long? = null
+    var reasonName: String? = null
+    var serviceSetting: String? = null
+    var where: String? = null
+    var issueDescription: String? = null
+    var contactPreference: String? = null
+    var issueImageIds: Set<Long>? = null
+
+}
+
+class Coverage  {
+    var id: Long? = null
+    var name: String? = null
+    var networkType: String? = null
+    var serviceCode: String? = null
+    var serviceId: Long = 0
+    var providerId: Long = 0
+    var memberId: Long = 0
+    var organizationId: Long = 0
+    var totalProviderAmount = 0.0
+    var patientPlanId: Long = 0
+    var units = 0.0
+    var groupedTotalProviderAmount: Map<String, Double> = HashMap()
+    var totalPatientAmount = 0.0
+    var groupedTotalPatientAmount: Map<String, Double> = HashMap()
+    var providerAmountBreakup: Map<String, AmountDetail> = HashMap<String, AmountDetail>()
+    var patientAmountBreakup: Map<String, AmountDetail> = HashMap<String, AmountDetail>()
+    var patientAmountBreakupStructure: PriceBreakUp? = null
+    var errorCode: String? = null
+    var errorDescription: String? = null
+    var service: Service? = null
+
+}
+
+class PriceBreakUp {
+    var Insured: Double? = null
+    var Sponsor: Double? = null
+}
+
+class AmountDetail  {
+    var amount = 0.0
+    var glName: String? = null
+    var glType: String? = null
+    var chargeCategory: String? = null
+    var chargeType: String? = null
+    var termType: String? = null
+    var walletAccountType: String? = null
+    var resource: String? = null
+}
+
+
+class AvailabilityGroupedByDate {
+    var availableDate: String? = null
+    var slots: List<TimePeriodConverter> = ArrayList()
+}
+
+class CostBreakUp {
+    var negotiated: Double? = null
+    var insured: Double? = null
+    var sponsor: Double? = null
+    var coverageId : Long? = null
+}
+internal class CalendarEvent {
+    private val id: String? = null
+    private val vendorUserId: Long = 0
+    private val serviceId: Long = 0
+    var eventSummary: String? = null
+    var timezone: String? = null
+    var appointment: Appointment? = null
+    var vendorEventId: String? = null
+    var errors: List<WPError>? = ArrayList()
+
+}
+
+class WPError {
+    var errorCode = 0
+    var fieldName: String? = null
+    var message: String? = null
+    var description: String? = null
+    var errorType: String? = null
+}
+
+internal class Availability {
+    var availableDate: String? = null
+    var slots: List<TimePeriodConverter> = ArrayList()
+}
+
+class SpecialistAvailability{
+    var eventSummary: String? = null
+    var timezone: String? = null
+    var duration: Int? = null
+    var leadTime: Int? = null
+    var numberOfAppointments: Int? = null
+    var numberOfAvailbilities: Int? = null
+    var busyTimePeriods: List<TimePeriodConverter> = ArrayList()
+    var freeTimePeriods: List<TimePeriodConverter> = ArrayList()
+    /*
+        "busyTimePeriods": [],
+        "freeTimePeriods": [{
+        "startTime": "09-14-2017 11:30:00",
+        "endTime": "09-14-2017 11:45:00"
+        }, {
+        "startTime": "09-14-2017 11:45:00",
+        "endTime": "09-14-2017 12:00:00"
+        }]
+   */
+}
+
+
 
 
 

@@ -4,7 +4,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".SpecialistDetail">
+    tools:context=".BookAppointment">
 
     <RelativeLayout
         android:layout_width="match_parent"
@@ -28,365 +28,238 @@
         <androidx.core.widget.NestedScrollView
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:layout_marginBottom="60dp"
             android:layout_below="@id/appbar">
 
-            <RelativeLayout
+            <ScrollView
+                android:id="@+id/scrollViewWrapper"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-
-                android:padding="8dp">
-
+                android:layout_above="@+id/bookButton"
+                android:layout_below="@id/appbar"
+                android:layout_marginTop="8dp"
+                android:layout_marginBottom="8dp"
+                android:visibility="visible"
+                >
 
                 <LinearLayout
-                    android:id="@+id/lloTopSection"
                     android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:orientation="horizontal"
-                    android:padding="5dp">
+                    android:layout_height="match_parent"
+                    android:layout_gravity="center_horizontal"
+                    android:orientation="vertical">
 
-                    <androidx.cardview.widget.CardView
-                        android:id="@+id/image_view_card"
-                        android:layout_width="80dp"
-                        android:layout_height="80dp"
-                        android:layout_marginEnd="8dp"
-                        android:orientation="vertical"
-                        app:cardCornerRadius="50dp"
-                        app:cardElevation="0dp">
 
-                        <ImageView
-                            android:id="@+id/imgvUser"
-                            android:layout_width="80dp"
-                            android:layout_height="80dp"
-                            android:src="@drawable/ic_launcher_foreground"
-                            app:srcCompat="@drawable/specialist_default" />
-
-                    </androidx.cardview.widget.CardView>
-                    >
 
                     <LinearLayout
-                        android:id="@+id/lloTopFields"
+                        android:id="@+id/loReasonWrapper"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
+                        android:layout_gravity="center_horizontal"
                         android:orientation="vertical"
+                        android:paddingBottom="10dp"
+                        android:paddingLeft="8dp"
+                        android:paddingRight="5dp"
+                        android:paddingTop="8dp"
+                        android:background="@drawable/border_bottom"
                         android:visibility="visible">
 
                         <TextView
-                            android:id="@+id/tvName"
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:layout_toEndOf="@id/image_view_card"
-                            android:text="name"
-                            android:textSize="20sp"
-                            android:textStyle="bold" />
-
-                        <TextView
-                            android:id="@+id/tvQualification"
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:layout_below="@id/tvName"
-                            android:layout_toEndOf="@id/image_view_card"
-                            android:text="qualification"
-                            android:textSize="16sp"
-                            android:visibility="gone" />
-
-                        <TextView
-                            android:id="@+id/tvSpeciality"
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:layout_below="@id/tvQualification"
-                            android:layout_marginTop="3dp"
-                            android:layout_toEndOf="@id/image_view_card"
-                            android:text="speciality"
-                            android:textSize="18sp" />
-                    </LinearLayout>
-
-                </LinearLayout>
-
-                <LinearLayout
-                    android:id="@+id/rootLayout"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_below="@id/lloTopSection"
-                    android:orientation="vertical"
-                    android:padding="5dp">
-
-
-                    <TextView
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:layout_marginTop="30dp"
-                        android:background="#f7f7f7"
-                        android:padding="8dp"
-                        android:text="Details"
-                        android:textAlignment="center"
-                        android:textSize="20dp"
-                        android:textStyle="bold" />
-
-                    <TextView
-                        android:id="@+id/tvGenderLabel"
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:layout_marginTop="10dp"
-                        android:text="GENDER"
-                        android:textColor="#B5B3B3"
-                        android:textSize="18sp" />
-
-                    <TextView
-                        android:id="@+id/tvGender"
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:text=""
-                        android:textSize="18sp" />
-
-                    <View
-                        android:layout_width="match_parent"
-                        android:layout_height="1dp"
-                        android:layout_marginTop="10dp"
-                        android:background="#F7F7F7" />
-
-                    <LinearLayout
-                        android:id="@+id/lloLanguage"
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:orientation="vertical"
-                        android:visibility="gone">
-
-                        <TextView
-                            android:id="@+id/tvLanguageLabel"
+                            style="@style/wpHint1"
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
-                            android:layout_marginTop="10dp"
-                            android:text="Language(s)"
-                            android:textColor="#B5B3B3"
-                            android:textSize="18sp" />
+                            android:gravity="left"
+                            android:paddingTop="8dp"
+                            android:text="REASON FOR VISIT"></TextView>
 
-                        <TextView
-                            android:id="@+id/tvLanguage"
+                        <Spinner
+                            android:id="@+id/reasonSpinner"
+                            style="@style/wpSpinner"
                             android:layout_width="match_parent"
-                            android:layout_height="wrap_content"
-                            android:text="..."
-                            android:textSize="20dp" />
-
-                        <View
-                            android:layout_width="match_parent"
-                            android:layout_height="1dp"
-                            android:layout_marginTop="10dp"
-                            android:background="#F7F7F7" />
-
-                    </LinearLayout>
-
-                    <LinearLayout
-                        android:id="@+id/lloEducation"
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:orientation="vertical"
-                        android:visibility="gone">
-
-                        <TextView
-                            android:id="@+id/tvEducationLabel"
-                            android:layout_width="match_parent"
-                            android:layout_height="wrap_content"
-                            android:layout_marginTop="10dp"
-                            android:text="EDUCATION"
-                            android:textColor="#B5B3B3"
-                            android:textSize="18sp" />
-
-                        <TextView
-                            android:id="@+id/tvEducation"
-                            android:layout_width="match_parent"
-                            android:layout_height="wrap_content"
-                            android:text="..."
-                            android:textSize="20dp" />
-
-                        <View
-                            android:layout_width="match_parent"
-                            android:layout_height="1dp"
-                            android:layout_marginTop="10dp"
-                            android:background="#F7F7F7" />
-
-                    </LinearLayout>
-
-                    <LinearLayout
-                        android:id="@+id/lloProfStatement"
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:orientation="vertical"
-                        android:visibility="gone">
-
-                        <TextView
-                            android:id="@+id/tvProfStatementLabel"
-                            android:layout_width="match_parent"
-                            android:layout_height="wrap_content"
-                            android:layout_marginTop="10dp"
-                            android:text="Brief Summary"
-                            android:textAllCaps="true"
-                            android:textColor="#B5B3B3"
-                            android:textSize="18sp" />
-
-                        <TextView
-                            android:id="@+id/tvProfStatement"
-                            android:layout_width="match_parent"
-                            android:layout_height="wrap_content"
-                            android:text="..."
-                            android:textSize="20dp" />
-
-                        <View
-                            android:layout_width="match_parent"
-                            android:layout_height="1dp"
-                            android:layout_marginTop="10dp"
-                            android:background="#F7F7F7" />
-
-                    </LinearLayout>
-
-                    <LinearLayout
-                        android:id="@+id/lloProfExp"
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:orientation="vertical"
-                        android:visibility="gone">
-
-                        <TextView
-                            android:id="@+id/tvProfExpLabel"
-                            android:layout_width="match_parent"
-                            android:layout_height="wrap_content"
-                            android:layout_marginTop="10dp"
-                            android:text="Professional Experience"
-                            android:textAllCaps="true"
-                            android:textColor="#B5B3B3"
-                            android:textSize="18sp" />
-
-                        <TextView
-                            android:id="@+id/tvProfExp"
-                            android:layout_width="match_parent"
-                            android:layout_height="wrap_content"
-                            android:text="..."
-                            android:textSize="20dp" />
-
-                        <View
-                            android:layout_width="match_parent"
-                            android:layout_height="1dp"
-                            android:layout_marginTop="10dp"
-                            android:background="#F7F7F7" />
-
-                    </LinearLayout>
-
-                    <LinearLayout
-                        android:id="@+id/lloRegistration"
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:orientation="vertical"
-                        android:visibility="gone">
-
-                        <TextView
-                            android:id="@+id/tvRegistrationLabel"
-                            android:layout_width="match_parent"
-                            android:layout_height="wrap_content"
-                            android:layout_marginTop="10dp"
-                            android:text="Registration"
-                            android:textAllCaps="true"
-                            android:textColor="#B5B3B3"
-                            android:textSize="18sp" />
-
-                        <TextView
-                            android:id="@+id/tvRegistration"
-                            android:layout_width="match_parent"
-                            android:layout_height="wrap_content"
-                            android:text="..."
-                            android:textSize="20dp" />
-
-                        <View
-                            android:layout_width="match_parent"
-                            android:layout_height="1dp"
-                            android:layout_marginTop="10dp"
-                            android:background="#F7F7F7" />
-
-                    </LinearLayout>
-
-                    <LinearLayout
-                        android:id="@+id/lloAwards"
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:orientation="vertical"
-                        android:visibility="gone">
-
-                        <TextView
-                            android:id="@+id/tvAwardsLabel"
-                            android:layout_width="match_parent"
-                            android:layout_height="wrap_content"
-                            android:layout_marginTop="10dp"
-                            android:text="Awards &amp; Recognitions"
-                            android:textAllCaps="true"
-                            android:textColor="#B5B3B3"
-                            android:textSize="18sp" />
-
-                        <TextView
-                            android:id="@+id/tvAwards"
-                            android:layout_width="match_parent"
-                            android:layout_height="wrap_content"
-                            android:text="..."
-                            android:textSize="20dp" />
-
-                        <View
-                            android:layout_width="match_parent"
-                            android:layout_height="1dp"
-                            android:layout_marginTop="10dp"
-                            android:background="#F7F7F7" />
-
+                            android:layout_height="wrap_content" />
                     </LinearLayout>
 
 
                     <LinearLayout
-                        android:id="@+id/lloMemberships"
+                        android:id="@+id/loContentWrapper"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
+                        android:layout_gravity="center_horizontal"
                         android:orientation="vertical"
-                        android:visibility="gone">
+                        android:paddingBottom="10dp"
+                        android:paddingLeft="8dp"
+                        android:paddingRight="5dp"
+                        android:paddingTop="8dp"
+                        android:visibility="visible">
 
-                        <TextView
-                            android:id="@+id/tvMembershipsLabel"
+                        <LinearLayout
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
-                            android:layout_marginTop="10dp"
-                            android:text="Memberships"
-                            android:textAllCaps="true"
-                            android:textColor="#B5B3B3"
-                            android:textSize="18sp" />
+                            android:layout_gravity="center_horizontal"
+                            android:orientation="vertical"
+                            android:paddingBottom="10dp"
+                            android:paddingLeft="8dp"
+                            android:paddingRight="5dp"
+                            android:paddingTop="8dp"
+                            android:background="@drawable/border_bottom"
+                            android:visibility="visible">
 
-                        <TextView
-                            android:id="@+id/tvMemberships"
+                        <LinearLayout
+                            android:id="@+id/loTypeOfCareWrapper"
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
-                            android:text="..."
-                            android:textSize="20dp" />
+                            android:layout_gravity="center_horizontal"
+                            android:orientation="horizontal"
+                            android:visibility="visible">
 
-                        <View
+                            <TextView
+                                style="@style/wpHint1"
+                                android:layout_width="0dip"
+                                android:layout_height="wrap_content"
+                                android:layout_gravity="center_vertical"
+                                android:layout_weight="0.8"
+                                android:gravity="left"
+                                android:paddingTop="8dp"
+                                android:text="TYPE OF CARE"></TextView>
+
+
+                        </LinearLayout>
+
+                        <LinearLayout
+                            android:id="@+id/lloServiceWrapper"
                             android:layout_width="match_parent"
-                            android:layout_height="1dp"
+                            android:layout_height="wrap_content"
+                            android:orientation="vertical"
+                            android:paddingBottom="5dp"
+                            android:visibility="visible">
+
+                            <LinearLayout
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content"
+                                android:orientation="horizontal"
+                                android:paddingBottom="0dp">
+
+                                <LinearLayout
+                                    android:layout_width="0dip"
+                                    android:layout_height="wrap_content"
+                                    android:layout_weight="0.75"
+                                    android:orientation="vertical">
+
+                                    <TextView
+                                        android:id="@+id/tvServiceName"
+                                        style="@style/wpBody1"
+                                        android:layout_width="wrap_content"
+                                        android:layout_height="wrap_content"
+                                        android:gravity="center_vertical"
+                                        android:text="..." />
+
+                                    <TextView
+                                        android:id="@+id/tvDuration"
+                                        style="@style/wpBody2"
+                                        android:layout_width="match_parent"
+                                        android:layout_height="wrap_content"
+                                        android:text="30 mins"
+                                        android:visibility="gone" />
+
+                                </LinearLayout>
+
+                                <LinearLayout
+                                    android:layout_width="0dip"
+                                    android:layout_height="wrap_content"
+                                    android:layout_gravity="right"
+                                    android:layout_weight="0.25"
+                                    android:gravity="right"
+                                    android:orientation="vertical">
+
+                                    <TextView
+                                        android:id="@+id/tvPrice"
+                                        style="@style/wpBody1"
+                                        android:layout_width="wrap_content"
+                                        android:layout_height="wrap_content"
+                                        android:layout_gravity="right"
+                                        android:text="$0.0" />
+
+                                    <TextView
+                                        android:id="@+id/tvPriceEstimate"
+                                        style="@style/wpHint1"
+                                        android:layout_width="wrap_content"
+                                        android:layout_height="wrap_content"
+                                        android:layout_gravity="right"
+                                        android:text="(Est)" />
+
+                                </LinearLayout>
+
+                            </LinearLayout>
+
+
+                        </LinearLayout>
+
+                        </LinearLayout>
+
+
+                        <LinearLayout
+                            android:id="@+id/lloSlotGroupedByDateWrapper"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:orientation="vertical"
+                            android:paddingTop="20dp"
+                            android:visibility="visible">
+
+
+
+                        </LinearLayout>
+
+
+                        <LinearLayout
+                            android:id="@+id/loAvailabilityWrapper"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:orientation="vertical"
                             android:layout_marginTop="10dp"
-                            android:background="#F7F7F7" />
+                            android:layout_marginBottom="0dp"
+                            android:visibility="visible"
+                            >
+
+
+                            <Button
+                                android:id="@+id/btnShowMoreSlots"
+                                android:layout_width="match_parent"
+                                android:layout_height="50dp"
+                                android:onClick="loadNextAvailability"
+                                android:padding="4dp"
+                                android:text="Check Next Availability"
+                                android:textColor="@color/accentPrimary"
+                                android:textSize="15sp"
+                                android:visibility="gone" />
+
+                            <TextView
+                                android:id="@+id/tvNoSlotMessage"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:layout_gravity="center_horizontal|center"
+                                android:layout_marginBottom="15dp"
+                                android:paddingTop="15dp"
+                                android:text="No slots available for this week."
+                                android:visibility="gone" />
+                        </LinearLayout>
+
 
                     </LinearLayout>
 
-                </LinearLayout>
 
 
-            </RelativeLayout>
+                    </LinearLayout>
+
+
+
+
+            </ScrollView>
+
 
         </androidx.core.widget.NestedScrollView>
+
+
     </RelativeLayout>
 
-    <Button
-        style="@style/Widget.MaterialComponents.Button.TextButton"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_gravity="bottom"
-        android:background="@drawable/border_top_touch"
-        android:onClick="bookVisit"
-        android:padding="10dp"
-        android:text="Book Virtual Visit"
-        android:textColor="@color/primary"
-        android:textSize="22sp" />
+
 
     <ProgressBar
         android:id="@+id/progressBar"

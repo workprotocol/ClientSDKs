@@ -12,7 +12,6 @@ import com.android.volley.toolbox.StringRequest
 import com.android.volley.toolbox.Volley
 import com.spritehealth.sdk.model.Speciality
 import com.spritehealth.sdk.model.User
-import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.launch
@@ -53,7 +52,7 @@ class SpriteHealthClient(): AppCompatActivity(){
 
         val stringRequest = object: StringRequest(Request.Method.GET, url,
             Response.Listener<String> { response ->
-                Log.d("A", "Response is: " + response.substring(0,500))
+                Log.d("A", "Response is: " + response)
                 callback.onSuccess(response);
             },
             Response.ErrorListener { error ->
@@ -81,7 +80,7 @@ class SpriteHealthClient(): AppCompatActivity(){
 
         val stringRequest = object: StringRequest(Request.Method.GET, myurl,
             Response.Listener<String> { response ->
-                Log.d("A", "Response is: " + response.substring(0,500))
+                Log.d("A", "Response is: " + response)
                 val response2 = response
                 auth_token = response
                 // displayVPT(response);
@@ -114,7 +113,7 @@ class SpriteHealthClient(): AppCompatActivity(){
 
         val stringRequest = object: StringRequest(Request.Method.GET, url,
                 Response.Listener<String> { response ->
-                    Log.d("A", "Response is: " + response.substring(0,500))
+                    Log.d("A", "Response is: " + response)
                     callback.onSuccess(response);
                 },
                 Response.ErrorListener { error ->
@@ -134,14 +133,14 @@ class SpriteHealthClient(): AppCompatActivity(){
         queue.add(stringRequest)
     }
 
-    fun callPostRequest(context:Context, appointmentCriteria:JSONObject, url: String, callback :Callback)
+    fun callPostRequest(context:Context, postDataParams: MutableMap<String, String>, url: String, callback:Callback)
     {
         val auth_token = auth_token
         val queue = Volley.newRequestQueue(context)
 
         val stringRequest = object: StringRequest(Request.Method.POST, url,
                 Response.Listener<String> { response ->
-                    Log.d("A", "Response is: " + response.substring(0,500))
+                    Log.d("A", "Response is: " + response)
 
                     callback.onSuccess(response);
                 },
@@ -162,18 +161,21 @@ class SpriteHealthClient(): AppCompatActivity(){
 
             @Throws(AuthFailureError::class)
             override fun getParams(): Map<String, String>? {
+                /*
                 val params: MutableMap<String, String> = HashMap()
-                val iter: Iterator<String> = appointmentCriteria.keys()
+                val iter: Iterator<String> = postDataJSON.keys()
                 while (iter.hasNext()) {
                     val key = iter.next()
                     try {
-                        val value: Any = appointmentCriteria.get(key)
+                        val value: Any = postDataJSON.get(key)
                         params[key] = value.toString().trim()
                     } catch (e: JSONException) {
                         // Something went wrong!
                     }
                 }
                 return params
+                */
+               return postDataParams
             }
         }
 
@@ -183,13 +185,13 @@ class SpriteHealthClient(): AppCompatActivity(){
 
     fun memberDetail( context:Context,callback :Callback  )
     {
-        val url = apiRoot +  "/resources/user?withCoverage=true"
+        val url = "$apiRoot/resources/user?withCoverage=true"
         callGetRequest(context, url, callback )
     }
 
     fun familyMembers(familyId:String?, context:Context,callback :Callback  )
     {
-        val url = apiRoot + "/resources/user/family/members?familyId=" + familyId;
+        val url = "$apiRoot/resources/user/family/members?familyId=$familyId";
         callGetRequest(context, url, callback )
     }
 
@@ -206,41 +208,60 @@ class SpriteHealthClient(): AppCompatActivity(){
     }
 
 
-    fun specialistDetail(specialistId:String?, context:Context,callback :Callback  )
+    fun specialistDetail(specialistId:Long?, context:Context,callback :Callback  )
     {
-        val url = apiRoot + "/resources/user/specialists/"+specialistId + "?slim=HIGH";
+        val url = "$apiRoot/resources/user/specialists/$specialistId?slim=HIGH";
+        callGetRequest(context, url, callback )
+    }
+
+
+    fun serviceDetail(serviceId:Long?, context:Context,callback :Callback  )
+    {
+        val url = "$apiRoot/resources/services/$serviceId?slim=HIGH";
         callGetRequest(context, url, callback )
     }
 
     fun fetchSpecialities(context:Context,callback :Callback ){
-        val url= apiRoot+"/resources/file/JSON/specialities.json";
+        val url= "$apiRoot/resources/file/JSON/specialities.json";
         callGetRequest(context, url, callback )
     }
 
     fun reasonList( context:Context,callback :Callback  )
     {
-        val url = apiRoot +  "/resources/reasons?specialities=26"
+        val url = "$apiRoot/resources/reasons"
         callGetRequest(context, url, callback )
     }
 
-    fun specialistAvailableSlot(specialistId:String?, context:Context,callback :Callback  )
-    {
-        val url = apiRoot + "/resources/specialists/available?serviceId=6207822929854464&vendorUserId=" + specialistId + "&weeks=1"
+
+    fun fetchReasonsBySpecialities(specialities: String?="", context: Context, callback: Callback) {
+        val url = "$apiRoot/resources/reasons?specialities=$specialities"
         callGetRequest(context, url, callback )
     }
+
+    fun specialistAvailableSlot(specialistId:Long?,serviceId:Long?,weeks:Int, context:Context,callback :Callback  )
+    {
+        val url =
+            "$apiRoot/resources/specialists/available?serviceId=$serviceId&vendorUserId=$specialistId&weeks=$weeks"
+        callGetRequest(context, url, callback )
+    }
+
+
+    fun fetchServiceCoverage(formPost: MutableMap<String, String>, context: Context, callback: SpriteHealthClient.Callback) {
+        var url = "$apiRoot/resources/serviceCoverages/fetchMAA"
+        callPostRequest(context,formPost, url, callback )
+    }
+
 
     fun listOfServiceByReason(reasonId: String?,specialistId:String?, context:Context,callback :Callback  )
     {
-        val url = apiRoot + "/resources/reasons/"+reasonId+"/services?vendorId=" + specialistId
+        val url = "$apiRoot/resources/reasons/$reasonId/services?vendorId=$specialistId"
         callGetRequest(context, url, callback )
     }
 
-    fun appointmentBooking( context:Context,appointmentCriteria:JSONObject,callback :Callback  )
+    fun appointmentBooking(formPost: MutableMap<String, String>, context:Context, callback:Callback  )
     {
-
-        var url = apiRoot+ "/resources/appointment"
-        var bd = appointmentCriteria
-        callPostRequest(context,appointmentCriteria, url, callback )
+        var url = "$apiRoot/resources/calendar/event"
+        callPostRequest(context,formPost, url, callback )
     }
 
    public fun callVPTFinder(calleeIntent: Intent, context: Context) {
@@ -254,6 +275,8 @@ class SpriteHealthClient(): AppCompatActivity(){
             context.startActivity(intent)
         }
     }
+
+
 
     companion object {
         var storedIntent: Intent = Intent();

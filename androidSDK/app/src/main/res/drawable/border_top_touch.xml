@@ -1,16 +1,16 @@
 <?xml version="1.0" encoding="utf-8"?>
 <selector xmlns:android="http://schemas.android.com/apk/res/android">
     <item android:state_pressed="true"
-        android:drawable="@color/primary" /> <!-- pressed -->
+        android:drawable="@color/pressed_color" /> <!-- pressed -->
     <item android:state_focused="true"
-        android:drawable="@color/primary" /> <!-- focused -->
+        android:drawable="@color/pressed_color" /> <!-- focused -->
     <item>
         <layer-list xmlns:android="http://schemas.android.com/apk/res/android">
             <item>
                 <shape android:shape="rectangle">
                     <!-- Draw a 1dp width border around shape -->
                     <stroke
-                        android:color="@color/bgColor"    android:width="1dp"
+                        android:color="@color/lightGray"    android:width="1dp"
                         />
                 </shape>
             </item>

@@ -312,8 +312,33 @@ public class SpriteHealthClient {
     }
     public func specialistAvailable(callback : @escaping ((NSError?,String) -> Void))
     {
-        let url = apiRoot + "/resources/specialists/available?specialities=26&serviceDefinitionIds=5414975176704000&startIndex=0&endIndex=10&getOnlyFirstAvailability=true&networkIds=5783379589988352,6214613415755776,6206424134713344,6293602384740352,6306161213046784,6206424134713344,5783379589988352,6293602384740352"
+      
+        var currentDate = Date()
+        let calendar = Calendar.current
+        let hour = calendar.component(.hour, from: currentDate)
         
+        if(hour >= 22)
+        {
+            var dateComponent = DateComponents()
+            dateComponent.hour = 3
+            currentDate = Calendar.current.date(byAdding: dateComponent, to: currentDate)!
+        }
+        else {
+            var dateComponent = DateComponents()
+            dateComponent.hour = 2
+            currentDate = Calendar.current.date(byAdding: dateComponent, to: currentDate)!
+        }
+        
+        let dateFormatter = DateFormatter()
+        dateFormatter.dateFormat = "MMM dd, yyyy hh:mm aaa"
+        let startDateTime = dateFormatter.string(from: currentDate)
+        dateFormatter.dateFormat = "HH:mm:ss"
+        let currentTime = dateFormatter.string(from: currentDate)
+        
+        var url = apiRoot + "/resources/specialists/available?specialities=26&serviceDefinitionIds=5414975176704000&startIndex=0&endIndex=10&getOnlyFirstAvailability=true&networkIds=5783379589988352,6214613415755776,6206424134713344,6293602384740352,6306161213046784,6206424134713344,5783379589988352,6293602384740352"
+        
+        var timeFields = "&startDateTime=" + startDateTime + "&currentTime"+currentTime //
+        url = url + timeFields.addingPercentEncoding(withAllowedCharacters: NSMutableCharacterSet.urlQueryAllowed)!
         callGetRequest(myurl: url, callback: callback)
     }
     public func specialistDetail(specialistId: String, callback : @escaping ((NSError?,String) -> Void))

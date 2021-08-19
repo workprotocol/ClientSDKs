@@ -63,7 +63,7 @@
     </style>
 
     <style name="wpHeading" parent="wpTypeface">
-        <item name="android:textSize">20sp</item>
+        <item name="android:textSize">25sp</item>
         <item name="android:textStyle">bold</item>
         <item name="android:textColor">@color/black</item>
         <item name="android:alpha">0.87</item>

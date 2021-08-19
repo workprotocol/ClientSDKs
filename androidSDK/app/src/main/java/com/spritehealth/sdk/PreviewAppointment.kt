@@ -8,7 +8,9 @@ import android.text.Html
 import android.text.method.LinkMovementMethod
 import android.view.View
 import android.view.View.VISIBLE
+import android.widget.TextView
 import android.widget.Toast
+import androidx.appcompat.app.ActionBar
 import androidx.appcompat.app.AppCompatActivity
 import com.google.gson.Gson
 import com.google.gson.GsonBuilder
@@ -21,6 +23,7 @@ import kotlinx.android.synthetic.main.activity_preview_appointment.tvDuration
 import kotlinx.android.synthetic.main.activity_preview_appointment.tvServiceName
 import kotlinx.android.synthetic.main.activity_specialist_detail.tvSpeciality
 import kotlinx.android.synthetic.main.activity_vptfinder.*
+import kotlinx.android.synthetic.main.custom_toolbar.*
 import java.time.format.DateTimeFormatter
 
 
@@ -55,7 +58,17 @@ internal class PreviewAppointment : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_preview_appointment)
-        setSupportActionBar(findViewById(R.id.toolbar))
+        //setSupportActionBar(findViewById(R.id.toolbar))
+
+        getSupportActionBar()?.displayOptions = ActionBar.DISPLAY_SHOW_CUSTOM;
+        getSupportActionBar()?.setCustomView(R.layout.custom_toolbar);
+
+        val tvPageHeading = supportActionBar!!.customView.findViewById<TextView>(R.id.tvPageHeading)
+        tvPageHeading.text = "Review Appointment"
+
+        imgvBack.setOnClickListener(){
+            this.finish();
+        }
 
         val bundle = intent.extras
         if (bundle != null) {

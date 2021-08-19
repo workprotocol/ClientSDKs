@@ -5,6 +5,7 @@ import android.os.Bundle
 import android.view.View
 import android.widget.ProgressBar
 import android.widget.TextView
+import androidx.appcompat.app.ActionBar
 import androidx.appcompat.app.AppCompatActivity
 import com.google.gson.Gson
 import com.google.gson.GsonBuilder
@@ -13,6 +14,7 @@ import com.spritehealth.sdk.model.User
 import com.spritehealth.sdk.model.VendorDescriptionTypeEnum
 import com.squareup.picasso.Picasso
 import kotlinx.android.synthetic.main.activity_specialist_detail.*
+import kotlinx.android.synthetic.main.custom_toolbar.*
 import org.json.JSONObject
 
 
@@ -26,7 +28,16 @@ internal class SpecialistDetail : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_specialist_detail)
-        setSupportActionBar(findViewById(R.id.toolbar))
+        //setSupportActionBar(findViewById(R.id.toolbar))
+        getSupportActionBar()?.displayOptions = ActionBar.DISPLAY_SHOW_CUSTOM;
+        getSupportActionBar()?.setCustomView(R.layout.custom_toolbar);
+
+        val tvPageHeading = supportActionBar!!.customView.findViewById<TextView>(R.id.tvPageHeading)
+        tvPageHeading.text = "Specialist Details"
+
+        imgvBack.setOnClickListener(){
+            this.finish();
+        }
 
         var id:Long = intent.getLongExtra("id",0)
 
@@ -40,15 +51,14 @@ internal class SpecialistDetail : AppCompatActivity() {
 
             if (specialistWithAvailability != null) {
                 tvName.text = specialistWithAvailability!!.name
+                tvPageHeading.text =specialistWithAvailability!!.name
 
-                if (specialistWithAvailability!!.specializationNames != null) {
+                    if (specialistWithAvailability!!.specializationNames != null) {
                     tvSpeciality.text = specialistWithAvailability!!.specializationNames
                 }
 
             }
         }
-
-     
 
         var response="";
         var progressBar: ProgressBar = findViewById(R.id.progressBar);

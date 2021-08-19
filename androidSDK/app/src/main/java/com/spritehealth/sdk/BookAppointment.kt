@@ -11,6 +11,8 @@ import android.view.View.VISIBLE
 import android.widget.AdapterView
 import android.widget.ArrayAdapter
 import android.widget.ProgressBar
+import android.widget.TextView
+import androidx.appcompat.app.ActionBar
 import androidx.appcompat.app.AppCompatActivity
 import com.google.gson.Gson
 import com.google.gson.GsonBuilder
@@ -22,6 +24,7 @@ import kotlinx.android.synthetic.main.activity_book_appointment.tvPrice
 import kotlinx.android.synthetic.main.activity_book_appointment.tvServiceName
 import kotlinx.android.synthetic.main.activity_preview_appointment.*
 import kotlinx.android.synthetic.main.activity_specialist_detail.progressBar
+import kotlinx.android.synthetic.main.custom_toolbar.*
 import org.json.JSONArray
 import org.json.JSONObject
 import java.text.SimpleDateFormat
@@ -81,7 +84,16 @@ internal class BookAppointment : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_book_appointment)
-        setSupportActionBar(findViewById(R.id.toolbar))
+        //setSupportActionBar(findViewById(R.id.toolbar))
+        getSupportActionBar()?.displayOptions = ActionBar.DISPLAY_SHOW_CUSTOM;
+        getSupportActionBar()?.setCustomView(R.layout.custom_toolbar);
+
+        val tvPageHeading = supportActionBar!!.customView.findViewById<TextView>(R.id.tvPageHeading)
+        tvPageHeading.text = "Select Date & Time"
+
+        imgvBack.setOnClickListener(){
+            this.finish();
+        }
 
         var progressBar: ProgressBar = findViewById(R.id.progressBar);
 

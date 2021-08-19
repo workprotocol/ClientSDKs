@@ -44,7 +44,7 @@ internal class AppointmentDetails : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_appointment_details)
-        setSupportActionBar(findViewById(R.id.toolbar))
+        //setSupportActionBar(findViewById(R.id.toolbar))
         webView =findViewById(R.id.webView1);
         progressBar =findViewById(R.id.progressBar);
         //progressBar.setVisibility(View.GONE);

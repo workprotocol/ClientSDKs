@@ -16,18 +16,14 @@ public class SpriteHealthClient {
     internal static var currentTokenCreationTime = Date().timeIntervalSinceReferenceDate;
     internal static var primaryColor = ""//"#66d582"
     internal static var primaryTextColor = ""//"#FFFFFF"
+    internal static var memberInfo :[String: Any]?
     public init(controller: UIViewController) {
         SpriteHealthClient.rootController = controller
      }
-    // /resources/oauth/authorize?response_type=token&client_id=0b5c8d72f9794ec69870886cd060bc82&no_redirect=true&skip_user_auth=true&user_identity=dag@berger.com
-    //private let apiRoot = "https://oauth-dot-wpbackendqa.appspot.com"
+   
     private let apiRoot = "https://wpbackendqa.appspot.com"
-    //static  var auth_token = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.bUJjUm1xREJ0LzAzQ2hKSWh2by9jRnA4V0dsRkRnQ1c2cDFlNndvQ2xUbmZPajZSRW9aYkNSZmIrWlNVT1ZnMVBRcDVCRVlERDlpWHFiTlR4M2M3TjkvS1ZEUm8yeFQ1WTJrVGxmNjFHditDUUNXSFdkMDZBRElPYnpsZGJHTG9tb1lxYlVBaUMyMTlaRjJCNSsvQ1c5TUhhaFhJcllRM1J4ZEZtT0s0cHF0WElDVUJHc0tOL1lLR0pML1pKdFZBUlRlREVaaUprQVpWaHlUT21kQnZiejhvYzNGKytVQnlucHJodGh3SlY4dFAyWkh6a3lJYk5OOTVmMysrWnJTK1ZKa1NsMVpsS2tndWU1NkNCMmFySkFsalQyWkErS1gvbUpEMmdHUjhMNkdvY1UyOXBCd3RJeTNHMS9uOUlNN0hWSURJWmpJdk5CNnYzNjJVM0gwREtVNzdmSmhSTUZ4ZmRoc3B4QkR1b0VWNCt0bGVUNE9QN251Z2NwWjhSV0hSK2pDOGZWc2ZXZ2x6bENQQTVnUTBmZzJLNWpoaVdLMkVPYUpweHIyMDllKy9vaUFJV3U0WUpYeHhrbk5GbTJ4Rk5xbnEzSm5NS0VCbmo3UXRIYlpGaXNnbVdidS9OQnFTTUFwalBXUVFnMkVXT2RGeGMwdGhaTFpaOEZIRUpGUXVJU3AyOHJ4VkVSZkVXbEEvZ2U1RWlwVGcwZzBzZlVSVg.ARVDXusPZ4jkhC35sVior7zGzNlvePVis/bvpDZLo1M="
     static  var auth_token = ""
     public init() {}
-    
-    //let myurl = "https://wpbackendqa.appspot.com/resources/specialists/available?specialities=26&serviceDefinitionIds=5414975176704000&startIndex=0&endIndex=10&startDateTime=06/21/2021 12:18 pm&currentTime=14:18:39&getOnlyFirstAvailability=true&networkIds=5783379589988352,6214613415755776,6206424134713344,6293602384740352,6306161213046784,6206424134713344,5783379589988352,6293602384740352"
-    
     public init(client_id: String, user_identity : String, controller: UIViewController) {
         
         SpriteHealthClient.rootController = controller;
@@ -43,21 +39,8 @@ public class SpriteHealthClient {
         SpriteHealthClient.rootController = controller;
         SpriteHealthClient.auth_token = auth_token;
     }
-    static func convertToDictionary(text: String) -> AnyObject? {
-
-     if let data = text.data(using: .utf8) {
-         do {
-            // return try JSONSerialization.jsonObject(with: data, options: []) as? Any
-         
-            let json = try? JSONSerialization.jsonObject(with: data as Data, options: []) as? AnyObject
-            return json
-         } catch {
-             print(error.localizedDescription)
-         }
-     }
-
-     return nil
-    }
+    
+    // --------------- Private Methods --------------------------
     private func getThemeColors()
     {
         let myurl = apiRoot + "/resources/brandThemes?target=iOS"
@@ -126,11 +109,12 @@ public class SpriteHealthClient {
         request.allHTTPHeaderFields = headers;
         request.httpMethod = "GET"
         request.timeoutInterval = 60
-        let task = URLSession.shared.dataTask(with: request) { (data, response, error) in
+        let task = URLSession.shared.dataTask(with: request) { [self] (data, response, error) in
             
             // Check if Error took place
             if let error = error {
                 print("Error took place \(error)")
+                group.leave()
                 return
             }
             
@@ -157,23 +141,31 @@ public class SpriteHealthClient {
                         }
                     if(access_token != "") {
                         SpriteHealthClient.auth_token = token_type + " " + access_token
+                        
+                                memberDetail(){ (error, result) in
+                                     // do stuff with the result
+                                     if let error = error {
+                                         print(error)
+                                        group.leave()
+                                     } else {
+                                     let resultConverted = result.replacingOccurrences(of: "\\", with: "")
+                                         if let json = SpriteHealthClient.convertToDictionary(text: resultConverted) as? [String: Any] {
+                                             SpriteHealthClient.memberInfo = json;
+                                            print(json)
+                                         }
+                                        group.leave()
+                                     }
+                                }
                     }
                 }
             }
-            group.leave()
+            
             
         }
         task.resume()
         group.wait()
     }
-    public func setToken(authToken: String)
-    {
-        SpriteHealthClient.auth_token = authToken
-    }
-    public func getToken() -> String
-    {
-        return SpriteHealthClient.auth_token
-    }
+   
     
     
     private func callGetRequest(myurl:String, callback : @escaping ((NSError?, String) -> Void))
@@ -255,23 +247,14 @@ public class SpriteHealthClient {
             request.allHTTPHeaderFields = headers;
             request.httpMethod = "POST"
             request.timeoutInterval = 60
-           /* let parameters: [String: Any] = [
-                    "request": [
-                            "xusercode" : "YOUR USERCODE HERE",
-                            "xpassword": "YOUR PASSWORD HERE"
-                    ]
-                ]
-            */
+           
             
             var requestBodyComponent = URLComponents()
            
             requestBodyComponent.queryItems = requestParameters.map {
                 URLQueryItem(name: $0.key, value:  stringFromAny($0.value))
             }
-          /*  guard let httpBody = try? JSONSerialization.data(withJSONObject: parameters, options: []) else {
-                    return
-                }
-     */
+         
             let httpBody = requestBodyComponent.query?.data(using: .utf8)
             
             request.httpBody = httpBody
@@ -299,6 +282,64 @@ public class SpriteHealthClient {
         }
     }
     
+    
+    
+    
+    // ------------------------- Static Function --------------------
+    static public func gobackToParent()
+    {
+        SpriteHealthClient.parentCallback!(nil, "test string");
+    }
+    static func convertToDictionary(text: String) -> AnyObject? {
+
+     if let data = text.data(using: .utf8) {
+         do {
+            // return try JSONSerialization.jsonObject(with: data, options: []) as? Any
+         
+            let json = try? JSONSerialization.jsonObject(with: data as Data, options: []) as? AnyObject
+            return json
+         } catch {
+             print(error.localizedDescription)
+         }
+     }
+
+     return nil
+    }
+    internal static func hexStringToUIColor (hex:String) -> UIColor {
+        var cString:String = hex.trimmingCharacters(in: .whitespacesAndNewlines).uppercased()
+
+        if (cString.hasPrefix("#")) {
+            cString.remove(at: cString.startIndex)
+        }
+
+        if ((cString.count) != 6) {
+            return UIColor.gray
+        }
+
+        var rgbValue:UInt64 = 0
+        Scanner(string: cString).scanHexInt64(&rgbValue)
+
+        return UIColor(
+            red: CGFloat((rgbValue & 0xFF0000) >> 16) / 255.0,
+            green: CGFloat((rgbValue & 0x00FF00) >> 8) / 255.0,
+            blue: CGFloat(rgbValue & 0x0000FF) / 255.0,
+            alpha: CGFloat(1.0)
+        )
+    }
+    
+    
+    
+    
+    // ------------------------ API Methods --------------------------
+    
+    public func setToken(authToken: String)
+    {
+        SpriteHealthClient.auth_token = authToken
+    }
+    public func getToken() -> String
+    {
+        return SpriteHealthClient.auth_token
+    }
     public func memberDetail (callback : @escaping ((NSError?,String) -> Void))
     {
         let url = apiRoot + "/resources/user?withCoverage=true";
@@ -334,13 +375,47 @@ public class SpriteHealthClient {
         let startDateTime = dateFormatter.string(from: currentDate)
         dateFormatter.dateFormat = "HH:mm:ss"
         let currentTime = dateFormatter.string(from: currentDate)
+        var networkIds = ""
+        if let planSubscriptions = SpriteHealthClient.memberInfo!["planSubscriptions"] as? [NSDictionary] {
+            for planSubscription in planSubscriptions
+            {
+                if let planNetworks = planSubscription["networkIds"] as? [Int]
+                {
+                    for planNetwork in planNetworks {
+                        if(networkIds == "") {
+                            networkIds = String(planNetwork)
+                        }
+                        else {
+                            networkIds = networkIds + "," + String(planNetwork)
+                        }
+                    }
+                }
+                
+            }
+            
+        }
+        var location = "";
+        if let officeLocations = SpriteHealthClient.memberInfo!["officeLocations"] as? [NSDictionary] {
+            for officeLocation in officeLocations
+            {
+                if let state = officeLocation["stateOrProvince"] as? String
+                {
+                    location = state
+                    break;
+                }
+                
+            }
+            
+        }
         
-        var url = apiRoot + "/resources/specialists/available?specialities=26&serviceDefinitionIds=5414975176704000&startIndex=0&endIndex=10&getOnlyFirstAvailability=true&networkIds=5783379589988352,6214613415755776,6206424134713344,6293602384740352,6306161213046784,6206424134713344,5783379589988352,6293602384740352"
+        var url = apiRoot + "/resources/specialists/available?specialities=26&serviceDefinitionIds=5414975176704000&startIndex=0&endIndex=10&getOnlyFirstAvailability=true&networkIds="+networkIds + "&state=" + location
         
-        var timeFields = "&startDateTime=" + startDateTime + "&currentTime"+currentTime //
+        let timeFields = "&startDateTime=" + startDateTime + "&currentTime"+currentTime //
         url = url + timeFields.addingPercentEncoding(withAllowedCharacters: NSMutableCharacterSet.urlQueryAllowed)!
         callGetRequest(myurl: url, callback: callback)
     }
+    
+    
     public func specialistDetail(specialistId: String, callback : @escaping ((NSError?,String) -> Void))
     {
         let url = apiRoot + "/resources/user/specialists/" + specialistId + "?slim=HIGH";
@@ -348,12 +423,8 @@ public class SpriteHealthClient {
         
         callGetRequest(myurl: url, callback: callback)
     }
-    public func reasonList(callback : @escaping ((NSError?,String) -> Void))
-    {
-        let url = apiRoot + "/resources/reasons?specialities=26"
-        callGetRequest(myurl: url, callback: callback)
-    }
-    public func serviceCoverageAndPricing(requestParameters: [String:Any] ,callback : @escaping ((NSError?,String) -> Void))
+   
+    public func fetchServiceCoverage(requestParameters: [String:Any] ,callback : @escaping ((NSError?,String) -> Void))
     {
         let url = apiRoot + "/resources/serviceCoverages/fetchMAA"
         callPostRequest(myurl: url, requestParameters: requestParameters,callback: callback)
@@ -365,9 +436,9 @@ public class SpriteHealthClient {
         callGetRequest(myurl: url, callback: callback)
     }
     
-    public func getReasons( callback : @escaping ((NSError?,String) -> Void))
+    public func fetchReasonsBySpecialities(specialities:String, callback : @escaping ((NSError?,String) -> Void))
     {
-        let url = apiRoot + "/resources/reasons?specialities=26&slim=HIGH"
+        let url = apiRoot + "/resources/reasons?specialities=" + specialities + "&slim=HIGH"
         callGetRequest(myurl: url, callback: callback)
     }
     public func listOfServiceByReason(reasonId: String, specialistId: String,callback : @escaping ((NSError?,String) -> Void))
@@ -392,16 +463,7 @@ public class SpriteHealthClient {
         callPostRequest(myurl: myurl, requestParameters: requestParameters,callback: callback)
         
     }
-    public func appointmentDetailPage(requestParameters: [String: Any], callback : @escaping ((NSError?,String) -> Void))
-    {
-        let myurl =  apiRoot + "/resources/oauth/sso"
-        if (!JSONSerialization.isValidJSONObject(requestParameters)) {
-               print("is not a valid json object")
-               return
-           }
-        callPostRequest(myurl: myurl, requestParameters: requestParameters,callback: callback)
-        
-    }
+
     public func appointmentDetails( appointmentId: Int,callback : @escaping ((NSError?,String) -> Void))
     {
         let url = apiRoot + "/resources/appointments/" + String(appointmentId)
@@ -420,50 +482,26 @@ public class SpriteHealthClient {
         let url = apiRoot + "/resources/appointment?patientId=" + String(patientId)
         callGetRequest(myurl: url, callback: callback)
     }
-    public func getSpcialities( callback : @escaping ((NSError?,String) -> Void))
+    public func fetchSpecialities( callback : @escaping ((NSError?,String) -> Void))
     {
         let url = apiRoot + "/resources/file/JSON/specialities.json"
         callGetRequest(myurl: url, callback: callback)
     }
-   
-    static public func gobackToParent()
+    
+    public func getDeveloperAccount( callback : @escaping ((NSError?,String) -> Void))
     {
-        SpriteHealthClient.parentCallback!(nil, "test string");
+        var url = apiRoot + "/resources/developerAccounts"
+        if(SpriteHealthClient.client_id != ""){
+            url = url + "?clientId=" + SpriteHealthClient.client_id
+        }
+        callGetRequest(myurl: url, callback: callback)
     }
     
     public func  callVPTFinder(callback : @escaping ((NSError?,String) -> Void)) {
-        
-       // let newViewController = (parentViewController.storyboard?.instantiateViewController(withIdentifier: "VPTFinderId"))!
-        //guard let vc = UIStoryboard.load() as? VPTFinderViewController else {return}
-        //parentViewController.present(newViewController, animated: true, completion: nil)
-        
         SpriteHealthClient.parentCallback = callback;
         let newViewController = VPTFinderViewController()
         newViewController.modalPresentationStyle = .fullScreen
         SpriteHealthClient.rootController?.present(newViewController, animated:true,completion:nil)
-    }
-    
-    
-    internal static func hexStringToUIColor (hex:String) -> UIColor {
-        var cString:String = hex.trimmingCharacters(in: .whitespacesAndNewlines).uppercased()
-
-        if (cString.hasPrefix("#")) {
-            cString.remove(at: cString.startIndex)
-        }
-
-        if ((cString.count) != 6) {
-            return UIColor.gray
-        }
-
-        var rgbValue:UInt64 = 0
-        Scanner(string: cString).scanHexInt64(&rgbValue)
-
-        return UIColor(
-            red: CGFloat((rgbValue & 0xFF0000) >> 16) / 255.0,
-            green: CGFloat((rgbValue & 0x00FF00) >> 8) / 255.0,
-            blue: CGFloat(rgbValue & 0x0000FF) / 255.0,
-            alpha: CGFloat(1.0)
-        )
     }
     
 }

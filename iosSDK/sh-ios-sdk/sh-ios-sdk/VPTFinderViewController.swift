@@ -164,7 +164,7 @@ public class VPTFinderViewController: UIViewController {
         
         let cmObj = SpriteHealthClient()
         
-        cmObj.getSpcialities(){ [self] (error, result) in
+        cmObj.fetchSpecialities(){ [self] (error, result) in
             if let error = error {
                 print(error)
             } else {

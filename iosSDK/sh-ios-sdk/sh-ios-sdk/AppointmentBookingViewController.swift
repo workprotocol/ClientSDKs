@@ -78,25 +78,7 @@ class AppointmentBookingViewController: UIViewController {
         dropDownPickIssue.setTitleColor(.gray, for: .normal)
         dropDownPickIssue.setImage(homeImage, for: .normal)
         dropDownPickIssue.contentHorizontalAlignment = .left
-        //dropDownPickIssue.imageEdgeInsets = UIEdgeInsets(top: 5, left: dropDownPickIssue.frame.size.width - 10, bottom: 5, right: 0)
-       // dropDownPickIssue.titleEdgeInsets = UIEdgeInsets(top: 0, left: 0, bottom: 0, right: 0 )
-     
-        
-        
-       /* var lineView = UIView(frame: CGRect(x: 10, y: dropDownPickIssue.frame.size.height, width: dropDownPickIssue.frame.size.width+10, height: 1))
-        lineView.backgroundColor = UIColor.blue
-        dropDownPickIssue.addSubview(lineView)
-        */
-       /* lineView = UIView(frame: CGRect(x: 0, y: 115 , width: UIScreen.main.bounds.width, height: 1))
-        lineView.backgroundColor = UIColor.gray
-        mainScrollBar.addSubview(lineView)
-         */
-        
-       // dataSource = ["Apple", "Mango", "Orange","Apple", "Mango", "Orange","Apple", "Mango", "Orange","Apple", "Mango", "Orange","Apple", "Mango", "Orange","Apple", "Mango", "Orange","Apple", "Mango", "Orange","Apple", "Mango", "Orange","Apple", "Mango", "Orange"]
-        
-       // lineView = UIView(frame: CGRect(x: 0, y: 200 , width: UIScreen.main.bounds.width, height: 1))
-       // lineView.backgroundColor = UIColor.gray
-       // mainScrollBar.addSubview(lineView)
+       
         view.isUserInteractionEnabled = false
         let myActivityIndicator = UIActivityIndicatorView(style: UIActivityIndicatorView.Style.medium)
                        
@@ -174,7 +156,7 @@ class AppointmentBookingViewController: UIViewController {
 
                             ]
                         print(requestParameters)
-                        cmObj.serviceCoverageAndPricing(requestParameters: requestParameters)
+                        cmObj.fetchServiceCoverage(requestParameters: requestParameters)
                         { (error, result) in
                             if let error = error {
                                 print(error)
@@ -218,7 +200,7 @@ class AppointmentBookingViewController: UIViewController {
         }
         
       
-        cmObj.getReasons(){ (error, result) in
+        cmObj.fetchReasonsBySpecialities(specialities: "26"){ (error, result) in
             // do stuff with the result
             if let error = error {
                 print(error)
@@ -236,41 +218,7 @@ class AppointmentBookingViewController: UIViewController {
         }
         
         
-     /*   var xTopLeft = 0
-        var yTopLeft = 215 + 20
-        var width = mainScrollBar.frame.size.width
-        var height = 25
-        
-        
-        var xOffset:CGFloat = 20
-        var  label = UILabel(frame: CGRect(x: xTopLeft, y: yTopLeft, width: Int(width), height: height))
-        mainScrollBar.addSubview(label)
-        createLabel(label: label, textColor: .black, textSize: 22, text: "Monday, Aug 2")
-        
-        var scView = UIScrollView(frame: CGRect(x: 0, y: yTopLeft + 25, width: Int(mainScrollBar.frame.size.width), height: 70))
-        mainScrollBar.addSubview(scView)
-        addHorizontalScorebar(scView: scView,xOffset:xOffset)
-         
-        
-       
-        yTopLeft = yTopLeft + 120
-        label = UILabel(frame: CGRect(x: xTopLeft, y: yTopLeft, width: Int(width), height: height))
-        mainScrollBar.addSubview(label)
-        createLabel(label: label, textColor: .black, textSize: 22, text: "Monday, Aug 3")
-        
-        scView = UIScrollView(frame: CGRect(x: 0, y: yTopLeft + 25, width: Int(mainScrollBar.frame.size.width), height: 70))
-        mainScrollBar.addSubview(scView)
-        addHorizontalScorebar(scView: scView, xOffset: xOffset)
-        
-        yTopLeft = yTopLeft + 120
-        label = UILabel(frame: CGRect(x: xTopLeft, y: yTopLeft, width: Int(width), height: height))
-        mainScrollBar.addSubview(label)
-        createLabel(label: label, textColor: .black, textSize: 22, text: "Monday, Aug 4")
-        
-        scView = UIScrollView(frame: CGRect(x: 0, y: yTopLeft + 25, width: Int(mainScrollBar.frame.size.width), height: 70))
-        mainScrollBar.addSubview(scView)
-        addHorizontalScorebar(scView: scView,xOffset: xOffset)
- */
+     
     }
     
     func pushReasons(json:AnyObject?) {

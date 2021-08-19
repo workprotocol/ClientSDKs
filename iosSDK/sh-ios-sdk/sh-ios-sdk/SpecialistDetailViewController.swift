@@ -176,17 +176,8 @@ class SpecialistDetailViewController: UIViewController {
                        myActivityIndicator.startAnimating()
                view.addSubview(myActivityIndicator)
         
-        let cmObj = SpriteHealthClient()
-        cmObj.memberDetail(){ (error, result) in
-            // do stuff with the result
-            if let error = error {
-                print(error)
-            } else {
-            let resultConverted = result.replacingOccurrences(of: "\\", with: "")
-                if let json = SpriteHealthClient.convertToDictionary(text: resultConverted) as? [String: Any] {
-
-              // print(json);
-               // print(type(of: json))
+     
+        if let json = SpriteHealthClient.memberInfo {
                 DispatchQueue.main.async { [self] in
                     if let email = json["email"] as? String {
                         
@@ -212,13 +203,12 @@ class SpecialistDetailViewController: UIViewController {
                     
                 }
             }
-            }
-            DispatchQueue.main.async {
-                self.view.isUserInteractionEnabled = true;
-            }
-        }
+            
+         
+                
+       
         specialistLabel.text = specialistName
-        //let cmObj = SpriteHealthClient()
+        let cmObj = SpriteHealthClient()
         cmObj.specialistDetail(specialistId: String(specialistId!)){ (error, result) in
             if let error = error {
                 print(error)
@@ -232,6 +222,7 @@ class SpecialistDetailViewController: UIViewController {
                 DispatchQueue.main.async {
                 self.displayDetails(json: json)
                     myActivityIndicator.stopAnimating()
+                    self.view.isUserInteractionEnabled = true;
                 }
             }
             }

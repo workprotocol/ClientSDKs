@@ -45,9 +45,6 @@ class ReviewAppointmentViewController: UIViewController, SFSafariViewControllerD
     
     override func viewDidLoad() {
         super.viewDidLoad()
-       
-        
-        
           if(SpriteHealthClient.primaryColor != "")
           {
               let primaryColor = SpriteHealthClient.hexStringToUIColor(hex:SpriteHealthClient.primaryColor)
@@ -68,62 +65,17 @@ class ReviewAppointmentViewController: UIViewController, SFSafariViewControllerD
           }
         
         specialityLabel.text = InfoArr!["speciality"]
-        /* let user_identity = SpriteHealthClient.user_identity   // Constructor
-        if(user_identity == "gary@berger.com")
-        {
-            userName1.text = "Gary Vayenrchuk"
-            userName2.text = "Gary Vayenrchuk"
-            userEmailId.text = "gary@berger.com"
-            userPhoneNo.text = "8150-369-423"
-        }
- */
+    
         userName1.text = InfoArr!["memberName"]
         userName2.text = InfoArr!["memberName"]
         userEmailId.text = InfoArr!["memberEmail"]
         userPhoneNo.text = InfoArr!["memberPhone"]
         self.organizationId = InfoArr!["organizationId"]
-        //let cmObj = SpriteHealthClient()
         
         
         
-       /* cmObj.memberDetail(){ (error, result) in
-            // do stuff with the result
-            if let error = error {
-                print(error)
-            } else {
-            let resultConverted = result.replacingOccurrences(of: "\\", with: "")
-            if let json = SpriteHealthClient.convertToDictionary(text: resultConverted) as? AnyObject {
-
-              // print(json);
-               // print(type(of: json))
-                DispatchQueue.main.async { [self] in
-                    if let email = json["email"] as? String {
-                        self.userEmailId.text = email
-                        
-                    }
-                    if let name = json["name"] as? String {
-                        self.userName1.text = name
-                        self.userName2.text = name
-                    }
-                    
-                    if let mobilePhone = json["mobilePhone"] as? String {
-                        self.userPhoneNo.text = mobilePhone
-                    }
-                    
-                    if let organizationIdVar = json["organizationId"] as? Int64 {
-                        self.organizationId = String(organizationIdVar)
-                    }
-                    
-                }
-            }
-            }
-        }
-        */
         
-     //   let attributedString = NSMutableAttributedString(string: "Want to learn iOS? You should visit the best source of free iOS tutorials!")
-                //attributedString.addAttribute(.link, value: "https://www.hackingwithswift.com", range: NSRange(location: 19, length: 55))
-
-        //        policyText.attributedText = attributedString
+       
         
         let startTime = InfoArr?["startTime"]
         let endTime = InfoArr?["endTime"]
@@ -133,13 +85,71 @@ class ReviewAppointmentViewController: UIViewController, SFSafariViewControllerD
         
         serviceNameLabel.text = InfoArr?["serviceName"]
         servicePriceLabel.text = InfoArr?["servicePrice"]
+        let startTimeArr = startTime!.components(separatedBy: "##")
+        let endTimeArr = endTime!.components(separatedBy: "##")
+        LabelChooseTimeSlot.text = startTimeArr[0] + " " + startTimeArr[1] + " - " + endTimeArr[1]
+        
         
         //visitDescriptionText.text =
-        let termAndPolicyTxt = "At the time of your visit, you and " + specialistName! + "will meet at the address above. If you would like to change your appointment, you can do that via Slette app or website. By confirming your appointment you are agreeinleto abide by the Terms of Use, Privacy Policy, Consent to Care via Telehealth, and the Sprite Health’s Cancellation policy."
         
+        let cmObj = SpriteHealthClient()
+        cmObj.getDeveloperAccount (){ [self] (error, result) in
+             // do stuff with the result
+             if let error = error {
+                 print(error)
+             } else {
+                
+                let resultConverted = result.replacingOccurrences(of: "\\", with: "")
+                if let json = SpriteHealthClient.convertToDictionary(text: resultConverted) as? [String: Any] {
+                    print(json)
+                   
+                    var companyDetail = [String: String]()
+                        if let name = json["name"] as? String {
+                            companyDetail["name"] = name
+                        }
+                        else {
+                            companyDetail["name"] = ""
+                        }
+                        if let privacyPolicyLink = json["privacyPolicyLink"] as? String {
+                            companyDetail["privacyPolicyLink"] = privacyPolicyLink
+                        }
+                        else {
+                            companyDetail["privacyPolicyLink"] = ""
+                        }
+                        if let termsOfUseLink = json["termsOfUseLink"] as? String {
+                            companyDetail["termsOfUseLink"] = termsOfUseLink
+                        }
+                        else {
+                            companyDetail["termsOfUseLink"] = ""
+                        }
+                        if let consentToCareLink = json["consentToCareLink"] as? String {
+                            companyDetail["consentToCareLink"] = consentToCareLink
+                        }
+                        else {
+                            companyDetail["consentToCareLink"] = ""
+                        }
+                       
+                    setTermAndPolicy(specialistName: specialistName!, companyDetail: companyDetail)
+                    
+                }
+             }
+        }
+        
+    }
+    
+    private func setTermAndPolicy(specialistName: String, companyDetail:[String:String])
+    {
+        var termAndPolicyTxt = "At the time of your visit, you and " + specialistName + " will meet at the address above. If you would like to change your appointment, you can do that via <companyName> app or website. By confirming your appointment you are agreeing to abide by the Terms of Use, Privacy Policy, Consent to Care via Telehealth, and the <companyName>’s Cancellation policy."
+        
+        let companyName = companyDetail["name"]
+        let privacyPolicyLink = companyDetail["privacyPolicyLink"];
+        let consentToCareLink = companyDetail["consentToCareLink"];
+        let termsOfUseLink = companyDetail["termsOfUseLink"];
+        
+        termAndPolicyTxt  =  termAndPolicyTxt.replacingOccurrences(of: "<companyName>", with: companyName! )
         
         let attributedString = NSMutableAttributedString(string: termAndPolicyTxt, attributes: [NSAttributedString.Key.font : UIFont.systemFont (ofSize: 20)])
-        var  url = URL(string: "https://spritehealth.com/about-sprite-health/disclaimer-and-terms-of-use/")!
+        var  url = URL(string: termsOfUseLink!)!
         var termOdUseRange = termAndPolicyTxt.range(of: "Terms of Use")
         
         var convertedRange = NSRange(termOdUseRange!, in: termAndPolicyTxt)
@@ -148,7 +158,7 @@ class ReviewAppointmentViewController: UIViewController, SFSafariViewControllerD
         attributedString.setAttributes([.link: url,.font : UIFont.systemFont (ofSize: 20)], range: convertedRange)
         
         
-        url = URL(string: "https://spritehealth.com/sprite-health-digital-platform-privacy-policy/")!
+        url = URL(string: privacyPolicyLink! )!
         termOdUseRange = termAndPolicyTxt.range(of: "Privacy Policy")
         
         convertedRange = NSRange(termOdUseRange!, in: termAndPolicyTxt)
@@ -156,74 +166,52 @@ class ReviewAppointmentViewController: UIViewController, SFSafariViewControllerD
         // Set the 'click here' substring to be the link
         attributedString.setAttributes([.link: url,.font : UIFont.systemFont (ofSize: 20)], range: convertedRange)
         
-        url = URL(string: "https://spritehealth.com/consent-to-use-of-telehealth/")!
+        url = URL(string: consentToCareLink!)!
         termOdUseRange = termAndPolicyTxt.range(of: "Consent to Care via Telehealth")
         
         convertedRange = NSRange(termOdUseRange!, in: termAndPolicyTxt)
         
         // Set the 'click here' substring to be the link
+        
         attributedString.setAttributes([.link: url,.font : UIFont.systemFont (ofSize: 20)], range: convertedRange)
-        
+        var textHeight:CGFloat = 200
+        DispatchQueue.main.async() { [self] in
+            self.visitDescriptionText.attributedText = attributedString
+            self.visitDescriptionText.isUserInteractionEnabled = true
+            self.visitDescriptionText.isEditable = false
 
-        self.visitDescriptionText.attributedText = attributedString
-        self.visitDescriptionText.isUserInteractionEnabled = true
-        self.visitDescriptionText.isEditable = false
-
-        // Set how links should appear: blue and underlined
-        self.visitDescriptionText.linkTextAttributes = [
-            .foregroundColor: UIColor.blue
-               
-        ]
+            // Set how links should appear: blue and underlined
+            self.visitDescriptionText.linkTextAttributes = [
+                .foregroundColor: UIColor.blue
+                   
+            ]
+            textHeight = termAndPolicyTxt.height(constraintedWidth: CGFloat(self.visitDescriptionText.frame.width), font: UIFont.systemFont(ofSize: 21));
+            let currentPosition = textHeight  //visitDescriptionText.frame
+            
+            visitDescriptionText.frame = CGRect(x:visitDescriptionText.frame.origin.x, y: visitDescriptionText.frame.origin.y, width: visitDescriptionText.frame.width , height: textHeight)
+            
+            let yForTextView = currentPosition + visitDescriptionText.frame.origin.y
+            let textView = UITextView()
+            //label.numberOfLines=7
+            textView.textAlignment = .left;//.center
+            textView.textColor = .darkGray
+            textView.font = .systemFont(ofSize: 20)
+            let conditionText = companyName! + " isn't a replacement for your doctor or emergency services. If you think you are having an emergency, immediately contact 911 or your country's emergency services number."
+            textView.text = conditionText
+            
+            textHeight = conditionText.height(constraintedWidth: CGFloat(visitDescriptionText.frame.width), font: UIFont.systemFont(ofSize: 20)) + 20 ;
+            
+            textView.backgroundColor = .systemGray6
+            textView.frame = CGRect(x:10, y: yForTextView, width: visitDescriptionText.frame.width , height: textHeight)
+            self.mainScrollBar.addSubview(textView)
+            self.mainScrollBar.isUserInteractionEnabled = true;
+            let height = Int(yForTextView +  textHeight + 50) //Int(self.view.frame.size.height) + 250
+            self.mainScrollBar.contentSize = CGSize(width: Int(self.mainScrollBar.frame.size.width), height: height)
+        }
+        
+         
+        
        
-        let currentPosition = visitDescriptionText.frame
-        
-        let yForTextView = currentPosition.height + currentPosition.origin.y + 15
-        let label = UILabel()
-        label.numberOfLines=7
-        label.textAlignment = .left;//.center
-        label.textColor = .darkGray
-        label.font.withSize(20)
-        label.text = "Sprite Health isn't a replacement for your doctor or emergency services. If you think you are having an emergency, immediately contact 911 or your country's emergency services number."
-        label.backgroundColor = .systemGray6
-        label.frame = CGRect(x:10, y: yForTextView, width: currentPosition.width , height: 150)
-        
-        mainScrollBar.addSubview(label)
-        let startTimeArr = startTime!.components(separatedBy: "##")
-        let endTimeArr = endTime!.components(separatedBy: "##")
-        
-        LabelChooseTimeSlot.text = startTimeArr[0] + " " + startTimeArr[1] + " - " + endTimeArr[1]
-        mainScrollBar.isUserInteractionEnabled = true;
-        let height = Int(self.view.frame.size.height) + 230
-        mainScrollBar.contentSize = CGSize(width: Int(mainScrollBar.frame.size.width), height: height)
-        
-        /*
-        var lineView = UIView(frame: CGRect(x: 0, y: 225 , width: mainScrollBar.frame.size.width, height: 1))
-        lineView.backgroundColor = UIColor.gray
-        mainScrollBar.addSubview(lineView)
-        
-         lineView = UIView(frame: CGRect(x: 0, y: 330 , width: mainScrollBar.frame.size.width, height: 1))
-        lineView.backgroundColor = UIColor.gray
-        mainScrollBar.addSubview(lineView)
-        lineView = UIView(frame: CGRect(x: 0, y: 520 , width: mainScrollBar.frame.size.width, height: 1))
-       lineView.backgroundColor = UIColor.gray
-       mainScrollBar.addSubview(lineView)
-        
-        
-         var lineView = UIView(frame: CGRect(x: 20, y: 420 , width: mainScrollBar.frame.size.width-40, height: 1))
-        lineView.backgroundColor = UIColor.blue
-        mainScrollBar.addSubview(lineView)
-        
-        lineView = UIView(frame: CGRect(x: 20, y: 460 , width: mainScrollBar.frame.size.width-40, height: 1))
-       lineView.backgroundColor = UIColor.blue
-       mainScrollBar.addSubview(lineView)
-        
-        lineView = UIView(frame: CGRect(x: 20, y: 500 , width: mainScrollBar.frame.size.width-40, height: 1))
-       lineView.backgroundColor = UIColor.blue
-       mainScrollBar.addSubview(lineView)
-         */
-       
-        
-        
     }
     
     @IBAction func navigationBack(_ sender: Any) {

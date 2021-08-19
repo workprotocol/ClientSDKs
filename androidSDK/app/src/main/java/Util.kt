@@ -1,7 +1,40 @@
+import java.io.UnsupportedEncodingException
+import java.net.URLEncoder
 import java.text.DecimalFormat
 import kotlin.math.roundToInt
 
 class  Util {
+    private val DEFAULT_PARAMS_ENCODING = "UTF-8"
+
+    protected fun getParamsEncoding(): String? {
+        return DEFAULT_PARAMS_ENCODING
+    }
+
+    fun encodeParameters(
+        params: MutableMap<String, String>
+    ): String? {
+        val paramsEncoding=getParamsEncoding()
+        val encodedParams = StringBuilder()
+        return try {
+            for ((key, value) in params) {
+                require(!(key == null || value == null)) {
+                    String.format(
+                        "Request#getParams() or Request#getPostParams() returned a map "
+                                + "containing a null key or value: (%s, %s). All keys "
+                                + "and values must be non-null.",
+                        key, value
+                    )
+                }
+                encodedParams.append(URLEncoder.encode(key, paramsEncoding))
+                encodedParams.append('=')
+                encodedParams.append(URLEncoder.encode(value, paramsEncoding))
+                encodedParams.append('&')
+            }
+            encodedParams.toString()
+        } catch (uee: UnsupportedEncodingException) {
+            throw RuntimeException("Encoding not supported: $paramsEncoding", uee)
+        }
+    }
 
     fun roundTo2Decimals(number: Double): Double {
         return try {
@@ -27,5 +60,6 @@ class  Util {
             number.toString()
         }
     }
+
 
 }

@@ -1,11 +1,13 @@
 package com.spritehealth.sdk
 
 
+import Util
 import android.content.Context
 import android.content.Intent
 import android.util.Log
 import androidx.appcompat.app.AppCompatActivity
 import com.android.volley.AuthFailureError
+import com.android.volley.DefaultRetryPolicy
 import com.android.volley.Request
 import com.android.volley.Response
 import com.android.volley.toolbox.StringRequest
@@ -15,17 +17,15 @@ import com.spritehealth.sdk.model.User
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.launch
-import org.json.JSONException
-import org.json.JSONObject
-import java.time.LocalDateTime
-import java.time.format.DateTimeFormatter
 import kotlin.coroutines.suspendCoroutine
 
 
 class SpriteHealthClient(): AppCompatActivity(){
 
 
-    constructor(client_id: String, user_identity : String, context:Context) : this() {
+    private val timeOutInMS: Int=50000
+
+    constructor(client_id: String, user_identity: String, context: Context) : this() {
         // some code
         SpriteHealthClient.client_id = client_id;
         SpriteHealthClient.user_identity = user_identity
@@ -41,7 +41,7 @@ class SpriteHealthClient(): AppCompatActivity(){
         fun onError(error: String?)
     }
 
-    fun createAccessToken(context: Context, callback :Callback)
+    fun createAccessToken(context: Context, callback: Callback)
     {
         val url =
             apiRoot + "/resources/oauth/authorize?response_type=token&client_id=" +
@@ -58,7 +58,7 @@ class SpriteHealthClient(): AppCompatActivity(){
             Response.ErrorListener { error ->
                 // Handle error
                 val errorStr = "ERROR: %s".format(error.toString());
-                Log.d("msg :",errorStr);
+                Log.d("msg :", errorStr);
                 callback.onError(errorStr);
             })
         {
@@ -68,6 +68,11 @@ class SpriteHealthClient(): AppCompatActivity(){
             }
         }
 
+        stringRequest.retryPolicy = DefaultRetryPolicy(
+            timeOutInMS,
+            DefaultRetryPolicy.DEFAULT_MAX_RETRIES,
+            DefaultRetryPolicy.DEFAULT_BACKOFF_MULT
+        )
         queue.add(stringRequest)
     }
 
@@ -91,7 +96,7 @@ class SpriteHealthClient(): AppCompatActivity(){
                 // Handle error
 
                 val errorStr = "ERROR: %s".format(error.toString());
-                Log.d("msg :",errorStr);
+                Log.d("msg :", errorStr);
                 //callback.onError(errorStr);
             })
         {
@@ -102,55 +107,116 @@ class SpriteHealthClient(): AppCompatActivity(){
             }
         }
 
+        stringRequest.retryPolicy = DefaultRetryPolicy(
+            timeOutInMS,
+            DefaultRetryPolicy.DEFAULT_MAX_RETRIES,
+            DefaultRetryPolicy.DEFAULT_BACKOFF_MULT
+        )
         queue.add(stringRequest);
     }
 
 
-    fun callGetRequest(context:Context, url: String, callback :Callback)
+    fun callGetRequest(context: Context, url: String, callback: Callback)
     {
         val auth_token = auth_token
         val queue = Volley.newRequestQueue(context)
 
         val stringRequest = object: StringRequest(Request.Method.GET, url,
-                Response.Listener<String> { response ->
-                    Log.d("A", "Response is: " + response)
-                    callback.onSuccess(response);
-                },
-                Response.ErrorListener { error ->
-                    // Handle error
-                    val errorStr = "ERROR: %s".format(error.toString());
-                    Log.d("msg :",errorStr);
-                    callback.onError(errorStr);
-                })
+            Response.Listener<String> { response ->
+                Log.d("A", "Response is: " + response)
+                callback.onSuccess(response);
+            },
+            Response.ErrorListener { error ->
+                // Handle error
+                val errorStr = "ERROR: %s".format(error.toString());
+                Log.d("msg :", errorStr);
+                callback.onError(errorStr);
+            })
         {
             override fun getHeaders(): MutableMap<String, String> {
                 val headers = HashMap<String, String>()
                 headers["Authorization"] = "Bearer $auth_token"
                 return headers
             }
+
         }
 
+        stringRequest.retryPolicy = DefaultRetryPolicy(
+            timeOutInMS,
+            DefaultRetryPolicy.DEFAULT_MAX_RETRIES,
+            DefaultRetryPolicy.DEFAULT_BACKOFF_MULT
+        )
         queue.add(stringRequest)
     }
 
-    fun callPostRequest(context:Context, postDataParams: MutableMap<String, String>, url: String, callback:Callback)
+    fun callGetRequestWithParams(
+        context: Context,
+        queryParams: MutableMap<String, String>,
+        url: String,
+        callback: Callback
+    )
+    {
+        val auth_token = auth_token
+        val queue = Volley.newRequestQueue(context)
+         var urlWithQureyString=""
+        val queryString:String?=Util().encodeParameters(queryParams)
+        if(url!=null && url.contains("?")){
+            urlWithQureyString=url.plus("&$queryString")
+        }else{
+            urlWithQureyString=url.plus("?$queryString")
+        }
+
+        val stringRequest = object: StringRequest(Request.Method.GET, urlWithQureyString,
+            Response.Listener<String> { response ->
+                Log.d("A", "Response is: " + response)
+                callback.onSuccess(response);
+            },
+            Response.ErrorListener { error ->
+                // Handle error
+                val errorStr = "ERROR: %s".format(error.toString());
+                Log.d("msg :", errorStr);
+                callback.onError(errorStr);
+            })
+        {
+            override fun getHeaders(): MutableMap<String, String> {
+                val headers = HashMap<String, String>()
+                headers["Authorization"] = "Bearer $auth_token"
+                return headers
+            }
+
+        }
+
+        stringRequest.retryPolicy = DefaultRetryPolicy(
+            timeOutInMS,
+            DefaultRetryPolicy.DEFAULT_MAX_RETRIES,
+            DefaultRetryPolicy.DEFAULT_BACKOFF_MULT
+        )
+        queue.add(stringRequest)
+    }
+
+    fun callPostRequest(
+        context: Context,
+        postDataParams: MutableMap<String, String>,
+        url: String,
+        callback: Callback
+    )
     {
         val auth_token = auth_token
         val queue = Volley.newRequestQueue(context)
 
         val stringRequest = object: StringRequest(Request.Method.POST, url,
-                Response.Listener<String> { response ->
-                    Log.d("A", "Response is: " + response)
+            Response.Listener<String> { response ->
+                Log.d("A", "Response is: " + response)
 
-                    callback.onSuccess(response);
-                },
-                Response.ErrorListener { error ->
-                    // Handle error
+                callback.onSuccess(response);
+            },
+            Response.ErrorListener { error ->
+                // Handle error
 
-                    val errorStr = "ERROR: %s".format(error.toString());
-                    Log.d("msg :",errorStr);
-                    callback.onError(errorStr);
-                })
+                val errorStr = "ERROR: %s".format(error.toString());
+                Log.d("msg :", errorStr);
+                callback.onError(errorStr);
+            })
         {
             override fun getHeaders(): MutableMap<String, String> {
                 val headers = HashMap<String, String>()
@@ -161,114 +227,140 @@ class SpriteHealthClient(): AppCompatActivity(){
 
             @Throws(AuthFailureError::class)
             override fun getParams(): Map<String, String>? {
-                /*
-                val params: MutableMap<String, String> = HashMap()
-                val iter: Iterator<String> = postDataJSON.keys()
-                while (iter.hasNext()) {
-                    val key = iter.next()
-                    try {
-                        val value: Any = postDataJSON.get(key)
-                        params[key] = value.toString().trim()
-                    } catch (e: JSONException) {
-                        // Something went wrong!
-                    }
-                }
-                return params
-                */
                return postDataParams
             }
         }
 
+        stringRequest.retryPolicy = DefaultRetryPolicy(
+            timeOutInMS,
+            DefaultRetryPolicy.DEFAULT_MAX_RETRIES,
+            DefaultRetryPolicy.DEFAULT_BACKOFF_MULT
+        )
         queue.add(stringRequest)
     }
 
 
-    fun memberDetail( context:Context,callback :Callback  )
+    fun memberDetail(context: Context, callback: Callback)
     {
         val url = "$apiRoot/resources/user?withCoverage=true"
-        callGetRequest(context, url, callback )
+        callGetRequest(context, url, callback)
     }
 
-    fun familyMembers(familyId:String?, context:Context,callback :Callback  )
+    fun familyMembers(familyId: String?, context: Context, callback: Callback)
     {
         val url = "$apiRoot/resources/user/family/members?familyId=$familyId";
-        callGetRequest(context, url, callback )
+        callGetRequest(context, url, callback)
     }
 
 
-    fun specialistAvailable(context:Context, callback :Callback){
-
-        val formatted = LocalDateTime.now().format(DateTimeFormatter.ofPattern("MM/dd/yyyy hh:mm a"))
-        val  currentTime = LocalDateTime.now().plusHours(2).format(DateTimeFormatter.ofPattern("hh:mm:ss"))
-        val url =  apiRoot + "/resources/specialists/available?"+//TODO: Dynamic parameters
-                "specialities=26&serviceDefinitionIds=5414975176704000&startIndex=0&endIndex=100&startDateTime="+
-                formatted+"&currentTime="+currentTime+ "&getOnlyFirstAvailability=true&networkIds="
-
-        callGetRequest(context, url, callback )
+    fun specialistAvailable(
+        queryParams: MutableMap<String, String>,
+        context: Context,
+        callback: Callback
+    ){
+        var url =  apiRoot + "/resources/specialists/available"
+        callGetRequestWithParams(context, queryParams, url, callback)
     }
 
 
-    fun specialistDetail(specialistId:Long?, context:Context,callback :Callback  )
+    fun specialistDetail(specialistId: Long?, context: Context, callback: Callback)
     {
         val url = "$apiRoot/resources/user/specialists/$specialistId?slim=HIGH";
-        callGetRequest(context, url, callback )
+        callGetRequest(context, url, callback)
     }
 
 
-    fun serviceDetail(serviceId:Long?, context:Context,callback :Callback  )
+    fun serviceDetail(serviceId: Long?, context: Context, callback: Callback)
     {
         val url = "$apiRoot/resources/services/$serviceId?slim=HIGH";
-        callGetRequest(context, url, callback )
+        callGetRequest(context, url, callback)
     }
 
-    fun fetchSpecialities(context:Context,callback :Callback ){
+    fun fetchSpecialities(context: Context, callback: Callback){
         val url= "$apiRoot/resources/file/JSON/specialities.json";
-        callGetRequest(context, url, callback )
+        callGetRequest(context, url, callback)
     }
 
-    fun reasonList( context:Context,callback :Callback  )
+    fun reasonList(context: Context, callback: Callback)
     {
         val url = "$apiRoot/resources/reasons"
-        callGetRequest(context, url, callback )
+        callGetRequest(context, url, callback)
     }
 
 
-    fun fetchReasonsBySpecialities(specialities: String?="", context: Context, callback: Callback) {
+    fun fetchReasonsBySpecialities(specialities: String? = "", context: Context, callback: Callback) {
         val url = "$apiRoot/resources/reasons?specialities=$specialities"
-        callGetRequest(context, url, callback )
+        callGetRequest(context, url, callback)
     }
 
-    fun specialistAvailableSlot(specialistId:Long?,serviceId:Long?,weeks:Int, context:Context,callback :Callback  )
+    fun specialistAvailableSlot(
+        params: MutableMap<String, String>,
+        context: Context,
+        callback: Callback
+    )
     {
-        val url =
-            "$apiRoot/resources/specialists/available?serviceId=$serviceId&vendorUserId=$specialistId&weeks=$weeks"
-        callGetRequest(context, url, callback )
+        val url ="$apiRoot/resources/specialists/available"
+        callGetRequestWithParams(context, params, url, callback)
     }
 
 
-    fun fetchServiceCoverage(formPost: MutableMap<String, String>, context: Context, callback: SpriteHealthClient.Callback) {
+    fun fetchServiceCoverage(
+        formPost: MutableMap<String, String>,
+        context: Context,
+        callback: SpriteHealthClient.Callback
+    ) {
         var url = "$apiRoot/resources/serviceCoverages/fetchMAA"
-        callPostRequest(context,formPost, url, callback )
+        callPostRequest(context, formPost, url, callback)
     }
 
 
-    fun listOfServiceByReason(reasonId: String?,specialistId:String?, context:Context,callback :Callback  )
+    fun listOfServiceByReason(
+        reasonId: String?,
+        specialistId: String?,
+        context: Context,
+        callback: Callback
+    )
     {
         val url = "$apiRoot/resources/reasons/$reasonId/services?vendorId=$specialistId"
-        callGetRequest(context, url, callback )
+        callGetRequest(context, url, callback)
     }
 
-    fun appointmentBooking(formPost: MutableMap<String, String>, context:Context, callback:Callback  )
+
+    internal fun fetchBrandThemes(
+        target: String?,
+        context: Context,
+        callback: Callback
+    )
+    {
+        val url = "$apiRoot/resources/brandThemes?target=$target"
+        callGetRequest(context, url, callback)
+    }
+
+    internal fun fetchDeveloperAccountByClientId(
+        clientId: String?,
+        context: Context,
+        callback: Callback
+    )
+    {
+        val url = "$apiRoot/resources/developerAccounts?clientId=$clientId"
+        callGetRequest(context, url, callback)
+    }
+
+    fun appointmentBooking(
+        formPost: MutableMap<String, String>,
+        context: Context,
+        callback: Callback
+    )
     {
         var url = "$apiRoot/resources/calendar/event"
-        callPostRequest(context,formPost, url, callback )
+        callPostRequest(context, formPost, url, callback)
     }
 
    public fun callVPTFinder(calleeIntent: Intent, context: Context) {
         storedIntent = calleeIntent;
 
         //val intent = Intent( context, Class.forName("com.example.spritehealthsdk.MainActivity")).apply
-        val intent= Intent( context,VPTFinder::class.java).apply{
+        val intent= Intent(context, VPTFinder::class.java).apply{
 
         }
         if(intent != null) {
@@ -280,6 +372,9 @@ class SpriteHealthClient(): AppCompatActivity(){
 
     companion object {
         var storedIntent: Intent = Intent();
+
+        internal val SSOWebAppRoot: String="https://wpfrontendqa.appspot.com"
+
         internal  var apiRoot = "https://wpbackendqa.appspot.com"
 
         //Keep it in memory
@@ -294,9 +389,5 @@ class SpriteHealthClient(): AppCompatActivity(){
         var client_id = "0b5c8d72f9794ec69870886cd060bc82"
         var expires_in:Long? = 3600//min
 
-
-       /* fun getAuthToken() : String {
-            return auth_token;
-        } */
     }
 }

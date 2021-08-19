@@ -10,7 +10,7 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         >
-    <com.google.android.material.appbar.AppBarLayout
+        <com.google.android.material.appbar.AppBarLayout
         android:id="@+id/appbar"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
@@ -314,29 +314,34 @@
                     android:text="What's next"></TextView>
 
                 <TextView
+                    android:id="@+id/tvNoticeFirstLine"
+                    style="@style/wpBody2"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:paddingBottom="8dp"
+                    android:textColorLink="@color/primary"
+                    android:text="At the time of your visit, you and specialist will join the video call. You can join via the app or website."
+                    ></TextView>
+
+                <TextView
                     android:id="@+id/tvNoticeSecondLine"
                     style="@style/wpBody2"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:paddingBottom="8dp"
-                    android:text=""
-                    ></TextView>
-
-                <TextView
-                    style="@style/wpBody2"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
                     android:paddingBottom="10dp"
-                    android:text="By confirming your appointment you are agreeing to abide by the Terms of Use, Privacy Policy,  Consent to Care via Telehealth, and the Sprite Health’s Cancellation policy."
+                    android:textColorLink="@color/primary"
+                    android:text="By confirming your appointment you are agreeing to abide by the Terms of Use, Privacy Policy,  Consent to Care via Telehealth, and the company’s Cancellation policy."
                     />
 
 
                 <TextView
+                    android:id="@+id/tvNoticeThirdLine"
                     style="@style/wpHint2"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:paddingBottom="8dp"
-                    android:text="Sprite Health isn't a replacement for your doctor or emergency services. If you think you are having an emergency, immediately contact 911 or your country's emergency services number.
+                    android:textColorLink="@color/primary"
+                    android:text="This app isn't a replacement for your doctor or emergency services. If you think you are having an emergency, immediately contact 911 or your country's emergency services number.
 "        />
 
             </LinearLayout>
@@ -344,8 +349,6 @@
 
     </LinearLayout>
         </ScrollView>
-
-
 
         <Button
             android:id="@+id/bookButton"
@@ -366,7 +369,6 @@
         android:layout_gravity="center"
         android:indeterminate="true"
         android:visibility="gone"
-
         />
 
 </androidx.coordinatorlayout.widget.CoordinatorLayout>

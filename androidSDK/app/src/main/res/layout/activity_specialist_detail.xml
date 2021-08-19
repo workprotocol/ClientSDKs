@@ -4,7 +4,6 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@drawable/border_top_touch"
     tools:context=".SpecialistDetail">
 
     <RelativeLayout
@@ -24,11 +23,11 @@
 
         </com.google.android.material.appbar.AppBarLayout>
 
-        <androidx.core.widget.NestedScrollView
+        <ScrollView
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:layout_below="@id/appbar"
-            android:layout_marginBottom="60dp">
+            android:layout_above="@+id/bookButton">
 
             <RelativeLayout
                 android:layout_width="match_parent"
@@ -57,7 +56,7 @@
                             android:id="@+id/imgvUser"
                             android:layout_width="80dp"
                             android:layout_height="80dp"
-                            android:src="@drawable/ic_launcher_foreground"
+                            android:src="@drawable/specialist_default"
                             app:srcCompat="@drawable/specialist_default" />
 
                     </androidx.cardview.widget.CardView>
@@ -76,8 +75,7 @@
                             android:layout_height="wrap_content"
                             android:layout_toEndOf="@id/image_view_card"
                             android:text="name"
-                            android:textSize="20sp"
-                            android:textStyle="bold" />
+                            style="@style/wpBody1" />
 
                         <TextView
                             android:id="@+id/tvQualification"
@@ -86,7 +84,7 @@
                             android:layout_below="@id/tvName"
                             android:layout_toEndOf="@id/image_view_card"
                             android:text="qualification"
-                            android:textSize="16sp"
+                            style="@style/wpHint2"
                             android:visibility="gone" />
 
                         <TextView
@@ -97,7 +95,7 @@
                             android:layout_marginTop="3dp"
                             android:layout_toEndOf="@id/image_view_card"
                             android:text="speciality"
-                            android:textSize="18sp" />
+                            style="@style/wpBody2" />
                     </LinearLayout>
 
                 </LinearLayout>
@@ -119,8 +117,7 @@
                         android:padding="8dp"
                         android:text="Details"
                         android:textAlignment="center"
-                        android:textSize="20dp"
-                        android:textStyle="bold" />
+                        style="@style/wpSectionHeading"/>
 
                     <TextView
                         android:id="@+id/tvGenderLabel"
@@ -128,15 +125,14 @@
                         android:layout_height="wrap_content"
                         android:layout_marginTop="10dp"
                         android:text="GENDER"
-                        android:textColor="#B5B3B3"
-                        android:textSize="18sp" />
+                        style="@style/wpHint2" />
 
                     <TextView
                         android:id="@+id/tvGender"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:text=""
-                        android:textSize="18sp" />
+                        style="@style/wpBody2"/>
 
                     <View
                         android:layout_width="match_parent"
@@ -157,15 +153,14 @@
                             android:layout_height="wrap_content"
                             android:layout_marginTop="10dp"
                             android:text="Language(s)"
-                            android:textColor="#B5B3B3"
-                            android:textSize="18sp" />
+                            style="@style/wpHint2" />
 
                         <TextView
                             android:id="@+id/tvLanguage"
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
                             android:text="..."
-                            android:textSize="20dp" />
+                            style="@style/wpBody2" />
 
                         <View
                             android:layout_width="match_parent"
@@ -188,15 +183,14 @@
                             android:layout_height="wrap_content"
                             android:layout_marginTop="10dp"
                             android:text="EDUCATION"
-                            android:textColor="#B5B3B3"
-                            android:textSize="18sp" />
+                            style="@style/wpHint2" />
 
                         <TextView
                             android:id="@+id/tvEducation"
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
                             android:text="..."
-                            android:textSize="20dp" />
+                            style="@style/wpBody2" />
 
                         <View
                             android:layout_width="match_parent"
@@ -220,15 +214,14 @@
                             android:layout_marginTop="10dp"
                             android:text="Brief Summary"
                             android:textAllCaps="true"
-                            android:textColor="#B5B3B3"
-                            android:textSize="18sp" />
+                            style="@style/wpHint2" />
 
                         <TextView
                             android:id="@+id/tvProfStatement"
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
                             android:text="..."
-                            android:textSize="20dp" />
+                            style="@style/wpBody2"/>
 
                         <View
                             android:layout_width="match_parent"
@@ -252,15 +245,14 @@
                             android:layout_marginTop="10dp"
                             android:text="Professional Experience"
                             android:textAllCaps="true"
-                            android:textColor="#B5B3B3"
-                            android:textSize="18sp" />
+                            style="@style/wpHint2" />
 
                         <TextView
                             android:id="@+id/tvProfExp"
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
                             android:text="..."
-                            android:textSize="20dp" />
+                            style="@style/wpBody2" />
 
                         <View
                             android:layout_width="match_parent"
@@ -284,15 +276,14 @@
                             android:layout_marginTop="10dp"
                             android:text="Registration"
                             android:textAllCaps="true"
-                            android:textColor="#B5B3B3"
-                            android:textSize="18sp" />
+                            style="@style/wpHint2" />
 
                         <TextView
                             android:id="@+id/tvRegistration"
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
                             android:text="..."
-                            android:textSize="20dp" />
+                            style="@style/wpBody2" />
 
                         <View
                             android:layout_width="match_parent"
@@ -316,15 +307,14 @@
                             android:layout_marginTop="10dp"
                             android:text="Awards &amp; Recognitions"
                             android:textAllCaps="true"
-                            android:textColor="#B5B3B3"
-                            android:textSize="18sp" />
+                            style="@style/wpHint2" />
 
                         <TextView
                             android:id="@+id/tvAwards"
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
                             android:text="..."
-                            android:textSize="20dp" />
+                            style="@style/wpBody2" />
 
                         <View
                             android:layout_width="match_parent"
@@ -349,15 +339,14 @@
                             android:layout_marginTop="10dp"
                             android:text="Memberships"
                             android:textAllCaps="true"
-                            android:textColor="#B5B3B3"
-                            android:textSize="18sp" />
+                            style="@style/wpHint2" />
 
                         <TextView
                             android:id="@+id/tvMemberships"
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
                             android:text="..."
-                            android:textSize="20dp" />
+                            style="@style/wpBody2" />
 
                         <View
                             android:layout_width="match_parent"
@@ -372,26 +361,30 @@
 
             </RelativeLayout>
 
-        </androidx.core.widget.NestedScrollView>
+
+
+        </ScrollView>
+
+
+        <Button
+            android:id="@+id/btnBookVisit"
+            style="@style/wpStickyButton"
+            android:layout_gravity="bottom"
+            android:onClick="bookVisit"
+            android:text="Book Virtual Visit"
+            android:visibility="visible" />
+
+        <ProgressBar
+            android:id="@+id/progressBar"
+            style="@style/Widget.AppCompat.ProgressBar"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+
+            android:layout_gravity="center"
+            android:indeterminate="true"
+
+            />
+
     </RelativeLayout>
-
-    <Button
-        android:id="@+id/btnBookVisit"
-        style="@style/wpStickyButton"
-        android:layout_gravity="bottom"
-        android:onClick="bookVisit"
-        android:text="Book Virtual Visit"
-        android:visibility="gone"/>
-
-    <ProgressBar
-        android:id="@+id/progressBar"
-        style="@style/Widget.AppCompat.ProgressBar"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-
-        android:layout_gravity="center"
-        android:indeterminate="true"
-
-        />
 
 </androidx.coordinatorlayout.widget.CoordinatorLayout>

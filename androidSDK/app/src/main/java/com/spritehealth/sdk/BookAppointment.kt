@@ -25,6 +25,8 @@ import kotlinx.android.synthetic.main.activity_specialist_detail.progressBar
 import org.json.JSONArray
 import org.json.JSONObject
 import java.text.SimpleDateFormat
+import java.time.LocalDateTime
+import java.time.format.DateTimeFormatter
 import java.util.*
 import kotlin.collections.ArrayList
 
@@ -96,7 +98,6 @@ internal class BookAppointment : AppCompatActivity() {
               fetchReasons();
                 if(serviceId>0) {
                     fetchServiceDetails()
-                    fetchAvailableSlots(null);
                 }
 
             }
@@ -215,6 +216,7 @@ internal class BookAppointment : AppCompatActivity() {
 
             if (service!!.wpIsDefault) {
                 renderCoverage()
+                fetchAvailableSlots(null);
                 return;
             }
             tvPrice.text = "...";
@@ -225,7 +227,8 @@ internal class BookAppointment : AppCompatActivity() {
     }
 
     private fun fetchServiceCoverage() {
-        progressBar.visibility = View.VISIBLE
+        progressBar.visibility = View.GONE
+        progressBarPricing.visibility = View.VISIBLE
         val formPost: MutableMap<String, String> = HashMap()
         formPost.put("memberId", SpriteHealthClient.member.id.toString());
         service?.let { formPost.put("providerId", it.wpVendorId.toString()) };
@@ -248,18 +251,18 @@ internal class BookAppointment : AppCompatActivity() {
                     // do stuff here
                     var responseJson = JSONObject(response)
                     readCoverage(responseJson)
-                    progressBar.visibility = View.GONE
+                    progressBarPricing.visibility = View.GONE
                 }
 
                 override fun onError(error: String?) {
+                    fetchAvailableSlots(null);
                     var errorMsg = error
-                    progressBar.visibility = View.GONE
+                    progressBarPricing.visibility = View.GONE
                 }
             })
     }
 
     private fun readCoverage(responseJson: JSONObject) {
-
         try {
         val type = object : TypeToken<Coverage>() {}.type
         coverage = gson.fromJson(responseJson.toString(), type);
@@ -276,6 +279,8 @@ internal class BookAppointment : AppCompatActivity() {
         } catch (e: Exception) {
 
         }
+
+        fetchAvailableSlots(null);
         renderCoverage()
     }
 
@@ -286,12 +291,29 @@ internal class BookAppointment : AppCompatActivity() {
     }
 
     private fun fetchAvailableSlots(startDate: Date?) {
-        progressBar.visibility = View.VISIBLE
+        progressBar.visibility = View.GONE
+        progressBarSlots.visibility=VISIBLE
+        val params: MutableMap<String, String> = HashMap()
+
+        params["vendorUserId"] = specialist?.id.toString()
+        params["weeks"] = "3"
+        params["serviceId"] = serviceId.toString()
+
+        var currentHour= LocalDateTime.now().hour;
+        val  currentTime:String?=null
+        var refDate : LocalDateTime?=null
+
+        if(currentHour>=22){
+            refDate =LocalDateTime.now().plusHours(3)
+        }else{
+            refDate = LocalDateTime.now().plusHours(2)
+        }
+
+        params["startDateTime"] = refDate.format(DateTimeFormatter.ofPattern("MM/dd/yyyy hh:mm a"))
+        params["currentTime"] = refDate.format(DateTimeFormatter.ofPattern("HH:mm:ss"))
 
         sdkClientInstance.specialistAvailableSlot(
-            specialist?.id,
-            serviceId,
-            3,
+            params,
             this,
             object : SpriteHealthClient.Callback {
                 override fun onSuccess(response: String?) {
@@ -299,11 +321,13 @@ internal class BookAppointment : AppCompatActivity() {
                     var responseJson = JSONObject(response)
                     readAvailability(responseJson)
                     progressBar.visibility = View.GONE
+                    progressBarSlots.visibility=GONE
                 }
 
                 override fun onError(error: String?) {
                     var errorMsg = error
                     progressBar.visibility = View.GONE
+                    progressBarSlots.visibility=GONE
                 }
             })
     }

@@ -3,6 +3,9 @@
     package="com.spritehealth.sdk">
 
     <uses-permission android:name="android.permission.INTERNET" />
+    <uses-permission android:name="android.permission.RECORD_AUDIO" />
+    <uses-permission android:name="android.permission.CAMERA" />
+    <uses-permission android:name="android.permission.MODIFY_AUDIO_SETTINGS" />
 
     <application
         android:allowBackup="true"
@@ -11,13 +14,6 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/Theme.SDK">
-
-        <activity
-            android:name=".SpecialistDetail"
-            android:label="@string/title_activity_specialist_detail"
-            android:theme="@style/Theme.SDK.NoActionBar">
-
-        </activity>
 
         <activity
             android:name=".VPTFinder"
@@ -31,6 +27,12 @@
         </activity>
 
         <activity
+            android:name=".SpecialistDetail"
+            android:label="@string/title_activity_specialist_detail"
+            android:theme="@style/Theme.SDK.NoActionBar">
+        </activity>
+
+        <activity
             android:name=".BookAppointment"
             android:label="Select Date &amp; Time"
             android:theme="@style/Theme.SDK.NoActionBar">
@@ -40,6 +42,13 @@
             android:name=".PreviewAppointment"
             android:label="Review Appointment"
             android:theme="@style/Theme.SDK.NoActionBar">
+        </activity>
+
+        <activity
+            android:name=".AppointmentDetails"
+            android:label="Appointment Details"
+            android:theme="@style/Theme.SDK.NoActionBar">
+
         </activity>
 
         <activity

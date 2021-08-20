@@ -373,9 +373,9 @@ class SpriteHealthClient(): AppCompatActivity(){
     companion object {
         var storedIntent: Intent = Intent();
 
-        internal val SSOWebAppRoot: String="https://wpfrontendqa.appspot.com"
+        internal val SSOWebAppRoot: String="https://berger.spritehealth.com"
 
-        internal  var apiRoot = "https://wpbackendqa.appspot.com"
+        internal  var apiRoot = "https://api.spritehealth.com"
 
         //Keep it in memory
         internal var member=User()

@@ -57,6 +57,8 @@ internal class SpecialistDetail : AppCompatActivity() {
                         tvSpeciality.text = specialistWithAvailability!!.specializationNames
                     }
 
+                tvGender.text = specialistWithAvailability!!.gender
+
                 setImage(specialistWithAvailability!!.imageIds)
             }
         }

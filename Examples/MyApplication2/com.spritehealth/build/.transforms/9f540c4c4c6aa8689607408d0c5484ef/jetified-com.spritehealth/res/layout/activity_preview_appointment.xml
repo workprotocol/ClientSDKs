@@ -1,0 +1,360 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.coordinatorlayout.widget.CoordinatorLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context=".PreviewAppointment">
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        >
+
+        <ScrollView
+            android:id="@+id/scrollViewWrapper"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_above="@+id/bookButton">
+
+            <LinearLayout
+                android:id="@+id/loContentToScroll"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                >
+
+
+                <LinearLayout
+                    android:id="@+id/loTopSection"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:background="@drawable/border_bottom"
+                    android:orientation="vertical"
+                    android:paddingTop="12dp"
+                    android:paddingBottom="20dp"
+                    android:paddingLeft="8dp">
+
+                    <TextView
+                        style="@style/wpHint1"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:gravity="center_horizontal"
+                        android:paddingBottom="8dp"
+                        android:text="TIME OF VISIT"></TextView>
+
+                    <TextView
+                        android:id="@+id/tvDisplayAppointmentTime"
+                        style="@style/wpBody2"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:gravity="center_vertical"
+                        android:paddingBottom="8dp"
+                        android:text="Requested Date &amp; Time" />
+
+                    <TextView
+                        style="@style/wpHint1"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:gravity="center_horizontal"
+                        android:paddingBottom="8dp"
+                        android:text="WITH"></TextView>
+
+                    <TextView
+                        android:id="@+id/tvSpecialistName"
+                        style="@style/wpBody1"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:text="Specialist"
+                        android:visibility="visible" />
+
+                    <TextView
+                        android:id="@+id/tvVendorName"
+                        style="@style/wpBody2"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:text="Provider" />
+
+                    <TextView
+                        android:id="@+id/tvSpeciality"
+                        style="@style/wpHint2"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:singleLine="true"
+                        android:maxLines="1"
+                        android:text="Speciality"
+                        android:visibility="gone" />
+                </LinearLayout>
+
+                <LinearLayout
+                    android:id="@+id/loMiddleSectionView"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical">
+
+                    <LinearLayout
+                        android:id="@+id/loReasonWrapper"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:background="@drawable/border_bottom"
+                        android:orientation="vertical"
+                        android:paddingBottom="20dp"
+                        android:paddingLeft="8dp"
+                        android:paddingRight="8dp"
+                        android:paddingTop="20dp"
+                        android:visibility="gone">
+
+                        <TextView
+                            style="@style/wpHint1"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:gravity="center_horizontal"
+                            android:paddingBottom="8dp"
+                            android:text="REASON FOR VISIT"></TextView>
+
+                        <TextView
+                            android:id="@+id/tvReason"
+                            style="@style/wpBody1"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:gravity="center_vertical"
+                            android:text="Reason " />
+
+                    </LinearLayout>
+
+                    <LinearLayout
+                        android:id="@+id/loServiceWrapper"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:orientation="vertical"
+                        android:paddingBottom="10dp"
+                        android:paddingLeft="8dp"
+                        android:paddingRight="8dp"
+                        android:paddingTop="20dp"
+                        android:visibility="visible">
+
+                        <TextView
+                            style="@style/wpHint1"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:gravity="center_horizontal"
+                            android:paddingBottom="8dp"
+                            android:text="TYPE OF CARE"></TextView>
+
+                        <LinearLayout
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:orientation="horizontal"
+                            android:paddingBottom="10dp">
+
+                            <LinearLayout
+                                android:layout_width="0dip"
+                                android:layout_height="wrap_content"
+                                android:layout_weight="0.75"
+                                android:orientation="vertical">
+
+                                <TextView
+                                    android:id="@+id/tvServiceName"
+                                    style="@style/wpBody1"
+                                    android:layout_width="wrap_content"
+                                    android:layout_height="wrap_content"
+                                    android:gravity="center_vertical"
+                                    android:text="Service Name " />
+
+                                <TextView
+                                    android:id="@+id/tvDuration"
+                                    style="@style/wpBody2"
+                                    android:layout_width="match_parent"
+                                    android:layout_height="wrap_content"
+                                    android:text="30 mins"
+                                    android:visibility="gone" />
+
+                            </LinearLayout>
+
+                            <LinearLayout
+                                android:layout_width="0dip"
+                                android:layout_height="wrap_content"
+                                android:layout_weight="0.25"
+                                android:layout_gravity="right"
+                                android:gravity="right"
+                                android:orientation="vertical">
+
+                                <TextView
+                                    android:id="@+id/tvPrice"
+                                    style="@style/wpBody1"
+                                    android:layout_width="wrap_content"
+                                    android:layout_height="wrap_content"
+                                    android:layout_gravity="right"
+                                    android:text="$0.0" />
+
+                                <TextView
+                                    android:id="@+id/tvPrice11"
+                                    style="@style/wpHint1"
+                                    android:layout_width="wrap_content"
+                                    android:layout_height="wrap_content"
+                                    android:layout_gravity="right"
+                                    android:text="(Est)" />
+
+                            </LinearLayout>
+
+                        </LinearLayout>
+
+
+                    </LinearLayout>
+
+
+                </LinearLayout>
+
+                <LinearLayout
+                    android:id="@+id/loConfirmationFields"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_centerHorizontal="true"
+                    android:background="@drawable/border_top"
+                    android:gravity="left|center_horizontal"
+                    android:orientation="vertical"
+                    android:padding="8dp"
+                    >
+
+                    <TextView
+                        android:id="@+id/tvConfirmSectionLabel"
+                        style="@style/wpBody1"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_centerHorizontal="true"
+                        android:gravity="left|center_horizontal"
+                        android:paddingBottom="5dp"
+                        android:paddingTop="8dp"
+                        android:text="Confirm Your Details" />
+
+                    <LinearLayout
+                        android:id="@+id/loConfirmationFields1"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:orientation="vertical"
+                        android:paddingTop="2dp"
+                        android:paddingBottom="8dp"
+                        android:layout_marginBottom="20dp"
+                        >
+
+                        <EditText
+                            android:id="@+id/patientsNameEditText"
+                            style="@style/wpBody2"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:layout_below="@+id/labelTextView"
+                            android:background="@drawable/wp_edittext"
+                            android:hint="name"
+                            android:paddingBottom="10dp"
+                            android:paddingTop="10dp" />
+                        />
+
+                        <EditText
+                            android:id="@+id/emailEditText"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:layout_below="@+id/patientsNameEditText"
+                            android:layout_marginTop="5dp"
+                            android:hint="email"
+                            android:background="@drawable/wp_edittext"
+                            style="@style/wpBody2"
+                            android:paddingBottom="10dp"
+                            android:paddingTop="10dp" />
+                        />
+
+                        <EditText
+                            android:id="@+id/mobileEditText"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:layout_below="@+id/emailEditText"
+                            android:layout_marginTop="5dp"
+                            android:cursorVisible="false"
+                            android:hint="mobile"
+                            android:inputType="number"
+                            android:background="@drawable/wp_edittext"
+                            style="@style/wpBody2"
+                            android:paddingBottom="10dp"
+                            android:paddingTop="10dp" />
+                    </LinearLayout>
+
+                </LinearLayout>
+
+
+
+            <LinearLayout
+                android:id="@+id/loNotice"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:background="@drawable/border_bottom"
+                android:orientation="vertical"
+                android:paddingTop="2dp"
+                android:paddingBottom="20dp"
+                android:paddingLeft="8dp">
+
+                <TextView
+                    style="@style/wpBody1"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:gravity="center_horizontal"
+                    android:paddingBottom="8dp"
+                    android:text="What's next"></TextView>
+
+                <TextView
+                    android:id="@+id/tvNoticeFirstLine"
+                    style="@style/wpBody2"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:paddingBottom="8dp"
+                    android:textColorLink="@color/primary"
+                    android:text="At the time of your visit, you and specialist will join the video call. You can join via the app or website."
+                    ></TextView>
+
+                <TextView
+                    android:id="@+id/tvNoticeSecondLine"
+                    style="@style/wpBody2"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:paddingBottom="10dp"
+                    android:textColorLink="@color/primary"
+                    android:text="By confirming your appointment you are agreeing to abide by the Terms of Use, Privacy Policy,  Consent to Care via Telehealth, and the company’s Cancellation policy."
+                    />
+
+
+                <TextView
+                    android:id="@+id/tvNoticeThirdLine"
+                    style="@style/wpHint2"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:paddingBottom="8dp"
+                    android:textColorLink="@color/primary"
+                    android:text="This app isn't a replacement for your doctor or emergency services. If you think you are having an emergency, immediately contact 911 or your country's emergency services number.
+"        />
+
+            </LinearLayout>
+
+
+    </LinearLayout>
+        </ScrollView>
+
+        <Button
+            android:id="@+id/bookButton"
+            style="@style/wpStickyButton"
+            android:onClick="bookVisit"
+            android:text="Book Virtual Visit" />
+
+
+
+    </RelativeLayout>
+
+
+    <ProgressBar
+        android:id="@+id/progressBar"
+        style="@style/Widget.AppCompat.ProgressBar"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center"
+        android:indeterminate="true"
+        android:visibility="gone"
+        />
+
+</androidx.coordinatorlayout.widget.CoordinatorLayout>

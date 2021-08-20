@@ -21,8 +21,7 @@
             android:id="@+id/imgvUser"
             android:layout_width="80dp"
             android:layout_height="80dp"
-            android:src="@drawable/ic_launcher_foreground"
-            app:srcCompat="@drawable/specialist_default" />
+            android:src="@drawable/specialist_default" />
 
         </androidx.cardview.widget.CardView>>
 

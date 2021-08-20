@@ -1,0 +1,270 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.coordinatorlayout.widget.CoordinatorLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context=".BookAppointment">
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        >
+
+        <ScrollView
+                android:id="@+id/scrollViewWrapper"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="8dp"
+                android:layout_marginBottom="8dp"
+                android:visibility="visible"
+                >
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:layout_gravity="center_horizontal"
+                    android:orientation="vertical">
+
+
+
+                    <LinearLayout
+                        android:id="@+id/loReasonWrapper"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_gravity="center_horizontal"
+                        android:orientation="vertical"
+                        android:paddingBottom="10dp"
+                        android:paddingLeft="8dp"
+                        android:paddingRight="5dp"
+                        android:paddingTop="8dp"
+                        android:background="@drawable/border_bottom"
+                        android:visibility="visible">
+
+                        <TextView
+                            style="@style/wpHint1"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:gravity="left"
+                            android:paddingTop="8dp"
+                            android:text="REASON FOR VISIT"></TextView>
+
+                        <Spinner
+                            android:id="@+id/reasonSpinner"
+                            style="@style/wpSpinner"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content" />
+                    </LinearLayout>
+
+
+                    <LinearLayout
+                        android:id="@+id/loContentWrapper"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_gravity="center_horizontal"
+                        android:orientation="vertical"
+                        android:paddingBottom="10dp"
+                        android:paddingLeft="8dp"
+                        android:paddingRight="5dp"
+                        android:paddingTop="8dp"
+                        android:visibility="visible">
+
+                        <LinearLayout
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:layout_gravity="center_horizontal"
+                            android:orientation="vertical"
+                            android:paddingBottom="10dp"
+                            android:paddingLeft="8dp"
+                            android:paddingRight="5dp"
+                            android:paddingTop="8dp"
+                            android:background="@drawable/border_bottom"
+                            android:visibility="visible">
+
+                        <LinearLayout
+                            android:id="@+id/loTypeOfCareWrapper"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:layout_gravity="center_horizontal"
+                            android:orientation="horizontal"
+                            android:visibility="visible">
+
+                            <TextView
+                                style="@style/wpHint1"
+                                android:layout_width="0dip"
+                                android:layout_height="wrap_content"
+                                android:layout_gravity="center_vertical"
+                                android:layout_weight="0.8"
+                                android:gravity="left"
+                                android:paddingTop="8dp"
+                                android:text="TYPE OF CARE"></TextView>
+
+
+                        </LinearLayout>
+
+                        <LinearLayout
+                            android:id="@+id/lloServiceWrapper"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:orientation="vertical"
+                            android:paddingBottom="5dp"
+                            android:visibility="visible">
+
+                            <LinearLayout
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content"
+                                android:orientation="horizontal"
+                                android:paddingBottom="0dp">
+
+                                <LinearLayout
+                                    android:layout_width="0dip"
+                                    android:layout_height="wrap_content"
+                                    android:layout_weight="0.75"
+                                    android:orientation="vertical">
+
+                                    <TextView
+                                        android:id="@+id/tvServiceName"
+                                        style="@style/wpBody1"
+                                        android:layout_width="wrap_content"
+                                        android:layout_height="wrap_content"
+                                        android:gravity="center_vertical"
+                                        android:text="..." />
+
+                                    <TextView
+                                        android:id="@+id/tvDuration"
+                                        style="@style/wpBody2"
+                                        android:layout_width="match_parent"
+                                        android:layout_height="wrap_content"
+                                        android:text="30 mins"
+                                        android:visibility="gone" />
+
+                                </LinearLayout>
+
+                                <LinearLayout
+                                    android:layout_width="0dip"
+                                    android:layout_height="wrap_content"
+                                    android:layout_gravity="right"
+                                    android:layout_weight="0.25"
+                                    android:gravity="right"
+                                    android:orientation="vertical">
+
+                                    <TextView
+                                        android:id="@+id/tvPrice"
+                                        style="@style/wpBody1"
+                                        android:layout_width="wrap_content"
+                                        android:layout_height="wrap_content"
+                                        android:layout_gravity="right"
+                                        android:text="$0.0" />
+
+                                    <TextView
+                                        android:id="@+id/tvPriceEstimate"
+                                        style="@style/wpHint1"
+                                        android:layout_width="wrap_content"
+                                        android:layout_height="wrap_content"
+                                        android:layout_gravity="right"
+                                        android:text="(Est)" />
+
+                                </LinearLayout>
+
+                            </LinearLayout>
+
+
+                        </LinearLayout>
+
+                        </LinearLayout>
+
+
+                        <LinearLayout
+                            android:id="@+id/lloSlotGroupedByDateWrapper"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:orientation="vertical"
+                            android:paddingTop="20dp"
+                            android:visibility="visible">
+
+
+
+                        </LinearLayout>
+
+
+                        <LinearLayout
+                            android:id="@+id/loAvailabilityWrapper"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:orientation="vertical"
+                            android:layout_marginTop="10dp"
+                            android:layout_marginBottom="0dp"
+                            android:visibility="visible"
+                            >
+
+
+                            <Button
+                                android:id="@+id/btnShowMoreSlots"
+                                android:layout_width="match_parent"
+                                android:layout_height="50dp"
+                                android:onClick="loadNextAvailability"
+                                android:padding="4dp"
+                                android:text="Check Next Availability"
+                                android:textColor="@color/accentPrimary"
+                                android:textSize="15sp"
+                                android:visibility="gone" />
+
+                            <TextView
+                                android:id="@+id/tvNoSlotMessage"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:layout_gravity="center_horizontal|center"
+                                android:layout_marginBottom="15dp"
+                                android:paddingTop="15dp"
+                                android:text="No slots available for this week."
+                                android:visibility="gone" />
+                        </LinearLayout>
+
+
+                    </LinearLayout>
+
+
+
+                    </LinearLayout>
+
+
+
+
+            </ScrollView>
+
+    </RelativeLayout>
+
+
+    <ProgressBar
+        android:id="@+id/progressBarPricing"
+        style="@style/Widget.AppCompat.ProgressBar"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:visibility="gone"
+        android:layout_gravity="center"
+        android:indeterminate="true"
+        />
+
+    <ProgressBar
+        android:id="@+id/progressBarSlots"
+        style="@style/Widget.AppCompat.ProgressBar"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:visibility="gone"
+        android:layout_gravity="center"
+        android:indeterminate="true"
+        />
+
+
+    <ProgressBar
+        android:id="@+id/progressBar"
+        style="@style/Widget.AppCompat.ProgressBar"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+
+        android:layout_gravity="center"
+        android:indeterminate="true"
+
+        />
+
+</androidx.coordinatorlayout.widget.CoordinatorLayout>

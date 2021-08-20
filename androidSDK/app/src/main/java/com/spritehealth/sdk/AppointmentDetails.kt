@@ -12,7 +12,9 @@ import android.os.Build
 import android.os.Bundle
 import android.webkit.*
 import android.widget.ProgressBar
+import android.widget.TextView
 import android.widget.Toast
+import androidx.appcompat.app.ActionBar
 import androidx.appcompat.app.AppCompatActivity
 import androidx.browser.customtabs.CustomTabsIntent
 import androidx.core.app.ActivityCompat
@@ -21,6 +23,7 @@ import com.google.gson.Gson
 import com.google.gson.GsonBuilder
 import com.google.gson.reflect.TypeToken
 import com.spritehealth.sdk.model.Appointment
+import kotlinx.android.synthetic.main.custom_toolbar.*
 
 
 internal class AppointmentDetails : AppCompatActivity() {
@@ -45,6 +48,16 @@ internal class AppointmentDetails : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_appointment_details)
         //setSupportActionBar(findViewById(R.id.toolbar))
+        getSupportActionBar()?.displayOptions = ActionBar.DISPLAY_SHOW_CUSTOM;
+        getSupportActionBar()?.setCustomView(R.layout.custom_toolbar);
+
+        val tvPageHeading = supportActionBar!!.customView.findViewById<TextView>(R.id.tvPageHeading)
+        tvPageHeading.text = "Appointment Details"
+
+        imgvBack.setOnClickListener(){
+            this.finish();
+        }
+
         webView =findViewById(R.id.webView1);
         progressBar =findViewById(R.id.progressBar);
         //progressBar.setVisibility(View.GONE);
@@ -101,8 +114,6 @@ internal class AppointmentDetails : AppCompatActivity() {
         }
 
     }
-
-
 
 
     private fun checkPermission(): Boolean {
@@ -250,18 +261,6 @@ internal class AppointmentDetails : AppCompatActivity() {
     private class MyWebViewClient : WebViewClient() {
 
         override fun shouldOverrideUrlLoading(view: WebView?, url: String?): Boolean {
-
-            /*
-           if (Uri.parse(url).host == "www.example.com") {
-               // This is my web site, so do not override; let my WebView load the page
-               return false
-           }
-
-           // Otherwise, the link is not for a page on my site, so launch another Activity that handles URLs
-           Intent(Intent.ACTION_VIEW, Uri.parse(url)).apply {
-               startActivity(this)
-           }
-           */
             return true
         }
 

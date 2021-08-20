@@ -54,9 +54,10 @@ internal class SpecialistDetail : AppCompatActivity() {
                 tvPageHeading.text =specialistWithAvailability!!.name
 
                     if (specialistWithAvailability!!.specializationNames != null) {
-                    tvSpeciality.text = specialistWithAvailability!!.specializationNames
-                }
+                        tvSpeciality.text = specialistWithAvailability!!.specializationNames
+                    }
 
+                setImage(specialistWithAvailability!!.imageIds)
             }
         }
 
@@ -91,14 +92,7 @@ internal class SpecialistDetail : AppCompatActivity() {
             val textView = findViewById<TextView>(R.id.tvName)
             textView.text = specialistUser.name
 
-
-            if (specialistUser.imageIds != null && specialistUser.imageIds!!.isNotEmpty()) {
-                var imageId = specialistUser.imageIds!!.iterator().next()
-
-                var imageUrl =
-                    SpriteHealthClient.apiRoot + "/resources/images/" + imageId.toString()
-                Picasso.get().load(imageUrl).into(imgvUser)
-            }
+           setImage(specialistUser.imageIds)
 
             var specialityNames: String? = ""
             if (specialistUser.specialization!!.isNotEmpty()) {
@@ -170,7 +164,7 @@ internal class SpecialistDetail : AppCompatActivity() {
                     lloLanguage.visibility = View.VISIBLE
                     tvLanguage.text = vendorDescription.description
                 }
-                if (vendorDescription.vendorDescriptionType != VendorDescriptionTypeEnum.REGISTRATION && vendorDescription.description != null && !vendorDescription.description!!.isEmpty()) {
+                if (vendorDescription.vendorDescriptionType == VendorDescriptionTypeEnum.REGISTRATION && vendorDescription.description != null && !vendorDescription.description!!.isEmpty()) {
                     lloRegistration.visibility = View.VISIBLE
                     tvRegistration.text = vendorDescription.description
                 }
@@ -196,6 +190,17 @@ internal class SpecialistDetail : AppCompatActivity() {
         if(specialistWithAvailability!!.availableSlots?.size ?: 0>0) {
             btnBookVisit.visibility = View.VISIBLE
         }
+    }
+
+    private fun setImage(imageIds: Set<Long>?) {
+        if (imageIds != null && imageIds!!.isNotEmpty()) {
+            var imageId = imageIds!!.iterator().next()
+
+            var imageUrl =
+                SpriteHealthClient.apiRoot + "/resources/images/" + imageId.toString()
+            Picasso.get().load(imageUrl).into(imgvUser)
+        }
+
     }
 
 

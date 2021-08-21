@@ -68,7 +68,7 @@ internal class VPTFinder : AppCompatActivity() {
 
 
         sdkClientInstance=SpriteHealthClient.getInstance(this.applicationContext)
-        sdkClientInstance!!.initialize(this,
+        sdkClientInstance!!.initialize(
             InitOptions("0b5c8d72f9794ec69870886cd060bc82","dag@berger.com",IntegrationMode.TEST), object:Callback<InitializationStatus>{
                 override fun onSuccess(initializationStatus: InitializationStatus) {
                     if(initializationStatus!=null && initializationStatus.status==InitializationStatusTypes.SUCCESS){

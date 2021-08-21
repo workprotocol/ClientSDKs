@@ -49,15 +49,8 @@ open class SingletonHolder<out T: Any, in A>(creator: (A) -> T) {
 
 class SpriteHealthClient private constructor(context: Context) {
 
-    private lateinit var mContext: Context
+    private var mContext: Context = context
 
-    init {
-        this.mContext = context
-    }
-
-    fun doSomething() {
-
-    }
 
     companion object : SingletonHolder<SpriteHealthClient, Context>(::SpriteHealthClient) {
 
@@ -95,11 +88,11 @@ class SpriteHealthClient private constructor(context: Context) {
 //class SpriteHealthClient(): AppCompatActivity(){
 
     fun initialize(
-        context: Context,
+        //context: Context,
         initOptions: InitOptions,
         callback: Callback<InitializationStatus>
     ) {
-        this.mContext = context
+        //this.mContext = context
         if (initOptions.clientId.isEmpty() || initOptions.userIdentity.isEmpty()) {
             callback.onError("clientId and userIdentity are mandatory fields of initOptions to initialize.")
             return
@@ -119,7 +112,7 @@ class SpriteHealthClient private constructor(context: Context) {
         }
 
         //create access token
-        createAccessToken(context, object : Callback<AccessTokenResponse?> {
+        createAccessToken(mContext, object : Callback<AccessTokenResponse?> {
             override fun onSuccess(accessTokenResponse: AccessTokenResponse?) {
                 if (accessTokenResponse != null) {
                     auth_token = accessTokenResponse.access_token

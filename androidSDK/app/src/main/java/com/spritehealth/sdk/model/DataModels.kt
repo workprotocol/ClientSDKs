@@ -140,6 +140,66 @@ class User {
 }
 
 
+class Specialist {
+    var id: Long? = null
+    var name: String? = null
+    var nickname: String? = null
+    var email: String? = null
+    var isCorporateAdmin = false
+    var isVendorAdmin = false
+    var isVendor = false
+    var mobilePhone: String? = null
+    var textPhone: String? = null
+    var landlinePhone: String? = null
+    var imageIds: Set<Long>? = null
+    var timeZone: String? = null
+
+    //Redundant due to lastModifiedDate
+    var lastAccessedDate: String? = null
+    var authType = "NATIVE"
+
+    /*TODO: need spelling correction */
+    var prefferedLanguage: String? = null
+    var status: String? = null
+
+    var accessLevel: String? = null
+    var specialistLocationIds: Set<Long>? = null
+    var licenseToPracticeStates: Set<String>? = null
+    var consultingFee: Float? = null
+    var memberFee: Float? = null
+    var serviceFee: Float? = null
+    var avgHCCRiskScore: Float? = null
+    var vendorId: Long = 0
+    var tin: String? = null
+    var npi: String? = null
+    var vendorNPI: String? = null
+    var videoBioId: Long? = null
+    var specialization: List<Int>? = null
+    var availableServiceDefinitionIds: List<Long>? = null
+    var vendorName: String? = null
+    var acceptingNewPatients: Boolean? = null
+
+    // Not persistent fields: For IMPORT/EXPORT Purposes --Starts here
+    var specializationNames: String? = null
+    var affiliations: List<String>? = null
+    var tier: Int? = null
+    var tierScore: Double? = null
+    var gender: String? = null
+    var maritalStatus: String? = null
+    var dateOfBirth: String? = null
+    var healthAccounts: List<Long>? = null
+    var deviceType: String? = null
+    var deviceId: String? = null
+
+    var specialistLocations: List<Location>? = null
+    var descriptions: List<VendorDescription>? = null
+
+    //Added temporary
+    var availableSlots: ArrayList<TimePeriodConverter>? = null
+    var serviceId: Long? = null
+}
+
+
 class Location{
     var streetAddress1: String? = null
 
@@ -313,7 +373,7 @@ class Appointment(id: Long = 0) {
 
 }
 
-class Coverage  {
+class NetworkCoverage  {
     var id: Long? = null
     var name: String? = null
     var networkType: String? = null
@@ -365,7 +425,8 @@ class CostBreakUp {
     var sponsor: Double? = null
     var coverageId : Long? = null
 }
-internal class CalendarEvent {
+
+class CalendarEvent {
     private val id: String? = null
     private val vendorUserId: Long = 0
     private val serviceId: Long = 0

@@ -12,19 +12,19 @@ import com.android.volley.Request
 import com.android.volley.Response
 import com.android.volley.toolbox.StringRequest
 import com.android.volley.toolbox.Volley
-import com.spritehealth.sdk.model.Speciality
-import com.spritehealth.sdk.model.User
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.GlobalScope
-import kotlinx.coroutines.launch
-import kotlin.coroutines.suspendCoroutine
+import com.google.gson.Gson
+import com.google.gson.GsonBuilder
+import com.google.gson.reflect.TypeToken
+import com.spritehealth.sdk.model.*
 
 
 class SpriteHealthClient(): AppCompatActivity(){
 
-
     private val timeOutInMS: Int=50000
+    var builder: GsonBuilder = GsonBuilder();
+    var gson: Gson = builder.create()
 
+    /*
     constructor(client_id: String, user_identity: String, context: Context) : this() {
         // some code
         SpriteHealthClient.client_id = client_id;
@@ -33,90 +33,18 @@ class SpriteHealthClient(): AppCompatActivity(){
             val job = launch { createToken(context) }
             job.join()
         }
-
     }
+    */
 
-    interface Callback{
-        fun onSuccess(result: String?)
+
+    interface Callback<T>{
+        fun onSuccess(result: T)
         fun onError(error: String?)
     }
 
-    fun createAccessToken(context: Context, callback: Callback)
-    {
-        val url =
-            apiRoot + "/resources/oauth/authorize?response_type=token&client_id=" +
-                    SpriteHealthClient.client_id +
-                    "&no_redirect=true&is_sso=true&skip_user_auth=true&user_identity=" +
-                    SpriteHealthClient.user_identity + ""
-        val queue = Volley.newRequestQueue(context)
-
-        val stringRequest = object: StringRequest(Request.Method.GET, url,
-            Response.Listener<String> { response ->
-                Log.d("A", "Response is: " + response)
-                callback.onSuccess(response);
-            },
-            Response.ErrorListener { error ->
-                // Handle error
-                val errorStr = "ERROR: %s".format(error.toString());
-                Log.d("msg :", errorStr);
-                callback.onError(errorStr);
-            })
-        {
-            override fun getHeaders(): MutableMap<String, String> {
-                val headers = HashMap<String, String>()
-                return headers
-            }
-        }
-
-        stringRequest.retryPolicy = DefaultRetryPolicy(
-            timeOutInMS,
-            DefaultRetryPolicy.DEFAULT_MAX_RETRIES,
-            DefaultRetryPolicy.DEFAULT_BACKOFF_MULT
-        )
-        queue.add(stringRequest)
-    }
 
 
-    suspend fun createToken(context: Context) = suspendCoroutine<String>
-    { cont ->
-        val myurl =
-            apiRoot + "/resources/oauth/authorize?response_type=token&client_id=" + SpriteHealthClient.client_id + "&no_redirect=true&is_sso=true&skip_user_auth=true&user_identity=" + SpriteHealthClient.user_identity + ""
-        val queue = Volley.newRequestQueue(context)
-
-        val stringRequest = object: StringRequest(Request.Method.GET, myurl,
-            Response.Listener<String> { response ->
-                Log.d("A", "Response is: " + response)
-                val response2 = response
-                auth_token = response
-                // displayVPT(response);
-                // val responseJsonArray: JSONArray = JSONArray(response)
-                //callback.onSuccess(response);
-            },
-            Response.ErrorListener { error ->
-                // Handle error
-
-                val errorStr = "ERROR: %s".format(error.toString());
-                Log.d("msg :", errorStr);
-                //callback.onError(errorStr);
-            })
-        {
-            override fun getHeaders(): MutableMap<String, String> {
-                val headers = HashMap<String, String>()
-
-                return headers
-            }
-        }
-
-        stringRequest.retryPolicy = DefaultRetryPolicy(
-            timeOutInMS,
-            DefaultRetryPolicy.DEFAULT_MAX_RETRIES,
-            DefaultRetryPolicy.DEFAULT_BACKOFF_MULT
-        )
-        queue.add(stringRequest);
-    }
-
-
-    fun callGetRequest(context: Context, url: String, callback: Callback)
+    private fun callGetRequest(context: Context, url: String, callback: Callback<String?>)
     {
         val auth_token = auth_token
         val queue = Volley.newRequestQueue(context)
@@ -149,11 +77,11 @@ class SpriteHealthClient(): AppCompatActivity(){
         queue.add(stringRequest)
     }
 
-    fun callGetRequestWithParams(
+    private fun callGetRequestWithParams(
         context: Context,
         queryParams: MutableMap<String, String>,
         url: String,
-        callback: Callback
+        callback: Callback<String?>
     )
     {
         val auth_token = auth_token
@@ -194,11 +122,11 @@ class SpriteHealthClient(): AppCompatActivity(){
         queue.add(stringRequest)
     }
 
-    fun callPostRequest(
+    private fun callPostRequest(
         context: Context,
         postDataParams: MutableMap<String, String>,
         url: String,
-        callback: Callback
+        callback: Callback<String?>
     )
     {
         val auth_token = auth_token
@@ -239,151 +167,378 @@ class SpriteHealthClient(): AppCompatActivity(){
         queue.add(stringRequest)
     }
 
-
-    fun memberDetail(context: Context, callback: Callback)
+    fun createAccessToken(context: Context, callback: Callback<AccessTokenResponse?>)
     {
-        val url = "$apiRoot/resources/user?withCoverage=true"
-        callGetRequest(context, url, callback)
+        val url ="$apiRoot/oauth/authorize?response_type=token&client_id=" +
+                    SpriteHealthClient.client_id +
+                    "&no_redirect=true&is_sso=true&skip_user_auth=true&user_identity=" +
+                    SpriteHealthClient.user_identity + ""
+
+        callGetRequest(context, url, object : SpriteHealthClient.Callback<String?> {
+            override fun onSuccess(response: String?) {
+                val accessTokenType = object : TypeToken<AccessTokenResponse>() {}.type
+                var accessTokenResponse: AccessTokenResponse = gson.fromJson(
+                    response,
+                    accessTokenType
+                );
+                callback.onSuccess(accessTokenResponse);
+            }
+
+            override fun onError(error: String?) {
+                callback.onError(error)
+            }
+        })
+
     }
 
-    fun familyMembers(familyId: String?, context: Context, callback: Callback)
+
+    fun getMemberDetails(context: Context, callback: Callback<User>)
     {
-        val url = "$apiRoot/resources/user/family/members?familyId=$familyId";
-        callGetRequest(context, url, callback)
+        val url = "$apiRoot/user?withCoverage=true"
+        callGetRequest(context, url, object : SpriteHealthClient.Callback<String?> {
+            override fun onSuccess(response: String?) {
+                val userType = object : TypeToken<User>() {}.type
+                var member: User = gson.fromJson(response, userType);
+
+                callback.onSuccess(member)
+            }
+
+            override fun onError(error: String?) {
+                callback.onError(error)
+            }
+        })
+
+     }
+
+
+    fun getFamilyMembers(familyId: String?, context: Context, callback: Callback<List<User>>)
+    {
+        val url = "$apiRoot/user/family/members?familyId=$familyId";
+        callGetRequest(context, url, object : SpriteHealthClient.Callback<String?> {
+            override fun onSuccess(response: String?) {
+                val type = object : TypeToken<List<User>>() {}.type
+                var members: List<User> = gson.fromJson(
+                    response,
+                    type
+                );
+                callback.onSuccess(members);
+            }
+
+            override fun onError(error: String?) {
+                callback.onError(error)
+            }
+        })
     }
 
 
-    fun specialistAvailable(
+    fun getAvailableSpecialists(
         queryParams: MutableMap<String, String>,
         context: Context,
-        callback: Callback
+        callback: Callback<List<Specialist>>
     ){
-        var url =  apiRoot + "/resources/specialists/available"
-        callGetRequestWithParams(context, queryParams, url, callback)
+        var url =  "$apiRoot/specialists/available"
+        callGetRequestWithParams(
+            context,
+            queryParams,
+            url,
+            object : SpriteHealthClient.Callback<String?> {
+                override fun onSuccess(response: String?) {
+                    val type = object : TypeToken<List<Specialist>>() {}.type
+                    var specialistsWithAvailability: List<Specialist> = gson.fromJson(
+                        response,
+                        type
+                    );
+                    callback.onSuccess(specialistsWithAvailability);
+                }
+
+                override fun onError(error: String?) {
+                    callback.onError(error)
+                }
+            })
     }
 
 
-    fun specialistDetail(specialistId: Long?, context: Context, callback: Callback)
+    fun getSpecialistDetails(specialistId: Long?, context: Context, callback: Callback<Specialist>)
     {
-        val url = "$apiRoot/resources/user/specialists/$specialistId?slim=HIGH";
-        callGetRequest(context, url, callback)
+        val url = "$apiRoot/user/specialists/$specialistId?slim=HIGH";
+        callGetRequest(context, url, object : SpriteHealthClient.Callback<String?> {
+            override fun onSuccess(response: String?) {
+                val type = object : TypeToken<Specialist>() {}.type
+                var specialist: Specialist = gson.fromJson(
+                    response,
+                    type
+                );
+                callback.onSuccess(specialist);
+            }
+
+            override fun onError(error: String?) {
+                callback.onError(error)
+            }
+        })
     }
 
 
-    fun serviceDetail(serviceId: Long?, context: Context, callback: Callback)
+    fun getServiceDetails(serviceId: Long?, context: Context, callback: Callback<Service>)
     {
-        val url = "$apiRoot/resources/services/$serviceId?slim=HIGH";
-        callGetRequest(context, url, callback)
+        val url = "$apiRoot/services/$serviceId?slim=HIGH";
+        callGetRequest(context, url, object : SpriteHealthClient.Callback<String?> {
+            override fun onSuccess(response: String?) {
+                val type = object : TypeToken<Service>() {}.type
+                var service: Service = gson.fromJson(
+                    response,
+                    type
+                );
+                callback.onSuccess(service);
+            }
+
+            override fun onError(error: String?) {
+                callback.onError(error)
+            }
+        })
     }
 
-    fun fetchSpecialities(context: Context, callback: Callback){
-        val url= "$apiRoot/resources/file/JSON/specialities.json";
-        callGetRequest(context, url, callback)
+    fun getSpecialities(context: Context, callback: Callback<List<Speciality>>){
+        val url= "$apiRoot/file/JSON/specialities.json";
+        callGetRequest(context, url, object : SpriteHealthClient.Callback<String?> {
+            override fun onSuccess(response: String?) {
+                val type = object : TypeToken<List<Speciality>>() {}.type
+                var specialities: List<Speciality> = gson.fromJson(
+                    response,
+                    type
+                );
+                callback.onSuccess(specialities);
+            }
+
+            override fun onError(error: String?) {
+                callback.onError(error)
+            }
+        })
     }
 
-    fun reasonList(context: Context, callback: Callback)
+    fun getReasons(
+        context: Context,
+        params: MutableMap<String, String>, callback: Callback<MutableList<Reason>>
+    )
     {
-        val url = "$apiRoot/resources/reasons"
-        callGetRequest(context, url, callback)
+        val url = "$apiRoot/reasons"
+        callGetRequestWithParams(
+            context,
+            params,
+            url,
+            object : SpriteHealthClient.Callback<String?> {
+                override fun onSuccess(response: String?) {
+                    val type = object : TypeToken<MutableList<Reason>>() {}.type
+                    var reasons: MutableList<Reason> = gson.fromJson(
+                        response,
+                        type
+                    );
+                    callback.onSuccess(reasons);
+                }
+
+                override fun onError(error: String?) {
+                    callback.onError(error)
+                }
+            })
     }
 
 
-    fun fetchReasonsBySpecialities(specialities: String? = "", context: Context, callback: Callback) {
-        val url = "$apiRoot/resources/reasons?specialities=$specialities"
-        callGetRequest(context, url, callback)
-    }
-
-    fun specialistAvailableSlot(
+    fun getSpecialistAvailability(
         params: MutableMap<String, String>,
         context: Context,
-        callback: Callback
+        callback: Callback<SpecialistAvailability>
     )
     {
-        val url ="$apiRoot/resources/specialists/available"
-        callGetRequestWithParams(context, params, url, callback)
+        val url ="$apiRoot/specialists/available"
+        callGetRequestWithParams(
+            context,
+            params,
+            url,
+            object : SpriteHealthClient.Callback<String?> {
+                override fun onSuccess(response: String?) {
+                    val type = object : TypeToken<SpecialistAvailability>() {}.type
+                    var specialistAvailability: SpecialistAvailability = gson.fromJson(
+                        response,
+                        type
+                    );
+                    callback.onSuccess(specialistAvailability);
+                }
+
+                override fun onError(error: String?) {
+                    callback.onError(error)
+                }
+            })
     }
 
 
-    fun fetchServiceCoverage(
+    fun getServiceNetworkCoverage(
         formPost: MutableMap<String, String>,
         context: Context,
-        callback: SpriteHealthClient.Callback
+        callback: SpriteHealthClient.Callback<NetworkCoverage>
     ) {
-        var url = "$apiRoot/resources/serviceCoverages/fetchMAA"
-        callPostRequest(context, formPost, url, callback)
+        var url = "$apiRoot/serviceCoverages/fetchMAA"
+        callPostRequest(context, formPost, url, object : SpriteHealthClient.Callback<String?> {
+            override fun onSuccess(response: String?) {
+                val type = object : TypeToken<NetworkCoverage>() {}.type
+                var networkCoverage: NetworkCoverage = gson.fromJson(
+                    response,
+                    type
+                );
+                callback.onSuccess(networkCoverage);
+            }
+
+            override fun onError(error: String?) {
+                callback.onError(error)
+            }
+        })
     }
 
 
-    fun listOfServiceByReason(
-        reasonId: String?,
-        specialistId: String?,
+    fun getServicesByReason(
+        reasonId: Long?,
+        vendorId: Long?,
         context: Context,
-        callback: Callback
+        callback: Callback<List<Service>>
     )
     {
-        val url = "$apiRoot/resources/reasons/$reasonId/services?vendorId=$specialistId"
-        callGetRequest(context, url, callback)
+        val url = "$apiRoot/reasons/$reasonId/services?vendorId=$vendorId"
+        callGetRequest(context, url, object : SpriteHealthClient.Callback<String?> {
+            override fun onSuccess(response: String?) {
+                val type = object : TypeToken<List<Service>>() {}.type
+                var services: List<Service> = gson.fromJson(
+                    response,
+                    type
+                );
+                callback.onSuccess(services);
+            }
+
+            override fun onError(error: String?) {
+                callback.onError(error)
+            }
+        })
     }
 
 
-    internal fun fetchBrandThemes(
+    internal fun getBrandThemes(
         target: String?,
         context: Context,
-        callback: Callback
+        callback: Callback<List<BrandTheme>>
     )
     {
-        val url = "$apiRoot/resources/brandThemes?target=$target"
-        callGetRequest(context, url, callback)
+        val url = "$apiRoot/brandThemes?target=$target"
+        callGetRequest(context, url, object : SpriteHealthClient.Callback<String?> {
+            override fun onSuccess(response: String?) {
+                val type = object : TypeToken<List<BrandTheme>>() {}.type
+                var brandThemes: List<BrandTheme> = gson.fromJson(
+                    response,
+                    type
+                );
+                callback.onSuccess(brandThemes);
+            }
+
+            override fun onError(error: String?) {
+                callback.onError(error)
+            }
+        })
     }
 
-    internal fun fetchDeveloperAccountByClientId(
-        clientId: String?,
+    internal fun getDeveloperAccount(
+        clientId: String,
         context: Context,
-        callback: Callback
+        callback: Callback<DeveloperAccount>
     )
     {
-        val url = "$apiRoot/resources/developerAccounts?clientId=$clientId"
-        callGetRequest(context, url, callback)
+        val url = "$apiRoot/developerAccounts?clientId=$clientId"
+        callGetRequest(context, url, object : SpriteHealthClient.Callback<String?> {
+            override fun onSuccess(response: String?) {
+                val type = object : TypeToken<DeveloperAccount>() {}.type
+                var account: DeveloperAccount = gson.fromJson(
+                    response,
+                    type
+                );
+                callback.onSuccess(account);
+            }
+
+            override fun onError(error: String?) {
+                callback.onError(error)
+            }
+        })
     }
 
-    fun appointmentBooking(
+    fun createAppointment(
         formPost: MutableMap<String, String>,
         context: Context,
-        callback: Callback
+        callback: Callback<CalendarEvent>
     )
     {
-        var url = "$apiRoot/resources/calendar/event"
-        callPostRequest(context, formPost, url, callback)
+        var url = "$apiRoot/calendar/event"
+        callPostRequest(context, formPost, url, object : SpriteHealthClient.Callback<String?> {
+            override fun onSuccess(response: String?) {
+                val type = object : TypeToken<CalendarEvent>() {}.type
+                var calendarEvent: CalendarEvent = gson.fromJson(
+                    response,
+                    type
+                );
+                callback.onSuccess(calendarEvent);
+            }
+
+            override fun onError(error: String?) {
+                callback.onError(error)
+            }
+        })
     }
 
-   public fun callVPTFinder(calleeIntent: Intent, context: Context) {
+
+    public fun launchVPTFlow(calleeIntent: Intent, context: Context, attrs: HashMap<String, String>) {
         storedIntent = calleeIntent;
-
-        //val intent = Intent( context, Class.forName("com.example.spritehealthsdk.MainActivity")).apply
-        val intent= Intent(context, VPTFinder::class.java).apply{
-
+        val intent= Intent(context, VPTFinder::class.java).apply {
+            for ((key, value) in attrs) {
+                require(!(key == null || value == null)) {
+                    this.putExtra(key, value)
+                }
+            }
         }
         if(intent != null) {
             context.startActivity(intent)
         }
     }
 
+    enum class Mode{
+        LIVE,TEST;
+    }
+
+ enum class APIDomains(val value: String) {
+
+     LIVE("wpbackendprod.appspot.com"),
+     TEST("wpbackendqa.appspot.com");
+
+ }
+
+    enum class WebClientDomains(val value: String) {
+        LIVE("wpfrontendprod.appspot.com"),
+        TEST("wpfrontendqa.appspot.com");
+
+
+    }
 
 
     companion object {
-        var storedIntent: Intent = Intent();
+        var storedIntent: Intent = Intent()
 
-        internal val SSOWebAppRoot: String="https://berger.spritehealth.com"
+        var selectedMode=Mode.TEST//default
 
-        internal  var apiRoot = "https://api.spritehealth.com"
+        internal var targetAPIDomain:String=APIDomains.TEST.value
+        internal var targetWebClientDomain:String=WebClientDomains.TEST.value
+
+        internal val SSOWebAppRoot: String="https://$targetWebClientDomain"
+
+        internal  var apiRoot = "https://$targetAPIDomain/resources"
 
         //Keep it in memory
         internal var member=User()
-        internal var specialities = ArrayList<Speciality>()
+        internal var specialities :List<Speciality>?= ArrayList()
 
         //TODO: MAKE IT DYNAMIC
-        internal  var auth_token:String? =""// "Bearer eyJ0eXAiOiJKV1QiLCJhbGciOiJSUzI1NiJ9.eyJzdWIiOiJkZWVwYWsuZ2FnbmVqYUBnbWFpbC5jb20iLCJyb2xlIjoiQ0EiLCJhdXRoR3JhbnRUeXBlIjoicmVzb3VyY2Vfb3duZXJfY3JlZGVudGlhbHMiLCJpc3MiOiJTcHJpdGUgSGVhbHRoIEFQSXMiLCJ0aW1lWm9uZSI6IkFtZXJpY2FcL0NoaWNhZ28iLCJ1c2VyQWdlbnQiOiIiLCJ1c2VySWQiOjU2NDIwMzQ5MzMxMzc0MDgsImF1ZCI6IlJlc291cmNlIENyZWRlbnRpYWxzIGNsaWVudCIsIm5iZiI6MTYyODc4MjczMSwic2NvcGUiOiJmdWxsX2FjY2VzcyIsImV4cCI6MTYyODgxMTUzMSwiYXV0aFR5cGUiOiJHT09HTEUiLCJpYXQiOjE2Mjg3ODI3MzEsImp0aSI6ImM5NGU0NDliLWIxYTktNDU1Zi1iZWQwLWQyZjg2ZWEzYzYyZCIsImVtYWlsIjoiZGVlcGFrLmdhZ25lamFAZ21haWwuY29tIn0.nByHw-gUtVfnUpy02OfBqyFJjNMhBA4ujtF-JYM6WZKkL_Uqg5J3gAM7me343fMyAqWRbp36jSj5HR4hktVhhWzla2GJ6jIZGh6niW4psNAKsTramYDvdcXqAy4bOfdszzgS7EcZWbyCi_FfAB-PKcKrxgFrrE7gdyWfK5Q99ZGTOno1yeYtmUNpWiJ5HDfOieVdkWlzYVCaSQS2XxglDCw4uwP-fmfV2JxCf71kgxz8z6OJi9gIYdjhYyjSd7xUIitKruP9ZsICJOgM5aywId_MEU9lhYEQN9iyk7_JxwE7FQOrHci__MDIN-oitkwrvPstHlvMVc-TIy5jyqMFOw"
-
+        internal  var auth_token:String? =""
         //TODO: To ask from host app
         var user_identity = "dag@berger.com"
         var client_id = "0b5c8d72f9794ec69870886cd060bc82"

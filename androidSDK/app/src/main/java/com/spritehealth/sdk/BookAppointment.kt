@@ -4,6 +4,7 @@ package com.spritehealth.sdk
 
 import Util
 import android.content.Intent
+import android.net.Network
 import android.os.Bundle
 import android.view.View
 import android.view.View.GONE
@@ -25,7 +26,6 @@ import kotlinx.android.synthetic.main.activity_book_appointment.tvServiceName
 import kotlinx.android.synthetic.main.activity_preview_appointment.*
 import kotlinx.android.synthetic.main.activity_specialist_detail.progressBar
 import kotlinx.android.synthetic.main.custom_toolbar.*
-import org.json.JSONArray
 import org.json.JSONObject
 import java.text.SimpleDateFormat
 import java.time.LocalDateTime
@@ -38,11 +38,11 @@ internal class BookAppointment : AppCompatActivity() {
 
     private val whereAbout: String?=null
     private var currentNavigatedCalendarDate: GregorianCalendar? =null
-    private var coverage: Coverage?=null
+    private var coverage: NetworkCoverage?=null
     private var costBreakUp: CostBreakUp =CostBreakUp();
     private var selectedReason: Reason? = null
     private var specialistAvailability: SpecialistAvailability? = null
-    private var reasonList: MutableList<Reason>? = ArrayList()
+    private var reasonList: MutableList<Reason> = ArrayList()
     var specialist:User?=null;
     var service: Service?=null
     var serviceId:Long=0;
@@ -121,13 +121,18 @@ internal class BookAppointment : AppCompatActivity() {
         progressBar.visibility = View.VISIBLE
         var specialities: String? = specialist?.specialization?.joinToString(",")
 
-             sdkClientInstance.fetchReasonsBySpecialities(
-                 specialities,
+        var params:MutableMap<String,String> = HashMap()
+
+        if (specialities != null) {
+            params.put("specialities",specialities)
+        }
+             sdkClientInstance.getReasons(
                 this,
-                object : SpriteHealthClient.Callback {
-                    override fun onSuccess(response: String?) {
-                        var reasonArrayJson = JSONArray(response)
-                        readReasons(reasonArrayJson)
+                 params,
+                object : SpriteHealthClient.Callback<MutableList<Reason>> {
+                    override fun onSuccess(reasons:MutableList<Reason>) {
+
+                        readReasons(reasons)
                         progressBar.visibility = View.GONE
                     }
 
@@ -139,9 +144,9 @@ internal class BookAppointment : AppCompatActivity() {
 
     }
 
-    private fun readReasons(jsonResponse: JSONArray) {
-        val reasonListType = object : TypeToken<List<Reason>>() {}.type
-        reasonList = gson.fromJson(jsonResponse.toString(), reasonListType);
+    private fun readReasons(reasons: MutableList<Reason>) {
+
+        reasonList = reasons
 
         if (reasonList?.isNotEmpty() == true) {
 
@@ -196,11 +201,10 @@ internal class BookAppointment : AppCompatActivity() {
     private fun fetchServiceDetails() {
         progressBar.visibility = View.VISIBLE
 
-        sdkClientInstance.serviceDetail(serviceId, this, object : SpriteHealthClient.Callback {
-            override fun onSuccess(response: String?) {
-                // do stuff here
-                var responseJson = JSONObject(response)
-                readService(responseJson)
+        sdkClientInstance.getServiceDetails(serviceId, this, object : SpriteHealthClient.Callback<Service> {
+            override fun onSuccess(serviceInfo: Service) {
+                service=serviceInfo
+                readService()
                 progressBar.visibility = View.GONE
             }
 
@@ -211,10 +215,8 @@ internal class BookAppointment : AppCompatActivity() {
         })
     }
 
-    private fun readService(responseJson: JSONObject) {
-        val type = object : TypeToken<Service>() {}.type
-        service = gson.fromJson(responseJson.toString(), type);
-
+    private fun readService() {
+      
         if(service!=null) {
             lloServiceWrapper.visibility=View.VISIBLE
             tvServiceName.text = service?.wpName ?: "";
@@ -233,12 +235,12 @@ internal class BookAppointment : AppCompatActivity() {
             }
             tvPrice.text = "...";
             tvPrice.visibility = VISIBLE;
-            fetchServiceCoverage()
+            fetchServiceNetworkCoverage()
         }
 
     }
 
-    private fun fetchServiceCoverage() {
+    private fun fetchServiceNetworkCoverage() {
         progressBar.visibility = View.GONE
         progressBarPricing.visibility = View.VISIBLE
         val formPost: MutableMap<String, String> = HashMap()
@@ -255,14 +257,13 @@ internal class BookAppointment : AppCompatActivity() {
         formPost.put("operation", "COMPUTE");
 
 
-        sdkClientInstance.fetchServiceCoverage(
+        sdkClientInstance.getServiceNetworkCoverage(
             formPost,
             this,
-            object : SpriteHealthClient.Callback {
-                override fun onSuccess(response: String?) {
-                    // do stuff here
-                    var responseJson = JSONObject(response)
-                    readCoverage(responseJson)
+            object : SpriteHealthClient.Callback<NetworkCoverage> {
+                override fun onSuccess(coverageInfo: NetworkCoverage) {
+                    coverage=coverageInfo
+                    readCoverage()
                     progressBarPricing.visibility = View.GONE
                 }
 
@@ -274,10 +275,8 @@ internal class BookAppointment : AppCompatActivity() {
             })
     }
 
-    private fun readCoverage(responseJson: JSONObject) {
+    private fun readCoverage() {
         try {
-        val type = object : TypeToken<Coverage>() {}.type
-        coverage = gson.fromJson(responseJson.toString(), type);
             if (coverage!=null){
                 if(coverage!!.errorDescription == null || coverage!!.errorDescription!!.isEmpty() ) {
                     costBreakUp.coverageId = coverage!!.id;
@@ -324,14 +323,12 @@ internal class BookAppointment : AppCompatActivity() {
         params["startDateTime"] = refDate.format(DateTimeFormatter.ofPattern("MM/dd/yyyy hh:mm a"))
         params["currentTime"] = refDate.format(DateTimeFormatter.ofPattern("HH:mm:ss"))
 
-        sdkClientInstance.specialistAvailableSlot(
+        sdkClientInstance.getSpecialistAvailability(
             params,
             this,
-            object : SpriteHealthClient.Callback {
-                override fun onSuccess(response: String?) {
-                    // do stuff here
-                    var responseJson = JSONObject(response)
-                    readAvailability(responseJson)
+            object : SpriteHealthClient.Callback<SpecialistAvailability> {
+                override fun onSuccess(response:SpecialistAvailability) {
+                    readAvailability(response)
                     progressBar.visibility = View.GONE
                     progressBarSlots.visibility=GONE
                 }
@@ -344,9 +341,8 @@ internal class BookAppointment : AppCompatActivity() {
             })
     }
 
-    private fun readAvailability(responseJson: JSONObject) {
-        val type = object : TypeToken<SpecialistAvailability>() {}.type
-        specialistAvailability = gson.fromJson(responseJson.toString(), type);
+    private fun readAvailability(specialistAvailabilityInfo: SpecialistAvailability) {
+        specialistAvailability = specialistAvailabilityInfo
 
         if(specialistAvailability?.freeTimePeriods?.isNotEmpty() == true) {
             //organize/group by slots by days

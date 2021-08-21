@@ -198,11 +198,11 @@ internal class PreviewAppointment : AppCompatActivity() {
     private fun fetchDeveloperAccount() {
         progressBar.visibility= VISIBLE
 
-        sdkClientInstance.fetchDeveloperAccountByClientId(
+        sdkClientInstance.getDeveloperAccount(
             SpriteHealthClient.client_id,
             this,
-            object : SpriteHealthClient.Callback {
-                override fun onSuccess(response: String?) {
+            object : SpriteHealthClient.Callback<DeveloperAccount> {
+                override fun onSuccess(response: DeveloperAccount) {
                     readDeveloperAccount(response)
                     progressBar.visibility = View.GONE
                 }
@@ -214,9 +214,8 @@ internal class PreviewAppointment : AppCompatActivity() {
             })
     }
 
-    fun readDeveloperAccount(responseStr: String?){
-        val type = object : TypeToken<DeveloperAccount>() {}.type
-        val developerAccount:DeveloperAccount = gson.fromJson(responseStr.toString(), type);
+    fun readDeveloperAccount(developerAccount: DeveloperAccount){
+
         if(developerAccount!=null){
             val companyName=developerAccount.name
             var website=developerAccount.website
@@ -261,7 +260,6 @@ internal class PreviewAppointment : AppCompatActivity() {
 
     @Synchronized
     fun bookVisit(view: View){
-        System.out.println("============> Button clicked 1")
         progressBar.visibility = VISIBLE
         bookButton.visibility = View.GONE
 
@@ -339,9 +337,8 @@ internal class PreviewAppointment : AppCompatActivity() {
         progressBar.visibility = VISIBLE
         bookButton.visibility = View.GONE
 
-        System.out.println("============> Button clicked 11")
-        clientSdkInstance.appointmentBooking(getFormPost(), this, object : SpriteHealthClient.Callback {
-            override fun onSuccess(response: String?) {
+         clientSdkInstance.createAppointment(getFormPost(), this, object : SpriteHealthClient.Callback<CalendarEvent> {
+            override fun onSuccess(response: CalendarEvent) {
                 // do stuff here
                 readAppointmentResponse(response)
                 progressBar.visibility = View.GONE
@@ -355,10 +352,7 @@ internal class PreviewAppointment : AppCompatActivity() {
 
     }
 
-    private fun readAppointmentResponse(responseStr: String?) {
-        System.out.println("============> Button clicked 111")
-        val calendarEvent: CalendarEvent =
-            gson.fromJson(responseStr, object : TypeToken<CalendarEvent?>() {}.type)
+    private fun readAppointmentResponse(calendarEvent: CalendarEvent) {
 
         var msg = "";
         if (calendarEvent != null && calendarEvent.errors?.size ?: 0 > 0) {

@@ -23,13 +23,12 @@ import com.android.volley.toolbox.Volley
 import com.google.android.gms.location.*
 import com.google.gson.Gson
 import com.google.gson.GsonBuilder
-import com.google.gson.reflect.TypeToken
 import com.spritehealth.sdk.model.AccessTokenResponse
+import com.spritehealth.sdk.model.Specialist
 import com.spritehealth.sdk.model.Speciality
 import com.spritehealth.sdk.model.User
 import kotlinx.android.synthetic.main.activity_vptfinder.*
 import kotlinx.android.synthetic.main.custom_toolbar.*
-import org.json.JSONArray
 import java.time.LocalDateTime
 import java.time.format.DateTimeFormatter
 import kotlin.collections.ArrayList
@@ -47,6 +46,7 @@ internal class VPTFinder : AppCompatActivity() {
 
     var builder: GsonBuilder = GsonBuilder();
     var gson: Gson =builder.create()
+    var mContext:Context=this
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -63,26 +63,22 @@ internal class VPTFinder : AppCompatActivity() {
         }
 
         mFusedLocationClient = LocationServices.getFusedLocationProviderClient(this)
-        getLastLocation()
+        //getLastLocation()
 
         val queue = Volley.newRequestQueue(this)
 
         var progressBar: ProgressBar = findViewById(R.id.progressBar);
         progressBar.visibility = View.VISIBLE
 
-        sdkClientInstance.createAccessToken(this, object : SpriteHealthClient.Callback {
-            override fun onSuccess(response: String?) {
-                var builder: GsonBuilder = GsonBuilder();
-                var gson: Gson = builder.create()
-                val accessTokenType = object : TypeToken<AccessTokenResponse>() {}.type
-                var accessTokenResponse: AccessTokenResponse = gson.fromJson(
-                    response,
-                    accessTokenType
-                );
-                SpriteHealthClient.auth_token = accessTokenResponse.access_token;
-                SpriteHealthClient.expires_in = accessTokenResponse.expires_in;
-
-                fetchMemberDetails()
+        sdkClientInstance.createAccessToken(this, object : SpriteHealthClient.Callback<AccessTokenResponse?> {
+            override fun onSuccess(accessTokenResponse: AccessTokenResponse?) {
+                if (accessTokenResponse != null) {
+                    SpriteHealthClient.auth_token = accessTokenResponse.access_token
+                    SpriteHealthClient.expires_in = accessTokenResponse.expires_in;
+                    fetchMemberDetails()
+                }else{
+                    Toast.makeText(mContext,"Failed to authenticate client.",Toast.LENGTH_LONG).show()
+                }
             }
 
             override fun onError(error: String?) {
@@ -95,14 +91,14 @@ internal class VPTFinder : AppCompatActivity() {
 
 
     fun fetchMemberDetails(){
-        sdkClientInstance.memberDetail(this, object : SpriteHealthClient.Callback {
-            override fun onSuccess(response: String?) {
-
-                val userType = object : TypeToken<User>() {}.type
-                var member: User = gson.fromJson(response, userType);
-                SpriteHealthClient.member = member;
-
-                fetchSpecialists()
+        sdkClientInstance.getMemberDetails(this, object : SpriteHealthClient.Callback<User> {
+            override fun onSuccess(memberInfo: User) {
+                if (memberInfo != null) {
+                    SpriteHealthClient.member = memberInfo
+                    fetchSpecialists()
+                }else{
+                    Toast.makeText(mContext,"Failed to access member details.",Toast.LENGTH_LONG).show()
+                }
             }
 
             override fun onError(error: String?) {
@@ -169,14 +165,13 @@ internal class VPTFinder : AppCompatActivity() {
         }
 
         progressBar.visibility = View.VISIBLE
-        sdkClientInstance.specialistAvailable(params, this, object : SpriteHealthClient.Callback {
-            override fun onSuccess(response: String?) {
-                // do stuff here
-                val responseJsonArray = JSONArray(response)
-                if(SpriteHealthClient.specialities.isNotEmpty()){
-                    displayVPT(responseJsonArray)
+        sdkClientInstance.getAvailableSpecialists(params, this, object : SpriteHealthClient.Callback<List<Specialist>> {
+            override fun onSuccess(speciaistsWithAvailability: List<Specialist>) {
+
+                if(SpriteHealthClient.specialities?.isNotEmpty() == true){
+                    displayVPT(speciaistsWithAvailability)
                 }else{
-                    fetchSpecialities(responseJsonArray)
+                    fetchSpecialities(speciaistsWithAvailability)
                 }
                 progressBar.visibility = View.GONE
             }
@@ -188,18 +183,14 @@ internal class VPTFinder : AppCompatActivity() {
         })
     }
 
-    fun fetchSpecialities(specialistsJsonArray: JSONArray) {
+    fun fetchSpecialities(specialistList: List<Specialist>) {
         progressBar.visibility = View.VISIBLE
 
-        sdkClientInstance.fetchSpecialities(this, object : SpriteHealthClient.Callback {
-            override fun onSuccess(response: String?) {
-                var builder: GsonBuilder = GsonBuilder();
-                var gson: Gson = builder.create()
-                val type = object : TypeToken<List<Speciality>>() {}.type
-                var specialities: ArrayList<Speciality> = gson.fromJson(response, type)
-                SpriteHealthClient.specialities = specialities;
+        sdkClientInstance.getSpecialities(this, object : SpriteHealthClient.Callback<List<Speciality>> {
+            override fun onSuccess(specialities: List<Speciality>) {
+                 SpriteHealthClient.specialities = specialities;
 
-                displayVPT(specialistsJsonArray)
+                displayVPT(specialistList)
             }
 
             override fun onError(error: String?) {
@@ -211,18 +202,10 @@ internal class VPTFinder : AppCompatActivity() {
 
 
 
-    fun displayVPT(jsonarray_info: JSONArray?) {
+    fun displayVPT(specialistList: List<Specialist>) {
         progressBar.visibility = View.GONE
-        var size: Int = jsonarray_info!!.length()
+        var size: Int = specialistList!!.size
         if(size>0){
-            var builder: GsonBuilder = GsonBuilder();
-            var gson: Gson =builder.create()
-            val specialistListType = object : TypeToken<List<User>>() {}.type
-            var specialistList:List<User> = gson.fromJson(
-                jsonarray_info.toString(),
-                specialistListType
-            );
-
             recycler_view.adapter = SpecialistAdapter(specialistList, this)
             recycler_view.layoutManager = LinearLayoutManager(this)
         }else{
@@ -248,8 +231,6 @@ internal class VPTFinder : AppCompatActivity() {
                         currentLatitude=location.latitude
                         currentLongitude=location.longitude
                         readLocationForState()
-                        //findViewById<TextView>(R.id.latTextView).text = location.latitude.toString()
-                        //findViewById<TextView>(R.id.lonTextView).text = location.longitude.toString()
                     }
                 }
             } else {

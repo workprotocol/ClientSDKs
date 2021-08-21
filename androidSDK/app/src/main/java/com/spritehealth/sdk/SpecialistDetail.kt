@@ -10,18 +10,17 @@ import androidx.appcompat.app.AppCompatActivity
 import com.google.gson.Gson
 import com.google.gson.GsonBuilder
 import com.google.gson.reflect.TypeToken
-import com.spritehealth.sdk.model.User
+import com.spritehealth.sdk.model.Specialist
 import com.spritehealth.sdk.model.VendorDescriptionTypeEnum
 import com.squareup.picasso.Picasso
 import kotlinx.android.synthetic.main.activity_specialist_detail.*
 import kotlinx.android.synthetic.main.custom_toolbar.*
-import org.json.JSONObject
 
 
 internal class SpecialistDetail : AppCompatActivity() {
 
-    private var specialistWithAvailability:User?=null;
-    private lateinit var specialistUser:User;
+    private var specialistWithAvailability:Specialist?=null;
+    private lateinit var specialistUser:Specialist;
 
     val clientSdkInstance = SpriteHealthClient()
 
@@ -46,7 +45,7 @@ internal class SpecialistDetail : AppCompatActivity() {
 
             var builder: GsonBuilder = GsonBuilder();
             var gson: Gson = builder.create()
-            val specialistType = object : TypeToken<User>() {}.type
+            val specialistType = object : TypeToken<Specialist>() {}.type
             specialistWithAvailability = gson.fromJson(specialistWithAvailabilityJSON.toString(), specialistType);
 
             if (specialistWithAvailability != null) {
@@ -67,11 +66,10 @@ internal class SpecialistDetail : AppCompatActivity() {
         var progressBar: ProgressBar = findViewById(R.id.progressBar);
         progressBar.visibility = View.VISIBLE
 
-        clientSdkInstance.specialistDetail(id, this, object : SpriteHealthClient.Callback {
-            override fun onSuccess(response: String?) {
-                // do stuff here
-                var responseJson = JSONObject(response)
-                displaySpecailistDetail(responseJson)
+        clientSdkInstance.getSpecialistDetails(id, this, object : SpriteHealthClient.Callback<Specialist> {
+            override fun onSuccess(specialist: Specialist) {
+                specialistUser=specialist
+                displaySpecailistDetail()
                 progressBar.visibility = View.GONE
             }
             override fun onError(error: String?)
@@ -82,12 +80,7 @@ internal class SpecialistDetail : AppCompatActivity() {
         } )
     }
 
-    fun displaySpecailistDetail(specialistJSON:JSONObject?) {
-        
-        var builder: GsonBuilder = GsonBuilder();
-        var gson: Gson =builder.create()
-        val specialistType = object : TypeToken<User>() {}.type
-        specialistUser= gson.fromJson(specialistJSON.toString(), specialistType);
+    fun displaySpecailistDetail() {
 
         if(specialistUser!=null) {
 
@@ -99,7 +92,7 @@ internal class SpecialistDetail : AppCompatActivity() {
             var specialityNames: String? = ""
             if (specialistUser.specialization!!.isNotEmpty()) {
 
-                var speciality = SpriteHealthClient.specialities.find {
+                var speciality = SpriteHealthClient.specialities?.find {
                     if (it.value != null && specialistUser.specialization != null) {
                         it.value!! == specialistUser.specialization!![0];
                     } else {
@@ -199,8 +192,8 @@ internal class SpecialistDetail : AppCompatActivity() {
             var imageId = imageIds!!.iterator().next()
 
             var imageUrl =
-                SpriteHealthClient.apiRoot + "/resources/images/" + imageId.toString()
-            Picasso.get().load(imageUrl).into(imgvUser)
+                SpriteHealthClient.apiRoot + "/images/" + imageId.toString()
+            Picasso.get().load(imageUrl).into(imgvSpecialist)
         }
 
     }
@@ -210,7 +203,7 @@ internal class SpecialistDetail : AppCompatActivity() {
         var builder:GsonBuilder = GsonBuilder()
         var gson:Gson =builder.create()
 
-        val intent = Intent(this, BookAppointment::class.java).apply {
+        val intent = android.content.Intent(this, BookAppointment::class.java).apply {
 
             if(specialistUser!=null) {
                 putExtra("specialistJSON", gson.toJson(specialistUser))

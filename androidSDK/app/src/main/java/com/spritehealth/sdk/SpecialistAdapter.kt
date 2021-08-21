@@ -10,6 +10,7 @@ import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
 import com.google.gson.Gson
 import com.google.gson.GsonBuilder
+import com.spritehealth.sdk.model.Specialist
 import com.spritehealth.sdk.model.User
 import com.squareup.picasso.Picasso
 import kotlinx.android.synthetic.main.specialist_list_item.view.*
@@ -30,7 +31,7 @@ interface CellClickListener {
 }
 */
 
-class SpecialistAdapter(private val specialistList: List<User>, private val context: Context) :
+class SpecialistAdapter(private val specialistList: List<Specialist>, private val context: Context) :
     RecyclerView.Adapter<SpecialistAdapter.ItemViewHolder>() {
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ItemViewHolder {
@@ -59,14 +60,14 @@ class SpecialistAdapter(private val specialistList: List<User>, private val cont
         if (currentItem.imageIds!=null && currentItem.imageIds!!.isNotEmpty()) {
             var imageId = currentItem.imageIds!!.iterator().next()
 
-            var imageUrl = SpriteHealthClient.apiRoot+"/resources/images/" + imageId.toString()
+            var imageUrl = SpriteHealthClient.apiRoot+"/images/" + imageId.toString()
             Picasso.get().load(imageUrl).into(holder.imageView)
         }
 
         var specialityNames:String?=""
         if(currentItem.specialization!!.isNotEmpty()){
 
-            var speciality=SpriteHealthClient.specialities.find {
+            var speciality= SpriteHealthClient.specialities?.find {
                 if(it.value!=null  && currentItem.specialization!=null){
                     it.value!! == currentItem.specialization!![0];
                 }else{

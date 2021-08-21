@@ -19,14 +19,11 @@ import androidx.appcompat.app.ActionBar
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.app.ActivityCompat
 import androidx.recyclerview.widget.LinearLayoutManager
-import com.android.volley.toolbox.Volley
 import com.google.android.gms.location.*
 import com.google.gson.Gson
 import com.google.gson.GsonBuilder
-import com.spritehealth.sdk.model.AccessTokenResponse
-import com.spritehealth.sdk.model.Specialist
-import com.spritehealth.sdk.model.Speciality
-import com.spritehealth.sdk.model.User
+import com.spritehealth.sdk.SpriteHealthClient.Callback
+import com.spritehealth.sdk.model.*
 import kotlinx.android.synthetic.main.activity_vptfinder.*
 import kotlinx.android.synthetic.main.custom_toolbar.*
 import java.time.LocalDateTime
@@ -42,7 +39,7 @@ internal class VPTFinder : AppCompatActivity() {
     private var currentLongitude: Double?=null
     private var currentLatitude: Double?=null
     val specialists: MutableList<Map<String, String>> = ArrayList()
-    val sdkClientInstance = SpriteHealthClient()
+    var sdkClientInstance: SpriteHealthClient? = null
 
     var builder: GsonBuilder = GsonBuilder();
     var gson: Gson =builder.create()
@@ -63,15 +60,35 @@ internal class VPTFinder : AppCompatActivity() {
         }
 
         mFusedLocationClient = LocationServices.getFusedLocationProviderClient(this)
-        //getLastLocation()
 
-        val queue = Volley.newRequestQueue(this)
 
         var progressBar: ProgressBar = findViewById(R.id.progressBar);
         progressBar.visibility = View.VISIBLE
 
+
+
+        sdkClientInstance=SpriteHealthClient.getInstance(this.applicationContext)
+        sdkClientInstance!!.initialize(this,
+            InitOptions("0b5c8d72f9794ec69870886cd060bc82","dag@berger.com",IntegrationMode.TEST), object:Callback<InitializationStatus>{
+                override fun onSuccess(initializationStatus: InitializationStatus) {
+                    if(initializationStatus!=null && initializationStatus.status==InitializationStatusTypes.SUCCESS){
+                        //fetchSpecialists()
+                        getLastLocation()
+                    }
+                }
+
+                override fun onError(error: String?) {
+                   Toast.makeText(mContext,"Failed to initialize Sprite Health client sdk.",Toast.LENGTH_LONG).show()
+                }
+
+            }
+        )
+
+
+        /*
+         val queue = Volley.newRequestQueue(this)
         sdkClientInstance.createAccessToken(this, object : SpriteHealthClient.Callback<AccessTokenResponse?> {
-            override fun onSuccess(accessTokenResponse: AccessTokenResponse?) {
+            override fun onSuccess(accessTokenResponse: InitializationStatus) {
                 if (accessTokenResponse != null) {
                     SpriteHealthClient.auth_token = accessTokenResponse.access_token
                     SpriteHealthClient.expires_in = accessTokenResponse.expires_in;
@@ -86,13 +103,16 @@ internal class VPTFinder : AppCompatActivity() {
                 progressBar.visibility = View.GONE
             }
         })
+        */
 
     }
 
 
+    /*
+
     fun fetchMemberDetails(){
         sdkClientInstance.getMemberDetails(this, object : SpriteHealthClient.Callback<User> {
-            override fun onSuccess(memberInfo: User) {
+            override fun onSuccess(memberInfo: InitializationStatus) {
                 if (memberInfo != null) {
                     SpriteHealthClient.member = memberInfo
                     fetchSpecialists()
@@ -107,6 +127,7 @@ internal class VPTFinder : AppCompatActivity() {
             }
         })
     }
+    */
 
     fun fetchSpecialists(){
         /*
@@ -165,7 +186,7 @@ internal class VPTFinder : AppCompatActivity() {
         }
 
         progressBar.visibility = View.VISIBLE
-        sdkClientInstance.getAvailableSpecialists(params, this, object : SpriteHealthClient.Callback<List<Specialist>> {
+        sdkClientInstance?.getAvailableSpecialists(params, this, object : Callback<List<Specialist>> {
             override fun onSuccess(speciaistsWithAvailability: List<Specialist>) {
 
                 if(SpriteHealthClient.specialities?.isNotEmpty() == true){
@@ -186,9 +207,9 @@ internal class VPTFinder : AppCompatActivity() {
     fun fetchSpecialities(specialistList: List<Specialist>) {
         progressBar.visibility = View.VISIBLE
 
-        sdkClientInstance.getSpecialities(this, object : SpriteHealthClient.Callback<List<Speciality>> {
+        sdkClientInstance?.getSpecialities(this, object : Callback<List<Speciality>> {
             override fun onSuccess(specialities: List<Speciality>) {
-                 SpriteHealthClient.specialities = specialities;
+                SpriteHealthClient.specialities = specialities;
 
                 displayVPT(specialistList)
             }

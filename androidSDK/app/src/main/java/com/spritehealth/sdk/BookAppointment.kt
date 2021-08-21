@@ -4,7 +4,6 @@ package com.spritehealth.sdk
 
 import Util
 import android.content.Intent
-import android.net.Network
 import android.os.Bundle
 import android.view.View
 import android.view.View.GONE
@@ -23,10 +22,8 @@ import kotlinx.android.synthetic.main.activity_book_appointment.*
 import kotlinx.android.synthetic.main.activity_book_appointment.tvDuration
 import kotlinx.android.synthetic.main.activity_book_appointment.tvPrice
 import kotlinx.android.synthetic.main.activity_book_appointment.tvServiceName
-import kotlinx.android.synthetic.main.activity_preview_appointment.*
 import kotlinx.android.synthetic.main.activity_specialist_detail.progressBar
 import kotlinx.android.synthetic.main.custom_toolbar.*
-import org.json.JSONObject
 import java.text.SimpleDateFormat
 import java.time.LocalDateTime
 import java.time.format.DateTimeFormatter
@@ -47,7 +44,7 @@ internal class BookAppointment : AppCompatActivity() {
     var service: Service?=null
     var serviceId:Long=0;
 
-    val sdkClientInstance = SpriteHealthClient()
+    val sdkClientInstance = SpriteHealthClient.getInstance(this)
     var builder: GsonBuilder = GsonBuilder();
     var gson: Gson = builder.create()
 
@@ -130,7 +127,7 @@ internal class BookAppointment : AppCompatActivity() {
                 this,
                  params,
                 object : SpriteHealthClient.Callback<MutableList<Reason>> {
-                    override fun onSuccess(reasons:MutableList<Reason>) {
+                    override fun onSuccess(reasons: MutableList<Reason>) {
 
                         readReasons(reasons)
                         progressBar.visibility = View.GONE
@@ -203,7 +200,7 @@ internal class BookAppointment : AppCompatActivity() {
 
         sdkClientInstance.getServiceDetails(serviceId, this, object : SpriteHealthClient.Callback<Service> {
             override fun onSuccess(serviceInfo: Service) {
-                service=serviceInfo
+                service= serviceInfo
                 readService()
                 progressBar.visibility = View.GONE
             }
@@ -262,7 +259,7 @@ internal class BookAppointment : AppCompatActivity() {
             this,
             object : SpriteHealthClient.Callback<NetworkCoverage> {
                 override fun onSuccess(coverageInfo: NetworkCoverage) {
-                    coverage=coverageInfo
+                    coverage= coverageInfo
                     readCoverage()
                     progressBarPricing.visibility = View.GONE
                 }
@@ -327,7 +324,7 @@ internal class BookAppointment : AppCompatActivity() {
             params,
             this,
             object : SpriteHealthClient.Callback<SpecialistAvailability> {
-                override fun onSuccess(response:SpecialistAvailability) {
+                override fun onSuccess(response: SpecialistAvailability) {
                     readAvailability(response)
                     progressBar.visibility = View.GONE
                     progressBarSlots.visibility=GONE

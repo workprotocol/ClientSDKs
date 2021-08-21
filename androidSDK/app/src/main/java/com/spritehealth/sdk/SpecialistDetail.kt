@@ -1,6 +1,5 @@
 
 package com.spritehealth.sdk
-import android.content .Intent
 import android.os.Bundle
 import android.view.View
 import android.widget.ProgressBar
@@ -10,6 +9,7 @@ import androidx.appcompat.app.AppCompatActivity
 import com.google.gson.Gson
 import com.google.gson.GsonBuilder
 import com.google.gson.reflect.TypeToken
+import com.spritehealth.sdk.model.InitializationStatus
 import com.spritehealth.sdk.model.Specialist
 import com.spritehealth.sdk.model.VendorDescriptionTypeEnum
 import com.squareup.picasso.Picasso
@@ -22,7 +22,7 @@ internal class SpecialistDetail : AppCompatActivity() {
     private var specialistWithAvailability:Specialist?=null;
     private lateinit var specialistUser:Specialist;
 
-    val clientSdkInstance = SpriteHealthClient()
+    val clientSdkInstance = SpriteHealthClient.getInstance(this)
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -68,7 +68,7 @@ internal class SpecialistDetail : AppCompatActivity() {
 
         clientSdkInstance.getSpecialistDetails(id, this, object : SpriteHealthClient.Callback<Specialist> {
             override fun onSuccess(specialist: Specialist) {
-                specialistUser=specialist
+                specialistUser= specialist
                 displaySpecailistDetail()
                 progressBar.visibility = View.GONE
             }

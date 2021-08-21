@@ -22,14 +22,13 @@ import kotlinx.android.synthetic.main.activity_preview_appointment.progressBar
 import kotlinx.android.synthetic.main.activity_preview_appointment.tvDuration
 import kotlinx.android.synthetic.main.activity_preview_appointment.tvServiceName
 import kotlinx.android.synthetic.main.activity_specialist_detail.tvSpeciality
-import kotlinx.android.synthetic.main.activity_vptfinder.*
 import kotlinx.android.synthetic.main.custom_toolbar.*
 import java.time.format.DateTimeFormatter
 
 
 internal class PreviewAppointment : AppCompatActivity() {
 
-    val sdkClientInstance = SpriteHealthClient()
+    val sdkClientInstance = SpriteHealthClient.getInstance(this)
 
     private var eventStartTime: String? = null
     private var eventEndTime: String?=null
@@ -53,7 +52,6 @@ internal class PreviewAppointment : AppCompatActivity() {
     var builder: GsonBuilder = GsonBuilder();
     var gson: Gson = builder.create()
 
-    val clientSdkInstance = SpriteHealthClient()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -337,7 +335,7 @@ internal class PreviewAppointment : AppCompatActivity() {
         progressBar.visibility = VISIBLE
         bookButton.visibility = View.GONE
 
-         clientSdkInstance.createAppointment(getFormPost(), this, object : SpriteHealthClient.Callback<CalendarEvent> {
+         sdkClientInstance.createAppointment(getFormPost(), this, object : SpriteHealthClient.Callback<CalendarEvent> {
             override fun onSuccess(response: CalendarEvent) {
                 // do stuff here
                 readAppointmentResponse(response)

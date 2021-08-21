@@ -3,6 +3,41 @@ package com.spritehealth.sdk.model
 import java.util.*
 import kotlin.collections.ArrayList
 
+enum class IntegrationMode{
+    LIVE,TEST;
+}
+
+
+enum class APIDomains(val value: String) {
+    LIVE("wpbackendprod.appspot.com"),
+    TEST("wpbackendqa.appspot.com");
+}
+
+enum class WebClientDomains(val value: String) {
+    LIVE("wpfrontendprod.appspot.com"),
+    TEST("wpfrontendqa.appspot.com");
+}
+
+
+
+class InitOptions(clientId: String, userIdentity: String, integrationMode: IntegrationMode=IntegrationMode.TEST) {
+    var clientId:String=clientId
+    var userIdentity:String=userIdentity
+    var integrationMode:IntegrationMode=integrationMode
+}
+
+
+enum class InitializationStatusTypes {
+    SUCCESS,
+    FAILURE;
+}
+
+
+class InitializationStatus(status:String,message:String){
+    var status:InitializationStatusTypes=InitializationStatusTypes.SUCCESS
+    var message:String="SDK Client initialized successfully."
+}
+
 
 class AccessTokenResponse{
 

@@ -40,7 +40,7 @@ internal class AppointmentDetails : AppCompatActivity() {
 
     val mainContext=this;
 
-    val clientSdkInstance = SpriteHealthClient()
+    val clientSdkInstance = SpriteHealthClient.getInstance(this)
 
     private val PERMISSION_REQUEST_CODE = 200
 

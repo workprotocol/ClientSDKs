@@ -43,7 +43,7 @@ internal class BookAppointment : AppCompatActivity() {
     private var selectedReason: Reason? = null
     private var specialistAvailability: SpecialistAvailability? = null
     private var reasonList: MutableList<Reason> = ArrayList()
-    var specialist:User?=null;
+    var specialist:Specialist?=null;
     var service: Service?=null
     var serviceId:Long=0;
 
@@ -103,7 +103,7 @@ internal class BookAppointment : AppCompatActivity() {
 
         if(intent.hasExtra("specialistJSON")) {
             val specialistJSON = intent.getStringExtra("specialistJSON")
-            val specialistType = object : TypeToken<User>() {}.type
+            val specialistType = object : TypeToken<Specialist>() {}.type
             specialist = gson.fromJson(specialistJSON.toString(), specialistType);
 
             if (specialist != null) {

@@ -42,7 +42,7 @@ internal class PreviewAppointment : AppCompatActivity() {
 
     var displayableAppointmentDateTimeFormatted: String? = null
 
-    var specialist:User?=null;
+    var specialist:Specialist?=null;
     private var service: Service? = null
     private var costBreakUp = CostBreakUp()
 
@@ -81,7 +81,7 @@ internal class PreviewAppointment : AppCompatActivity() {
 
             if (bundle.containsKey("specialistJSON")) {
                 val specialistJSON = bundle.getString("specialistJSON")
-                val type = object : TypeToken<User>() {}.type
+                val type = object : TypeToken<Specialist>() {}.type
                 specialist =gson.fromJson(specialistJSON, type)
             }
 

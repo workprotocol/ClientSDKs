@@ -4,16 +4,13 @@ package com.spritehealth.sdk
 import CustomTabHelper
 import android.Manifest
 import android.annotation.SuppressLint
-import android.app.AlertDialog
-import android.content.DialogInterface
+import android.content.Intent
 import android.content.pm.PackageManager
 import android.net.Uri
-import android.os.Build
 import android.os.Bundle
 import android.webkit.*
 import android.widget.ProgressBar
 import android.widget.TextView
-import android.widget.Toast
 import androidx.appcompat.app.ActionBar
 import androidx.appcompat.app.AppCompatActivity
 import androidx.browser.customtabs.CustomTabsIntent
@@ -28,6 +25,9 @@ import kotlinx.android.synthetic.main.custom_toolbar.*
 
 internal class AppointmentDetails : AppCompatActivity() {
 
+    private lateinit var customTabsIntent: CustomTabsIntent
+
+    private var requestCode: Int=0
     private var WEB_URL_TO_LAUNCH: String? =null
     private var appointment: Appointment? =null
     var webView: WebView?=null
@@ -43,6 +43,7 @@ internal class AppointmentDetails : AppCompatActivity() {
     val clientSdkInstance = SpriteHealthClient.getInstance(this)
 
     private val PERMISSION_REQUEST_CODE = 200
+    var OPEN_NEW_ACTIVITY:Int = 12345
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -73,6 +74,8 @@ internal class AppointmentDetails : AppCompatActivity() {
 
         }
 
+        
+        /*
 
         if (checkPermission()) {
             //main logic or main code
@@ -81,44 +84,90 @@ internal class AppointmentDetails : AppCompatActivity() {
         } else {
             requestPermission();
         }
+        
+        */
 
+
+    }
+
+    override fun onResume() {
+        super.onResume()
+        //if (requestCode >= 0){
+            if (requestCode == OPEN_NEW_ACTIVITY && SpriteHealthClient.storedIntent != null) {
+                requestCode = -1
+                this.startActivity(SpriteHealthClient.storedIntent)
+            } else {
+                triggerPage()
+            }
+     //}
+    }
+
+    fun triggerPage(){
 
 
         val builder = CustomTabsIntent.Builder()
         // modify toolbar color
-                //builder.setToolbarColor(ContextCompat.getColor(this, R.color.primary))
+        //builder.setToolbarColor(ContextCompat.getColor(this, R.color.primary))
         // add share button to overflow men
-                //builder.addDefaultShareMenuItem()
+        //builder.addDefaultShareMenuItem()
         // add menu item to oveflow
-               // builder.addMenuItem("MENU_ITEM_NAME", pendingIntent)
+        // builder.addMenuItem("MENU_ITEM_NAME", pendingIntent)
         // show website title
-                //builder.setUrlBarHidingEnabled(true).setShowTitle(false)
+        //builder.setUrlBarHidingEnabled(true).setShowTitle(false)
         // modify back button icon
-                //builder.setCloseButtonIcon(bitmap)
+        //builder.setCloseButtonIcon(bitmap)
         // menu item icon
-                //builder.setActionButton(bitmap, "Android", pendingIntent, true)
+        //builder.setActionButton(bitmap, "Android", pendingIntent, true)
         // animation for enter and exit of tab            builder.setStartAnimations(this, android.R.anim.fade_in, android.R.anim.fade_out)
         builder.setExitAnimations(this, android.R.anim.fade_in, android.R.anim.fade_out)
         //By default, if we don’t set any animations then the
 
-        val customTabsIntent = builder.build()
-
+        customTabsIntent = builder.build()
+        requestCode=OPEN_NEW_ACTIVITY
         // check is chrom available
         val packageName = WEB_URL_TO_LAUNCH?.let { CustomTabHelper().getPackageNameToUse(this, it) }
         if (packageName == null)
         // if chrome not available open in web view
             loadDetailsPage()
         else {
+
             customTabsIntent.intent.setPackage(packageName)
             customTabsIntent.launchUrl(this, Uri.parse(WEB_URL_TO_LAUNCH))
-        }
 
+            /*
+            val openURL = Intent(android.content.Intent.ACTION_VIEW)
+            openURL.data = Uri.parse(WEB_URL_TO_LAUNCH)
+            startActivityForResult(openURL,OPEN_NEW_ACTIVITY)
+            */
+        }
+    }
+
+
+    override fun onBackPressed() {
+        super.onBackPressed()
+        if (requestCode == OPEN_NEW_ACTIVITY && SpriteHealthClient.storedIntent!=null) {
+            this.startActivity(SpriteHealthClient.storedIntent)
+        }
+    }
+
+    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
+        super.onActivityResult(requestCode, resultCode, data)
+
+        if (requestCode == OPEN_NEW_ACTIVITY && SpriteHealthClient.storedIntent!=null) {
+           this.startActivity(SpriteHealthClient.storedIntent)
+        }
     }
 
 
     private fun checkPermission(): Boolean {
-        val cameraAccessGranted:Boolean=ContextCompat.checkSelfPermission(this, Manifest.permission.CAMERA)== PackageManager.PERMISSION_GRANTED
-        val audioAccessGranted:Boolean=ContextCompat.checkSelfPermission(this, Manifest.permission.RECORD_AUDIO) == PackageManager.PERMISSION_GRANTED
+        val cameraAccessGranted:Boolean=ContextCompat.checkSelfPermission(
+            this,
+            Manifest.permission.CAMERA
+        )== PackageManager.PERMISSION_GRANTED
+        val audioAccessGranted:Boolean=ContextCompat.checkSelfPermission(
+            this,
+            Manifest.permission.RECORD_AUDIO
+        ) == PackageManager.PERMISSION_GRANTED
 
         return if (!cameraAccessGranted || !audioAccessGranted ) {
             // Permission is not granted
@@ -129,7 +178,7 @@ internal class AppointmentDetails : AppCompatActivity() {
 
         private fun requestPermission() {
             ActivityCompat.requestPermissions(
-                this, arrayOf(Manifest.permission.CAMERA,Manifest.permission.RECORD_AUDIO),
+                this, arrayOf(Manifest.permission.CAMERA, Manifest.permission.RECORD_AUDIO),
                 PERMISSION_REQUEST_CODE
             )
         }

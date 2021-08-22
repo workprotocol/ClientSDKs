@@ -2,6 +2,7 @@ package com.spritehealth.sdk
 
 
 import Util
+import android.app.Activity
 import android.content.Context
 import android.content.Intent
 import android.util.Log
@@ -54,12 +55,13 @@ class SpriteHealthClient private constructor(context: Context) {
 
     companion object : SingletonHolder<SpriteHealthClient, Context>(::SpriteHealthClient) {
 
+        //var launchingActivity: Intent? = null
         var launchAttributes: HashMap<String, String>?=null
         val timeOutInMS: Int = 50000
         var builder: GsonBuilder = GsonBuilder();
         var gson: Gson = builder.create()
 
-        var storedIntent: Intent = Intent()
+        var storedIntent: Intent? = null
 
         var selectedMode = IntegrationMode.TEST//default
 

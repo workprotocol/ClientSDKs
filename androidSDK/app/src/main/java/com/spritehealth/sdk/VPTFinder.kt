@@ -73,7 +73,7 @@ internal class VPTFinder : AppCompatActivity() {
         progressBar.visibility = View.VISIBLE
 
 
-
+        SpriteHealthClient.storedIntent= Intent(this, VPTFinder::class.java)
         sdkClientInstance=SpriteHealthClient.getInstance(this.applicationContext)
         sdkClientInstance!!.initialize(
             InitOptions("0b5c8d72f9794ec69870886cd060bc82","dag@berger.com",IntegrationMode.TEST), object:Callback<InitializationStatus>{

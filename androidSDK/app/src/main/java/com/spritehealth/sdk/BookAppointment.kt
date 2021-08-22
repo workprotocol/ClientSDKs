@@ -486,48 +486,6 @@ internal class BookAppointment : AppCompatActivity() {
         val timeSlotJSON: String = gson.toJson(timeSlot)
         intent.putExtra("timeSlotJSON", timeSlotJSON)
 
-        /*
-
-
-        var startTimeFormatted: String? = timeSlot?.startTime
-        //Format date time as 08/13 - Fri, 05:15 pm
-        var inFormatter = DateTimeFormatter.ofPattern("MM-dd-yyyy HH:mm:ss")
-        var appointmentDate=inFormatter.parse(startTimeFormatted)//08-13-2021 17:15:00
-        var outFormatter = DateTimeFormatter.ofPattern("EEE, MMM dd at hh:mm a - ")
-        startTimeFormatted= outFormatter.format(appointmentDate)
-
-        val eventStartTime: String = startDate.toString() + " " + timeNotation //requestedTime;
-        var eventEndTime = "" // startDate + " " + getEndTime();
-        var dateToDisplay = eventStartTime
-        try {
-            val outFormatter: DateFormat = SimpleDateFormat("MMM dd, yyyy")
-            val sdf: DateFormat = SimpleDateFormat("MM/dd/yyyy hh:mm a")
-            val eventStartDateTime: Date = sdf.parse(eventStartTime)
-            var duration:Int=30;
-            if (service != null && service!!.wpDuration > 0) {
-                duration = service!!.wpDuration
-            }
-            val eventEndDateTime: Date? =DateUtils().getNextDate(eventStartDateTime, duration)
-            eventEndTime = sdf.format(eventEndDateTime)
-
-            calendar?.time = eventStartDateTime
-            dateToDisplay = outFormatter.format(calendar?.time)
-            dateToDisplay += " at $timeNotation"
-        } catch (e: Exception) {
-
-        }
-
-
-
-        intent.putExtra("eventStartTime", eventStartTime)
-        intent.putExtra("eventEndTime", eventEndTime)
-        intent.putExtra("timeNotation", timeNotation)
-        intent.putExtra("startDate", startDate)
-        intent.putExtra("startDateForDisplay", dateToDisplay)
-        intent.putExtra("whereAbout", whereAbout)
-
-        */
-
         startActivity(intent)
     }
 

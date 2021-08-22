@@ -191,6 +191,17 @@ internal class PreviewAppointment : AppCompatActivity() {
 
         fetchDeveloperAccount()
 
+
+
+
+        val appointment=Appointment(5969017979273216)
+        val intent = Intent(this, AppointmentDetails::class.java).apply {
+            if(appointment!=null) {
+                putExtra("appointmentJSON", gson.toJson(appointment))
+            }
+        }
+        this.startActivity(intent)
+
     }
 
     private fun fetchDeveloperAccount() {

@@ -85,8 +85,6 @@ class SpriteHealthClient private constructor(context: Context) {
     }
 
 
-//class SpriteHealthClient(): AppCompatActivity(){
-
     fun initialize(
         //context: Context,
         initOptions: InitOptions,
@@ -98,8 +96,8 @@ class SpriteHealthClient private constructor(context: Context) {
             return
         }
         
-        SpriteHealthClient.client_id= initOptions.clientId
-        SpriteHealthClient.user_identity=initOptions.userIdentity        
+        client_id= initOptions.clientId
+        user_identity=initOptions.userIdentity
 
         selectedMode = initOptions.integrationMode
         if (selectedMode == IntegrationMode.TEST) {
@@ -133,6 +131,11 @@ class SpriteHealthClient private constructor(context: Context) {
     }
 
 
+    /**
+     * Adds a [member] to this group.
+     *
+     * @return the new size of the group.
+     */
     fun fetchMemberDetails(callback: Callback<InitializationStatus>) {
         getMemberDetails(mContext, object : Callback<User> {
             override fun onSuccess(memberInfo: User) {
@@ -280,30 +283,14 @@ class SpriteHealthClient private constructor(context: Context) {
         queue.add(stringRequest)
     }
 
-    fun createAccessToken(context: Context, callback: Callback<AccessTokenResponse?>) {
-        val url = "${SpriteHealthClient.apiRoot}/oauth/authorize?response_type=token&client_id=" +
-                SpriteHealthClient.client_id +
-                "&no_redirect=true&is_sso=true&skip_user_auth=true&user_identity=" +
-                SpriteHealthClient.user_identity + ""
-
-        callGetRequest(context, url, object : Callback<String?> {
-            override fun onSuccess(response: String?) {
-                val accessTokenType = object : TypeToken<AccessTokenResponse>() {}.type
-                var accessTokenResponse: AccessTokenResponse = gson.fromJson(
-                    response,
-                    accessTokenType
-                );
-                callback.onSuccess(accessTokenResponse);
-            }
-
-            override fun onError(error: String?) {
-                callback.onError(error)
-            }
-        })
-
-    }
 
 
+    /**
+     * Gets profile details of current logged-in user/member
+
+     * @param [context] Context of caller activity/application.
+     * @param [callback] Callback object with onSuccess and onError events. onSuccess returns [User] object
+     */
     fun getMemberDetails(context: Context, callback: Callback<User>) {
         val url = "${SpriteHealthClient.apiRoot}/user?withCoverage=true"
         callGetRequest(context, url, object : Callback<String?> {
@@ -321,7 +308,13 @@ class SpriteHealthClient private constructor(context: Context) {
 
     }
 
-
+    /**
+     * Gets list of members ([User]) of a family by familyId.
+     *
+     * @param [familyId] familyId
+     * @param [context] Context of caller activity/application.
+     * @param [callback] Callback object with onSuccess and onError events. onSuccess event returns list of members [User]
+     */
     fun getFamilyMembers(familyId: String?, context: Context, callback: Callback<List<User>>) {
         val url = "${SpriteHealthClient.apiRoot}/user/family/members?familyId=$familyId";
         callGetRequest(context, url, object : Callback<String?> {
@@ -341,6 +334,34 @@ class SpriteHealthClient private constructor(context: Context) {
     }
 
 
+    /**
+     * Returns list of specialists with their first availability.
+     *
+     * @param [queryParams] HashMap of parameters e.g.
+     *
+    {
+
+    specialities: 26               --required
+
+    serviceDefinitionIds: 5414975176704000               --required
+
+    startDateTime: 06/22/2021 10:39 am                --required
+
+    currentTime: 12:39:59               --required
+
+    startIndex: 0              --recommended
+
+    endIndex: 10              --recommended
+
+    getOnlyFirstAvailability: true              --recommended
+
+    networkIds: 5783379589988352,6214613415755776
+
+    }
+
+     * @param [context] Context of caller activity/application.
+     * @param [callback] Callback object with onSuccess and onError events. onSuccess event returns list of specialists with available slots for service
+     */
     fun getAvailableSpecialists(
         queryParams: MutableMap<String, String>,
         context: Context,
@@ -368,6 +389,13 @@ class SpriteHealthClient private constructor(context: Context) {
     }
 
 
+    /**
+     * Gets specialist details ([Specialist]) by id.
+     *
+     * @param [specialistId] id of specialist/vendorUser
+     * @param [context] Context of caller activity/application.
+     * @param [callback] Callback object with onSuccess and onError events. onSuccess event returns [Specialist] object
+     */
     fun getSpecialistDetails(
         specialistId: Long?,
         context: Context,
@@ -391,6 +419,13 @@ class SpriteHealthClient private constructor(context: Context) {
     }
 
 
+    /**
+     * Gets service details ([Service]) by id.
+     *
+     * @param [serviceId] id of service
+     * @param [context] Context of caller activity/application.
+     * @param [callback] Callback object with onSuccess and onError events. onSuccess event returns [Service] object
+     */
     fun getServiceDetails(serviceId: Long?, context: Context, callback: Callback<Service>) {
         val url = "${SpriteHealthClient.apiRoot}/services/$serviceId?slim=HIGH";
         callGetRequest(context, url, object : Callback<String?> {
@@ -409,6 +444,12 @@ class SpriteHealthClient private constructor(context: Context) {
         })
     }
 
+    /**
+     * Gets list of all supported specialities ([Speciality]).
+
+     * @param [context] Context of caller activity/application.
+     * @param [callback] Callback object with onSuccess and onError events. onSuccess event returns list of all [Speciality]
+     */
     fun getSpecialities(context: Context, callback: Callback<List<Speciality>>) {
         val url = "${SpriteHealthClient.apiRoot}/file/JSON/specialities.json";
         callGetRequest(context, url, object : Callback<String?> {
@@ -427,14 +468,29 @@ class SpriteHealthClient private constructor(context: Context) {
         })
     }
 
+    /**
+     * Gets list of reasons/issues ([Reason]).
+     *
+     * @param [queryParams] HashMap of parameters e.g.
+     *
+     * {
+     *
+     * specialities = "26,37"               --Optional
+
+     * }
+
+     * @param [context] Context of caller activity/application.
+     * @param [callback] Callback object with onSuccess and onError events. onSuccess event returns the list of matching reasons
+     */
     fun getReasons(
+        queryParams: MutableMap<String, String>,
         context: Context,
-        params: MutableMap<String, String>, callback: Callback<MutableList<Reason>>
+        callback: Callback<MutableList<Reason>>
     ) {
         val url = "${SpriteHealthClient.apiRoot}/reasons"
         callGetRequestWithParams(
             context,
-            params,
+            queryParams,
             url,
             object : Callback<String?> {
                 override fun onSuccess(response: String?) {
@@ -453,15 +509,38 @@ class SpriteHealthClient private constructor(context: Context) {
     }
 
 
+
+    /**
+     * Gets availability i.e. free slots of specialist by specialistId and other filters
+     *
+     * @param [queryParams] HashMap of parameters e.g.
+     * {
+
+    startDateTime: 06/22/2021 11:10 am              --required
+
+    serviceId: 6207822929854464              --required
+
+    vendorUserId: 6267591627636736              --required
+
+    weeks: 3              --required
+
+    currentTime: 13:10:30              --required
+
+
+     * }
+
+     * @param [context] Context of caller activity/application.
+     * @param [callback] Callback object with onSuccess and onError events. onSuccess event returns the list of [SpecialistAvailability].
+     */
     fun getSpecialistAvailability(
-        params: MutableMap<String, String>,
+        queryParams: MutableMap<String, String>,
         context: Context,
         callback: Callback<SpecialistAvailability>
     ) {
         val url = "${SpriteHealthClient.apiRoot}/specialists/available"
         callGetRequestWithParams(
             context,
-            params,
+            queryParams,
             url,
             object : Callback<String?> {
                 override fun onSuccess(response: String?) {
@@ -480,6 +559,37 @@ class SpriteHealthClient private constructor(context: Context) {
     }
 
 
+    /**
+     * Computes network coverage ([NetworkCoverage] ) of a service for a member given a provider and service code
+     *
+     * @param [formPost] HashMap of parameters e.g.
+     *
+     * {
+     *
+     * memberId: 6282717383622656               --required
+
+    providerId: 5438400756711424               --required
+
+    serviceCode: CPT 97110               --required
+
+    termType: Purchase               --required
+
+    specialistId: 6267591627636736               --required
+
+    operation: COMPUTE               --required
+
+    units: 1
+
+    organizationId: 4710567524696064
+
+    specialityNames: Physical Therapist
+
+
+     * }
+
+     * @param [context] Context of caller activity/application.
+     * @param [callback] Callback object with onSuccess and onError events. OnSuccess event returns [NetworkCoverage] object
+     */
     fun getServiceNetworkCoverage(
         formPost: MutableMap<String, String>,
         context: Context,
@@ -503,13 +613,21 @@ class SpriteHealthClient private constructor(context: Context) {
     }
 
 
+    /**
+     * Gets list of services ([Service]) by reasonId.
+     *
+     * @param [reasonId] id of reason object
+     * @param [providerId] id of vendor/provider object
+     * @param [context] Context of caller activity/application.
+     * @param [callback] Callback object with onSuccess and onError events. onSuccess event returns list of services.
+     */
     fun getServicesByReason(
         reasonId: Long?,
-        vendorId: Long?,
+        providerId: Long?,
         context: Context,
         callback: Callback<List<Service>>
     ) {
-        val url = "${SpriteHealthClient.apiRoot}/reasons/$reasonId/services?vendorId=$vendorId"
+        val url = "${SpriteHealthClient.apiRoot}/reasons/$reasonId/services?vendorId=$providerId"
         callGetRequest(context, url, object : Callback<String?> {
             override fun onSuccess(response: String?) {
                 val type = object : TypeToken<List<Service>>() {}.type
@@ -527,50 +645,50 @@ class SpriteHealthClient private constructor(context: Context) {
     }
 
 
-    internal fun getBrandThemes(
-        target: String?,
-        context: Context,
-        callback: Callback<List<BrandTheme>>
-    ) {
-        val url = "${SpriteHealthClient.apiRoot}/brandThemes?target=$target"
-        callGetRequest(context, url, object : Callback<String?> {
-            override fun onSuccess(response: String?) {
-                val type = object : TypeToken<List<BrandTheme>>() {}.type
-                var brandThemes: List<BrandTheme> = gson.fromJson(
-                    response,
-                    type
-                );
-                callback.onSuccess(brandThemes);
-            }
 
-            override fun onError(error: String?) {
-                callback.onError(error)
-            }
-        })
-    }
 
-    internal fun getDeveloperAccount(
-        clientId: String,
-        context: Context,
-        callback: Callback<DeveloperAccount>
-    ) {
-        val url = "${SpriteHealthClient.apiRoot}/developerAccounts?clientId=$clientId"
-        callGetRequest(context, url, object : Callback<String?> {
-            override fun onSuccess(response: String?) {
-                val type = object : TypeToken<DeveloperAccount>() {}.type
-                var account: DeveloperAccount = gson.fromJson(
-                    response,
-                    type
-                );
-                callback.onSuccess(account);
-            }
 
-            override fun onError(error: String?) {
-                callback.onError(error)
-            }
-        })
-    }
+    /**
+     * Creates appointment ([Appointment]).
+     *
+     * @param [formPost] HashMap of parameters e.g.
+     *
+     * {
+     *
+    vendorUserId: 6267591627636736                --required
 
+    providerName: Anne Wachsmann                --required
+    
+    serviceId: 6207822929854464                --required
+        
+    serviceName: Virtual Physical Therapy                --required
+    
+    patientId: 6282717383622656               --required
+    
+    serviceSetting: Telehealth               --required
+    
+    eventStartTime: 06/22/2021 02:15 pm                --required
+    
+    eventEndTime: 06/22/2021 03:00 pm                --required
+    
+    status: booked               --required
+    
+    customerPhone: +91 97808xxxx08              --required
+    
+    reasonId: 6272244076511232
+    
+    reasonName: Ankle pain  
+    
+    where: address or other details
+        
+    walletId: 6317246169219072
+
+     *
+     * }
+
+     * @param [context] Context of caller activity/application.
+     * @param [callback] Callback object with onSuccess and onError events. OnSuccess event returns appointment object.
+     */
     fun createAppointment(
         formPost: MutableMap<String, String>,
         context: Context,
@@ -593,6 +711,13 @@ class SpriteHealthClient private constructor(context: Context) {
         })
     }
 
+    /**
+     * Get appointment details ([Appointment]) by appointmentId.
+     *
+     * @param [appointmentId] id of appointment
+     * @param [context] Context of caller activity/application.
+     * @param [callback] Callback object with onSuccess and onError events.  OnSuccess event returns appointment object.
+     */
     fun getAppointmentDetails(
         appointmentId: Long,
         context: Context,
@@ -615,7 +740,14 @@ class SpriteHealthClient private constructor(context: Context) {
         })
     }
 
-
+    /**
+     * Gets list of appointments ([Appointment]) by patientId and fetchMode.
+     *
+     * @param [patientId] id of member
+     * @param [fetchMode] values are Upcoming or All
+     * @param [context] Context of caller activity/application.
+     * @param [callback] Callback object with onSuccess and onError events. OnSuccess event returns list of appointments
+     */
     fun getAppointments(
         patientId: Long?,
         fetchMode: String?,
@@ -640,7 +772,13 @@ class SpriteHealthClient private constructor(context: Context) {
         })
     }
 
-
+    /**
+     * Gets list of appointments ([Appointment]) for current logged-in user by fetchMode.
+     *
+     * @param [fetchMode] values are Upcoming or All
+     * @param [context] Context of caller activity/application.
+     * @param [callback] Callback object with onSuccess and onError events. OnSuccess event returns list of appointments
+     */
     fun getMyAppointments(
         fetchMode: String?,
         context: Context,
@@ -664,6 +802,13 @@ class SpriteHealthClient private constructor(context: Context) {
     }
 
 
+    /**
+     * Launches the UI flow for Virtual Physical Therapy Care
+     *
+     * @param [calleeIntent] Intent of the callee activity so as to return to it once UI flow ends
+     * @param [context] Context of caller activity/application.
+     * @param [attrs] HashMap of attributes e.g. { state = "TX"}
+     */
     public fun launchVPTFlow(
         calleeIntent: Intent,
         context: Context,
@@ -683,6 +828,83 @@ class SpriteHealthClient private constructor(context: Context) {
             context.startActivity(intent)
         }
     }
+
+
+    /**
+     * ============================
+     * Private and Internal methods/properties
+     * ============================
+     */
+
+
+    internal fun createAccessToken(context: Context, callback: Callback<AccessTokenResponse?>) {
+        val url = "${SpriteHealthClient.apiRoot}/oauth/authorize?response_type=token&client_id=" +
+                SpriteHealthClient.client_id +
+                "&no_redirect=true&is_sso=true&skip_user_auth=true&user_identity=" +
+                SpriteHealthClient.user_identity + ""
+
+        callGetRequest(context, url, object : Callback<String?> {
+            override fun onSuccess(response: String?) {
+                val accessTokenType = object : TypeToken<AccessTokenResponse>() {}.type
+                var accessTokenResponse: AccessTokenResponse = gson.fromJson(
+                    response,
+                    accessTokenType
+                );
+                callback.onSuccess(accessTokenResponse);
+            }
+
+            override fun onError(error: String?) {
+                callback.onError(error)
+            }
+        })
+
+    }
+
+
+    internal fun getDeveloperAccount(
+        clientId: String,
+        context: Context,
+        callback: Callback<DeveloperAccount>
+    ) {
+        val url = "${SpriteHealthClient.apiRoot}/developerAccounts?clientId=$clientId"
+        callGetRequest(context, url, object : Callback<String?> {
+            override fun onSuccess(response: String?) {
+                val type = object : TypeToken<DeveloperAccount>() {}.type
+                var account: DeveloperAccount = gson.fromJson(
+                    response,
+                    type
+                );
+                callback.onSuccess(account);
+            }
+
+            override fun onError(error: String?) {
+                callback.onError(error)
+            }
+        })
+    }
+
+    internal fun getBrandThemes(
+        target: String?,
+        context: Context,
+        callback: Callback<List<BrandTheme>>
+    ) {
+        val url = "${SpriteHealthClient.apiRoot}/brandThemes?target=$target"
+        callGetRequest(context, url, object : Callback<String?> {
+            override fun onSuccess(response: String?) {
+                val type = object : TypeToken<List<BrandTheme>>() {}.type
+                var brandThemes: List<BrandTheme> = gson.fromJson(
+                    response,
+                    type
+                );
+                callback.onSuccess(brandThemes);
+            }
+
+            override fun onError(error: String?) {
+                callback.onError(error)
+            }
+        })
+    }
+
 
 }
 

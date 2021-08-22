@@ -22,6 +22,7 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import com.google.android.gms.location.*
 import com.google.gson.Gson
 import com.google.gson.GsonBuilder
+import com.google.gson.reflect.TypeToken
 import com.spritehealth.sdk.SpriteHealthClient.Callback
 import com.spritehealth.sdk.model.*
 import kotlinx.android.synthetic.main.activity_vptfinder.*
@@ -52,14 +53,20 @@ internal class VPTFinder : AppCompatActivity() {
         getSupportActionBar()?.displayOptions = ActionBar.DISPLAY_SHOW_CUSTOM;
         getSupportActionBar()?.setCustomView(R.layout.custom_toolbar);
 
+
+        val bundle = intent.extras
+        if (bundle != null && intent.hasExtra("state")) {
+            state=intent.getStringExtra("state")
+        }
+
+
+
         val tvPageHeading = supportActionBar!!.customView.findViewById<TextView>(R.id.tvPageHeading)
         tvPageHeading.text = "Physical Therapists"
 
         imgvBack.setOnClickListener(){
             this.finish();
         }
-
-        mFusedLocationClient = LocationServices.getFusedLocationProviderClient(this)
 
 
         var progressBar: ProgressBar = findViewById(R.id.progressBar);
@@ -72,8 +79,13 @@ internal class VPTFinder : AppCompatActivity() {
             InitOptions("0b5c8d72f9794ec69870886cd060bc82","dag@berger.com",IntegrationMode.TEST), object:Callback<InitializationStatus>{
                 override fun onSuccess(initializationStatus: InitializationStatus) {
                     if(initializationStatus!=null && initializationStatus.status==InitializationStatusTypes.SUCCESS){
-                        //fetchSpecialists()
-                        getLastLocation()
+
+                        if(state==null || state!!.isEmpty()){
+                            mFusedLocationClient = LocationServices.getFusedLocationProviderClient(mContext)
+                            getLastLocation()
+                        }else{
+                            fetchSpecialists()
+                        }
                     }
                 }
 
@@ -85,49 +97,7 @@ internal class VPTFinder : AppCompatActivity() {
         )
 
 
-        /*
-         val queue = Volley.newRequestQueue(this)
-        sdkClientInstance.createAccessToken(this, object : SpriteHealthClient.Callback<AccessTokenResponse?> {
-            override fun onSuccess(accessTokenResponse: InitializationStatus) {
-                if (accessTokenResponse != null) {
-                    SpriteHealthClient.auth_token = accessTokenResponse.access_token
-                    SpriteHealthClient.expires_in = accessTokenResponse.expires_in;
-                    fetchMemberDetails()
-                }else{
-                    Toast.makeText(mContext,"Failed to authenticate client.",Toast.LENGTH_LONG).show()
-                }
-            }
-
-            override fun onError(error: String?) {
-                var errorMsg = error
-                progressBar.visibility = View.GONE
-            }
-        })
-        */
-
     }
-
-
-    /*
-
-    fun fetchMemberDetails(){
-        sdkClientInstance.getMemberDetails(this, object : SpriteHealthClient.Callback<User> {
-            override fun onSuccess(memberInfo: InitializationStatus) {
-                if (memberInfo != null) {
-                    SpriteHealthClient.member = memberInfo
-                    fetchSpecialists()
-                }else{
-                    Toast.makeText(mContext,"Failed to access member details.",Toast.LENGTH_LONG).show()
-                }
-            }
-
-            override fun onError(error: String?) {
-                var errorMsg = error
-                progressBar.visibility = View.GONE
-            }
-        })
-    }
-    */
 
     fun fetchSpecialists(){
         /*
@@ -184,6 +154,7 @@ internal class VPTFinder : AppCompatActivity() {
             }
 
         }
+
 
         progressBar.visibility = View.VISIBLE
         sdkClientInstance?.getAvailableSpecialists(params, this, object : Callback<List<Specialist>> {

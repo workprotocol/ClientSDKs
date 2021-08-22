@@ -124,8 +124,8 @@ internal class BookAppointment : AppCompatActivity() {
             params.put("specialities",specialities)
         }
              sdkClientInstance.getReasons(
-                this,
                  params,
+                this,
                 object : SpriteHealthClient.Callback<MutableList<Reason>> {
                     override fun onSuccess(reasons: MutableList<Reason>) {
 

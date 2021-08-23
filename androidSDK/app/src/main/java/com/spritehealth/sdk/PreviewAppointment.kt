@@ -193,7 +193,7 @@ internal class PreviewAppointment : AppCompatActivity() {
 
 
 
-
+    /*
         val appointment=Appointment(5969017979273216)
         val intent = Intent(this, AppointmentDetails::class.java).apply {
             if(appointment!=null) {
@@ -201,7 +201,7 @@ internal class PreviewAppointment : AppCompatActivity() {
             }
         }
         this.startActivity(intent)
-
+    */
     }
 
     private fun fetchDeveloperAccount() {

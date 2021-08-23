@@ -9,13 +9,13 @@ enum class IntegrationMode{
 
 
 enum class APIDomains(val value: String) {
-    LIVE("wpbackendprod.appspot.com"),
-    TEST("wpbackendqa.appspot.com");
+    LIVE("api.spritehealth.com"),
+    TEST("api-qa.spritehealth.com");
 }
 
 enum class WebClientDomains(val value: String) {
-    LIVE("wpfrontendprod.appspot.com"),
-    TEST("wpfrontendqa.appspot.com");
+    LIVE("app.spritehealth.com"),
+    TEST("berger.spritehealth.com");
 }
 
 

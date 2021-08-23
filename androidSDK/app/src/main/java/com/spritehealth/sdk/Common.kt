@@ -55,15 +55,14 @@ class SpriteHealthClient private constructor(context: Context) {
 
     companion object : SingletonHolder<SpriteHealthClient, Context>(::SpriteHealthClient) {
 
-        //var launchingActivity: Intent? = null
-        var launchAttributes: HashMap<String, String>?=null
-        val timeOutInMS: Int = 50000
-        var builder: GsonBuilder = GsonBuilder();
-        var gson: Gson = builder.create()
+        internal var launchAttributes: HashMap<String, String>?=null
+        internal val timeOutInMS: Int = 50000
+        internal var builder: GsonBuilder = GsonBuilder();
+        internal var gson: Gson = builder.create()
 
-        var storedIntent: Intent? = null
+        internal var storedIntent: Intent? = null
 
-        var selectedMode = IntegrationMode.TEST//default
+        internal var selectedMode = IntegrationMode.TEST//default
 
         internal var targetAPIDomain: String = APIDomains.TEST.value
         internal var targetWebClientDomain: String = WebClientDomains.TEST.value
@@ -80,9 +79,13 @@ class SpriteHealthClient private constructor(context: Context) {
         internal var auth_token: String? = ""
 
         //TODO: To ask from host app
-        var user_identity = ""// "dag@berger.com"
-        var client_id = ""// "0b5c8d72f9794ec69870886cd060bc82"
-        var expires_in: Long? = 3600//min
+        internal var user_identity = ""// "dag@berger.com"
+        internal var client_id = ""// "0b5c8d72f9794ec69870886cd060bc82"
+        internal var expires_in: Long? = 3600//min
+
+
+        //static public properties
+        var isInitialized:Boolean=false
 
     }
 
@@ -133,15 +136,13 @@ class SpriteHealthClient private constructor(context: Context) {
     }
 
 
-    /**
-     * Adds a [member] to this group.
-     *
-     * @return the new size of the group.
-     */
-    fun fetchMemberDetails(callback: Callback<InitializationStatus>) {
+
+   internal fun fetchMemberDetails(callback: Callback<InitializationStatus>) {
         getMemberDetails(mContext, object : Callback<User> {
             override fun onSuccess(memberInfo: User) {
+
                 if (memberInfo != null) {
+                    isInitialized=true
                     SpriteHealthClient.member = memberInfo
                     callback.onSuccess(
                         InitializationStatus(
@@ -175,13 +176,13 @@ class SpriteHealthClient private constructor(context: Context) {
         val queue = Volley.newRequestQueue(context)
         val stringRequest = object : StringRequest(Request.Method.GET, url,
             Response.Listener<String> { response ->
-                //Log.d("A", "Response is: " + response)
+                ////Log.d("A", "Response is: " + response)
                 callback.onSuccess(response);
             },
             Response.ErrorListener { error ->
                 // Handle error
                 val errorStr = "ERROR: %s".format(error.toString());
-                //Log.d("msg :", errorStr);
+                ////Log.d("msg :", errorStr);
                 callback.onError(errorStr);
             }) {
             override fun getHeaders(): MutableMap<String, String> {
@@ -210,21 +211,25 @@ class SpriteHealthClient private constructor(context: Context) {
         val queue = Volley.newRequestQueue(context)
         var urlWithQureyString = ""
         val queryString: String? = Util().encodeParameters(queryParams)
+
         if (url != null && url.contains("?")) {
             urlWithQureyString = url.plus("&$queryString")
         } else {
             urlWithQureyString = url.plus("?$queryString")
         }
 
+        ////System.out.println("finally calling to  "+urlWithQureyString)
         val stringRequest = object : StringRequest(Request.Method.GET, urlWithQureyString,
             Response.Listener<String> { response ->
                 //Log.d("A", "Response is: " + response)
+                //System.out.println("Response is: " + response)
                 callback.onSuccess(response);
             },
             Response.ErrorListener { error ->
                 // Handle error
                 val errorStr = "ERROR: %s".format(error.toString());
-                //Log.d("msg :", errorStr);
+                //Log.d("msg :", errorStr)
+                //System.out.println("msg : $errorStr")
                 callback.onError(errorStr);
             }) {
             override fun getHeaders(): MutableMap<String, String> {
@@ -254,14 +259,14 @@ class SpriteHealthClient private constructor(context: Context) {
 
         val stringRequest = object : StringRequest(Request.Method.POST, url,
             Response.Listener<String> { response ->
-                ////Log.d("A", "Response is: " + response)
+                //////Log.d("A", "Response is: " + response)
                 callback.onSuccess(response);
             },
             Response.ErrorListener { error ->
                 // Handle error
 
                 val errorStr = "ERROR: %s".format(error.toString());
-                //Log.d("msg :", errorStr);
+                ////Log.d("msg :", errorStr);
                 callback.onError(errorStr);
             }) {
             override fun getHeaders(): MutableMap<String, String> {
@@ -297,10 +302,14 @@ class SpriteHealthClient private constructor(context: Context) {
         val url = "${SpriteHealthClient.apiRoot}/user?withCoverage=true"
         callGetRequest(context, url, object : Callback<String?> {
             override fun onSuccess(response: String?) {
-                val userType = object : TypeToken<User>() {}.type
-                var member: User = gson.fromJson(response, userType);
+                try {
+                    val userType = object : TypeToken<User>() {}.type
+                    var member: User = gson.fromJson(response, userType);
 
-                callback.onSuccess(member)
+                    callback.onSuccess(member)
+                }catch (e:Exception){
+                callback.onError("Failed to find member.")
+            }
             }
 
             override fun onError(error: String?) {
@@ -337,7 +346,7 @@ class SpriteHealthClient private constructor(context: Context) {
 
 
     /**
-     * Returns list of specialists with their first availability.
+     * Gets list of specialists with their first availability.
      *
      * @param [queryParams] HashMap of parameters e.g.
      *
@@ -359,6 +368,8 @@ class SpriteHealthClient private constructor(context: Context) {
 
     networkIds: 5783379589988352,6214613415755776
 
+    state: TX
+
     }
 
      * @param [context] Context of caller activity/application.
@@ -370,12 +381,15 @@ class SpriteHealthClient private constructor(context: Context) {
         callback: Callback<List<Specialist>>
     ) {
         var url = "${SpriteHealthClient.apiRoot}/specialists/available"
+
+        //System.out.println("calling "+url)
         callGetRequestWithParams(
             context,
             queryParams,
             url,
             object : Callback<String?> {
                 override fun onSuccess(response: String?) {
+                    //System.out.println("found "+response)
                     val type = object : TypeToken<List<Specialist>>() {}.type
                     var specialistsWithAvailability: List<Specialist> = gson.fromJson(
                         response,
@@ -385,6 +399,7 @@ class SpriteHealthClient private constructor(context: Context) {
                 }
 
                 override fun onError(error: String?) {
+                    //System.out.println("error "+error)
                     callback.onError(error)
                 }
             })
@@ -399,7 +414,7 @@ class SpriteHealthClient private constructor(context: Context) {
      * @param [callback] Callback object with onSuccess and onError events. onSuccess event returns [Specialist] object
      */
     fun getSpecialistDetails(
-        specialistId: Long?,
+        specialistId: Long,
         context: Context,
         callback: Callback<Specialist>
     ) {
@@ -428,7 +443,7 @@ class SpriteHealthClient private constructor(context: Context) {
      * @param [context] Context of caller activity/application.
      * @param [callback] Callback object with onSuccess and onError events. onSuccess event returns [Service] object
      */
-    fun getServiceDetails(serviceId: Long?, context: Context, callback: Callback<Service>) {
+    fun getServiceDetails(serviceId: Long, context: Context, callback: Callback<Service>) {
         val url = "${SpriteHealthClient.apiRoot}/services/$serviceId?slim=HIGH";
         callGetRequest(context, url, object : Callback<String?> {
             override fun onSuccess(response: String?) {
@@ -821,7 +836,7 @@ class SpriteHealthClient private constructor(context: Context) {
         
         val intent = Intent(context, VPTFinder::class.java).apply {
             for ((key, value) in attrs) {
-                require(!(key == null || value == null)) {
+                if(!(key == null || value == null)) {
                     this.putExtra(key, value)
                 }
             }
@@ -847,12 +862,16 @@ class SpriteHealthClient private constructor(context: Context) {
 
         callGetRequest(context, url, object : Callback<String?> {
             override fun onSuccess(response: String?) {
-                val accessTokenType = object : TypeToken<AccessTokenResponse>() {}.type
-                var accessTokenResponse: AccessTokenResponse = gson.fromJson(
-                    response,
-                    accessTokenType
-                );
-                callback.onSuccess(accessTokenResponse);
+                try {
+                    val accessTokenType = object : TypeToken<AccessTokenResponse>() {}.type
+                    var accessTokenResponse: AccessTokenResponse = gson.fromJson(
+                        response,
+                        accessTokenType
+                    );
+                    callback.onSuccess(accessTokenResponse);
+                }catch (e:Exception){
+                    callback.onError("Failed to authenticate")
+                }
             }
 
             override fun onError(error: String?) {
@@ -871,12 +890,16 @@ class SpriteHealthClient private constructor(context: Context) {
         val url = "${SpriteHealthClient.apiRoot}/developerAccounts?clientId=$clientId"
         callGetRequest(context, url, object : Callback<String?> {
             override fun onSuccess(response: String?) {
+                try{
                 val type = object : TypeToken<DeveloperAccount>() {}.type
                 var account: DeveloperAccount = gson.fromJson(
                     response,
                     type
                 );
                 callback.onSuccess(account);
+            }catch (e:Exception){
+                callback.onError("Failed to find developer account for the clientId")
+            }
             }
 
             override fun onError(error: String?) {

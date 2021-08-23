@@ -40,7 +40,7 @@ internal class VPTFinder : AppCompatActivity() {
     private var currentLongitude: Double?=null
     private var currentLatitude: Double?=null
     val specialists: MutableList<Map<String, String>> = ArrayList()
-    var sdkClientInstance: SpriteHealthClient? = null
+    var sdkClientInstance=SpriteHealthClient.getInstance(this)
 
     var builder: GsonBuilder = GsonBuilder();
     var gson: Gson =builder.create()
@@ -54,8 +54,7 @@ internal class VPTFinder : AppCompatActivity() {
         getSupportActionBar()?.setCustomView(R.layout.custom_toolbar);
 
 
-        val bundle = intent.extras
-        if (bundle != null && intent.hasExtra("state")) {
+        if (intent != null && intent.hasExtra("state")) {
             state=intent.getStringExtra("state")
         }
 
@@ -68,11 +67,21 @@ internal class VPTFinder : AppCompatActivity() {
             this.finish();
         }
 
-
         var progressBar: ProgressBar = findViewById(R.id.progressBar);
         progressBar.visibility = View.VISIBLE
 
+        //Toast.makeText(mContext,"state=$state",Toast.LENGTH_LONG).show()
+        if(state==null || state!!.isEmpty()){
+            //Toast.makeText(mContext,"Checking location now",Toast.LENGTH_SHORT).show()
+            mFusedLocationClient = LocationServices.getFusedLocationProviderClient(mContext)
+            getLastLocation()
+        }else{
+            //Toast.makeText(mContext,"State found hence fetching specialsits now...",Toast.LENGTH_SHORT).show()
+            fetchSpecialists()
+        }
 
+        /*
+        //TODO -- move it to Partner app activity
         SpriteHealthClient.storedIntent= Intent(this, VPTFinder::class.java)
         sdkClientInstance=SpriteHealthClient.getInstance(this.applicationContext)
         sdkClientInstance!!.initialize(
@@ -95,6 +104,36 @@ internal class VPTFinder : AppCompatActivity() {
 
             }
         )
+        */
+
+
+        /*
+        val currentActivityIntent=this.intent
+        val attributes: HashMap<String, String> = HashMap()
+        attributes["state"]="TX"
+
+        sdkClientInstance=SpriteHealthClient.getInstance(this)
+
+        sdkClientInstance!!.initialize(
+            InitOptions("0b5c8d72f9794ec69870886cd060bc82","dag@berger.com", IntegrationMode.TEST), object:
+                SpriteHealthClient.Callback<InitializationStatus> {
+                override fun onSuccess(initializationStatus: InitializationStatus) {
+                    if(initializationStatus!=null && initializationStatus.status== InitializationStatusTypes.SUCCESS){
+                        Toast.makeText(mContext,"Successful to initialize Sprite Health client sdk.",Toast.LENGTH_LONG).show()
+                        sdkClientInstance?.launchVPTFlow(currentActivityIntent,mContext,attributes)
+                    }
+                }
+
+                override fun onError(error: String?) {
+                    Toast.makeText(mContext,"Failed to initialize Sprite Health client sdk.",Toast.LENGTH_LONG).show()
+                }
+
+            }
+        )
+    */
+
+
+
 
 
     }
@@ -111,7 +150,7 @@ internal class VPTFinder : AppCompatActivity() {
 
     return;
     */
-
+        //Toast.makeText(mContext,"Fetching specialists.",Toast.LENGTH_LONG).show()
         val params: MutableMap<String, String> = HashMap()
 
             params["specialities"] = "26"
@@ -155,11 +194,12 @@ internal class VPTFinder : AppCompatActivity() {
 
         }
 
+        //Toast.makeText(mContext,"Calling endpoint to fetch Specialists ",Toast.LENGTH_SHORT).show()
 
         progressBar.visibility = View.VISIBLE
         sdkClientInstance?.getAvailableSpecialists(params, this, object : Callback<List<Specialist>> {
             override fun onSuccess(speciaistsWithAvailability: List<Specialist>) {
-
+                //Toast.makeText(mContext,"Fetched specialists as "+speciaistsWithAvailability!!.size,Toast.LENGTH_SHORT).show()
                 if(SpriteHealthClient.specialities?.isNotEmpty() == true){
                     displayVPT(speciaistsWithAvailability)
                 }else{
@@ -170,6 +210,7 @@ internal class VPTFinder : AppCompatActivity() {
 
             override fun onError(error: String?) {
                 var errorMsg = error
+                Toast.makeText(mContext,"Error occurred due to "+error,Toast.LENGTH_SHORT).show()
                 progressBar.visibility = View.GONE
             }
         })

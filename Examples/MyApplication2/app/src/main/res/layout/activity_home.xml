@@ -8,6 +8,9 @@
 
     tools:context=".ui.login.HomeActivity">
 
+
+
+
     <RelativeLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
@@ -60,6 +63,61 @@
             android:textColor="#be143c"
             tools:layout_editor_absoluteX="16dp"
             tools:layout_editor_absoluteY="312dp"></TextView>
+
+
+
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_centerHorizontal="true"
+            android:orientation="horizontal"
+            android:padding="10dp"
+            android:layout_marginTop="200dp"
+            tools:layout_editor_absoluteX="116dp"
+            tools:layout_editor_absoluteY="512dp"
+            >
+
+        <TextView
+            style="@style/wpBody1"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_centerHorizontal="true"
+            android:gravity="left|center_horizontal"
+            android:paddingBottom="5dp"
+            android:paddingTop="8dp"
+            android:text="Enter your state" />
+
+        <LinearLayout
+
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:paddingTop="2dp"
+            android:paddingBottom="8dp"
+            android:layout_marginLeft="10dp"
+            android:layout_marginBottom="20dp"
+            >
+
+        <EditText
+            android:id="@+id/edtState"
+            style="@style/wpBody2"
+            android:layout_width="100dp"
+            android:layout_height="40dp"
+            android:layout_below="@+id/labelTextView"
+            android:background="@drawable/wp_edittext"
+            android:hint="e.g TX"
+            android:text="TX"
+            android:padding="8dp" />
+        </LinearLayout>
+        </LinearLayout>
+
+
+
+
+
+
+
 
 
 
@@ -159,6 +217,7 @@
                     tools:ignore="MissingConstraints"></ImageView>
 
                 <TextView
+                    android:id="@+id/tvVirtualCare"
                     android:layout_width="290dp"
                     android:layout_height="match_parent"
                     android:layout_marginLeft="10dp"
@@ -170,6 +229,7 @@
                     tools:layout_editor_absoluteX="16dp"
                     tools:layout_editor_absoluteY="392dp"></TextView>
 
+
                 <ImageView
                     android:layout_width="50dp"
                     android:layout_height="50dp"
@@ -178,11 +238,19 @@
                     tools:ignore="MissingConstraints"></ImageView>
             </LinearLayout>
 
+            <ProgressBar
+                android:id="@+id/loading"
+                android:layout_width="30dp"
+                android:layout_height="30dp"
+                app:layout_constraintStart_toEndOf="@id/lloVPT"
+                android:layout_marginLeft="240dp"
+                android:layout_marginTop="-50dp"
+                android:visibility="gone"
+                />
 
         </LinearLayout>
 
     </RelativeLayout>
-
 
 
 

@@ -1,32 +1,42 @@
 
 package com.spritehealth.sdk
-import android.content .Intent
 import android.os.Bundle
 import android.view.View
 import android.widget.ProgressBar
 import android.widget.TextView
+import androidx.appcompat.app.ActionBar
 import androidx.appcompat.app.AppCompatActivity
 import com.google.gson.Gson
 import com.google.gson.GsonBuilder
 import com.google.gson.reflect.TypeToken
-import com.spritehealth.sdk.model.User
+import com.spritehealth.sdk.model.InitializationStatus
+import com.spritehealth.sdk.model.Specialist
 import com.spritehealth.sdk.model.VendorDescriptionTypeEnum
 import com.squareup.picasso.Picasso
 import kotlinx.android.synthetic.main.activity_specialist_detail.*
-import org.json.JSONObject
+import kotlinx.android.synthetic.main.custom_toolbar.*
 
 
 internal class SpecialistDetail : AppCompatActivity() {
 
-    private var specialistWithAvailability:User?=null;
-    private lateinit var specialistUser:User;
+    private var specialistWithAvailability:Specialist?=null;
+    private lateinit var specialistUser:Specialist;
 
-    val clientSdkInstance = SpriteHealthClient()
+    val clientSdkInstance = SpriteHealthClient.getInstance(this)
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_specialist_detail)
-        setSupportActionBar(findViewById(R.id.toolbar))
+        //setSupportActionBar(findViewById(R.id.toolbar))
+        getSupportActionBar()?.displayOptions = ActionBar.DISPLAY_SHOW_CUSTOM;
+        getSupportActionBar()?.setCustomView(R.layout.custom_toolbar);
+
+        val tvPageHeading = supportActionBar!!.customView.findViewById<TextView>(R.id.tvPageHeading)
+        tvPageHeading.text = "Specialist Details"
+
+        imgvBack.setOnClickListener(){
+            this.finish();
+        }
 
         var id:Long = intent.getLongExtra("id",0)
 
@@ -35,30 +45,31 @@ internal class SpecialistDetail : AppCompatActivity() {
 
             var builder: GsonBuilder = GsonBuilder();
             var gson: Gson = builder.create()
-            val specialistType = object : TypeToken<User>() {}.type
+            val specialistType = object : TypeToken<Specialist>() {}.type
             specialistWithAvailability = gson.fromJson(specialistWithAvailabilityJSON.toString(), specialistType);
 
             if (specialistWithAvailability != null) {
                 tvName.text = specialistWithAvailability!!.name
+                tvPageHeading.text =specialistWithAvailability!!.name
 
-                if (specialistWithAvailability!!.specializationNames != null) {
-                    tvSpeciality.text = specialistWithAvailability!!.specializationNames
-                }
+                    if (specialistWithAvailability!!.specializationNames != null) {
+                        tvSpeciality.text = specialistWithAvailability!!.specializationNames
+                    }
 
+                tvGender.text = specialistWithAvailability!!.gender
+
+                setImage(specialistWithAvailability!!.imageIds)
             }
         }
-
-     
 
         var response="";
         var progressBar: ProgressBar = findViewById(R.id.progressBar);
         progressBar.visibility = View.VISIBLE
 
-        clientSdkInstance.specialistDetail(id, this, object : SpriteHealthClient.Callback {
-            override fun onSuccess(response: String?) {
-                // do stuff here
-                var responseJson = JSONObject(response)
-                displaySpecailistDetail(responseJson)
+        clientSdkInstance.getSpecialistDetails(id, this, object : SpriteHealthClient.Callback<Specialist> {
+            override fun onSuccess(specialist: Specialist) {
+                specialistUser= specialist
+                displaySpecailistDetail()
                 progressBar.visibility = View.GONE
             }
             override fun onError(error: String?)
@@ -69,31 +80,19 @@ internal class SpecialistDetail : AppCompatActivity() {
         } )
     }
 
-    fun displaySpecailistDetail(specialistJSON:JSONObject?) {
-        
-        var builder: GsonBuilder = GsonBuilder();
-        var gson: Gson =builder.create()
-        val specialistType = object : TypeToken<User>() {}.type
-        specialistUser= gson.fromJson(specialistJSON.toString(), specialistType);
+    fun displaySpecailistDetail() {
 
         if(specialistUser!=null) {
 
             val textView = findViewById<TextView>(R.id.tvName)
             textView.text = specialistUser.name
 
-
-            if (specialistUser.imageIds != null && specialistUser.imageIds!!.isNotEmpty()) {
-                var imageId = specialistUser.imageIds!!.iterator().next()
-
-                var imageUrl =
-                    SpriteHealthClient.apiRoot + "/resources/images/" + imageId.toString()
-                Picasso.get().load(imageUrl).into(imgvUser)
-            }
+           setImage(specialistUser.imageIds)
 
             var specialityNames: String? = ""
             if (specialistUser.specialization!!.isNotEmpty()) {
 
-                var speciality = SpriteHealthClient.specialities.find {
+                var speciality = SpriteHealthClient.specialities?.find {
                     if (it.value != null && specialistUser.specialization != null) {
                         it.value!! == specialistUser.specialization!![0];
                     } else {
@@ -160,7 +159,7 @@ internal class SpecialistDetail : AppCompatActivity() {
                     lloLanguage.visibility = View.VISIBLE
                     tvLanguage.text = vendorDescription.description
                 }
-                if (vendorDescription.vendorDescriptionType != VendorDescriptionTypeEnum.REGISTRATION && vendorDescription.description != null && !vendorDescription.description!!.isEmpty()) {
+                if (vendorDescription.vendorDescriptionType == VendorDescriptionTypeEnum.REGISTRATION && vendorDescription.description != null && !vendorDescription.description!!.isEmpty()) {
                     lloRegistration.visibility = View.VISIBLE
                     tvRegistration.text = vendorDescription.description
                 }
@@ -188,12 +187,23 @@ internal class SpecialistDetail : AppCompatActivity() {
         }
     }
 
+    private fun setImage(imageIds: Set<Long>?) {
+        if (imageIds != null && imageIds!!.isNotEmpty()) {
+            var imageId = imageIds!!.iterator().next()
+
+            var imageUrl =
+                SpriteHealthClient.apiRoot + "/images/" + imageId.toString()
+            Picasso.get().load(imageUrl).into(imgvSpecialist)
+        }
+
+    }
+
 
     fun bookVisit(view: View){
         var builder:GsonBuilder = GsonBuilder()
         var gson:Gson =builder.create()
 
-        val intent = Intent(this, BookAppointment::class.java).apply {
+        val intent = android.content.Intent(this, BookAppointment::class.java).apply {
 
             if(specialistUser!=null) {
                 putExtra("specialistJSON", gson.toJson(specialistUser))

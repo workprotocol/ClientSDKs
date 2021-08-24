@@ -3,6 +3,41 @@ package com.spritehealth.sdk.model
 import java.util.*
 import kotlin.collections.ArrayList
 
+enum class IntegrationMode{
+    LIVE,TEST;
+}
+
+
+enum class APIDomains(val value: String) {
+    LIVE("api.spritehealth.com"),
+    TEST("api-qa.spritehealth.com");
+}
+
+enum class WebClientDomains(val value: String) {
+    LIVE("app.spritehealth.com"),
+    TEST("berger.spritehealth.com");
+}
+
+
+
+class InitOptions(clientId: String, userIdentity: String, integrationMode: IntegrationMode=IntegrationMode.TEST) {
+    var clientId:String=clientId
+    var userIdentity:String=userIdentity
+    var integrationMode:IntegrationMode=integrationMode
+}
+
+
+enum class InitializationStatusTypes {
+    SUCCESS,
+    FAILURE;
+}
+
+
+class InitializationStatus(status:String,message:String){
+    var status:InitializationStatusTypes=InitializationStatusTypes.SUCCESS
+    var message:String="SDK Client initialized successfully."
+}
+
 
 class AccessTokenResponse{
 
@@ -129,6 +164,72 @@ class User {
     var disabled: Boolean? = null
     var specialistLocations: List<Location>? = null
     var descriptions: List<VendorDescription>? = null
+
+
+    var planSubscriptions:List<Subscription>?=ArrayList()
+
+
+    //Added temporary
+    var availableSlots: ArrayList<TimePeriodConverter>? = null
+    var serviceId: Long? = null
+}
+
+
+class Specialist {
+    var id: Long? = null
+    var name: String? = null
+    var nickname: String? = null
+    var email: String? = null
+    var isCorporateAdmin = false
+    var isVendorAdmin = false
+    var isVendor = false
+    var mobilePhone: String? = null
+    var textPhone: String? = null
+    var landlinePhone: String? = null
+    var imageIds: Set<Long>? = null
+    var timeZone: String? = null
+
+    //Redundant due to lastModifiedDate
+    var lastAccessedDate: String? = null
+    var authType = "NATIVE"
+
+    /*TODO: need spelling correction */
+    var prefferedLanguage: String? = null
+    var status: String? = null
+
+    var accessLevel: String? = null
+    var specialistLocationIds: Set<Long>? = null
+    var licenseToPracticeStates: Set<String>? = null
+    var consultingFee: Float? = null
+    var memberFee: Float? = null
+    var serviceFee: Float? = null
+    var avgHCCRiskScore: Float? = null
+    var vendorId: Long = 0
+    var tin: String? = null
+    var npi: String? = null
+    var vendorNPI: String? = null
+    var videoBioId: Long? = null
+    var specialization: List<Int>? = null
+    var availableServiceDefinitionIds: List<Long>? = null
+    var vendorName: String? = null
+    var acceptingNewPatients: Boolean? = null
+
+    // Not persistent fields: For IMPORT/EXPORT Purposes --Starts here
+    var specializationNames: String? = null
+    var affiliations: List<String>? = null
+    var tier: Int? = null
+    var tierScore: Double? = null
+    var gender: String? = null
+    var maritalStatus: String? = null
+    var dateOfBirth: String? = null
+    var healthAccounts: List<Long>? = null
+    var deviceType: String? = null
+    var deviceId: String? = null
+
+    var specialistLocations: List<Location>? = null
+    var descriptions: List<VendorDescription>? = null
+
+    //Added temporary
     var availableSlots: ArrayList<TimePeriodConverter>? = null
     var serviceId: Long? = null
 }
@@ -253,7 +354,25 @@ class Service {
     var wpSetting: String? = null
 }
 
-class Appointment {
+class Subscription {
+    var coverageId: Long?=null
+    var coverageLevel: String?=null
+    var coveredMemberIds:List<Long>?=ArrayList()
+    var directNetworkIds: List<Long>?=ArrayList()
+    var endDate: String?=null
+    var enrollmentDate: String?=null
+    var episode: Long?=null
+    var id:Long?=null
+    var networkIds: List<Long>?=ArrayList()
+    var organizationId: Long?=null
+    var planCategoryId: Long?=null
+    var planId: Long?=null
+    var planName: String?=null
+    var startDate: String?=null
+    var  userId: Long?=null
+}
+
+class Appointment(id: Long = 0) {
     var isVendor = false
     var vendorId: Long = 0
     var vendorName: String? = null
@@ -265,7 +384,7 @@ class Appointment {
     var customerName: String? = null
     var customerEmail: String? = null
     var customerPhone: String? = null
-    var id: Long = 0
+    var id: Long = id
     var userId: String? = null
     var vendorUserId: String? = null
     var patientId: Long = 0
@@ -289,7 +408,7 @@ class Appointment {
 
 }
 
-class Coverage  {
+class NetworkCoverage  {
     var id: Long? = null
     var name: String? = null
     var networkType: String? = null
@@ -341,7 +460,8 @@ class CostBreakUp {
     var sponsor: Double? = null
     var coverageId : Long? = null
 }
-internal class CalendarEvent {
+
+class CalendarEvent {
     private val id: String? = null
     private val vendorUserId: Long = 0
     private val serviceId: Long = 0
@@ -387,11 +507,121 @@ class SpecialistAvailability{
    */
 }
 
+class DeveloperAccount{
+    var accountId: String? = null
+
+    var name: String? = null
+
+    var address: String? = null
+
+    var appIds: List<Long>? = null
+
+    var email: String? = null
+    var imageId: Long? = null
+
+    var phone: String? = null
+
+    var website: String? = null
+
+    var status: String? = null
+
+    var privacyPolicyLink: String? = null
+
+    var termsOfUseLink: String? = null
+
+    var consentToCareLink: String? = null
+}
 
 
 
+class BrandTheme{
+    var target : String? = null
 
+    var brandLogoIds : Set<Long>? = null
 
+    var fontFileIds: Set<Long>? = null
+
+    var fontFileUrls: List<String>? = null
+
+    //var fontFiles: List<FileInfoConverter>? = null
+
+    // Body styles
+
+    // Body styles
+    var bodyFontFamily: String? = null
+
+    var bodyFontSize // with unit as px, pt,em,rem etc.
+            : String? = null
+
+    var bodyFontColor: String? = null
+
+    // General
+
+    // General
+    var primaryColor // button background, link color, etc.
+            : String? = null
+
+    var borderColor: String? = null
+
+    var backgroundColor: String? = null
+
+    // Reusable global UI Components
+
+    // Buttons
+
+    // Reusable global UI Components
+    // Buttons
+    var lightButtonBackgroundColor: String? = null
+
+    var lightButtonTextColor: String? = null
+
+    var darkButtonBackgroundColor: String? = null
+
+    var darkButtonTextColor: String? = null
+
+    // Hyperlinks
+
+    // Hyperlinks
+    var hyperlinkDefaultColor: String? = null
+
+    var hyperlinkHoverColor: String? = null
+
+    var hyperlinkActiveColor: String? = null
+
+    // Badges/labels
+
+    // Badges/labels
+    var badgeTextColor: String? = null
+
+    var badgeBackgroundColor: String? = null
+
+    // Tabs
+
+    // Tabs
+    var tabBackgroundColor: String? = null
+
+    var tabActiveBackgroundColor: String? = null
+
+    var tabHoverBackgroundColor: String? = null
+
+    var tabTextColor: String? = null
+
+    var tabActiveTextColor: String? = null
+
+    var tabHoverTextColor: String? = null
+
+    // Text selection
+
+    // Text selection
+    var textSelectionColor: String? = null
+
+    var textSelectionBackgroundColor: String? = null
+
+    var description: String? = null
+
+    var tenantId // organizationId/vendorId
+            : Long? = null
+}
 
 
 

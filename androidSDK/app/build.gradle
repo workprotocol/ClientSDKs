@@ -1,6 +1,6 @@
 plugins {
-    id 'com.android.application'
-    //id 'com.android.library'
+    //id 'com.android.application'
+    id 'com.android.library'
     id 'kotlin-android'
     id 'kotlin-android-extensions'
 
@@ -15,8 +15,8 @@ android {
     buildToolsVersion "30.0.3"
 
     defaultConfig {
-        applicationId "com.spritehealth.sdk"
-        minSdkVersion 28
+        //applicationId "com.spritehealth.sdk"
+        minSdkVersion 29
         targetSdkVersion 30
         versionCode 1
         versionName "1.0"
@@ -53,9 +53,12 @@ dependencies {
     testImplementation 'junit:junit:4.+'
     androidTestImplementation 'androidx.test.ext:junit:1.1.2'
     androidTestImplementation 'androidx.test.espresso:espresso-core:3.3.0'
+
+    //sdk explicit dependencies
+    implementation 'com.google.android.gms:play-services-location:18.0.0'
     implementation("com.android.volley:volley:1.1.1")
     implementation 'com.squareup.picasso:picasso:2.71828'
-    //implementation("org.jetbrains.kotlinx:kotlinx-serialization-json:1.2.2")
     implementation 'com.google.code.gson:gson:2.8.7'
+    implementation 'androidx.browser:browser:1.0.0'
 
 }

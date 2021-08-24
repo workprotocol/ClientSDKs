@@ -2,27 +2,37 @@
 package com.spritehealth.sdk
 
 import Util
+import android.content.Intent
 import android.os.Bundle
+import android.text.Html
+import android.text.method.LinkMovementMethod
 import android.view.View
 import android.view.View.VISIBLE
+import android.widget.TextView
 import android.widget.Toast
+import androidx.appcompat.app.ActionBar
 import androidx.appcompat.app.AppCompatActivity
 import com.google.gson.Gson
 import com.google.gson.GsonBuilder
 import com.google.gson.reflect.TypeToken
 import com.spritehealth.sdk.model.*
 import kotlinx.android.synthetic.main.activity_preview_appointment.*
+import kotlinx.android.synthetic.main.activity_preview_appointment.loReasonWrapper
+import kotlinx.android.synthetic.main.activity_preview_appointment.progressBar
+import kotlinx.android.synthetic.main.activity_preview_appointment.tvDuration
+import kotlinx.android.synthetic.main.activity_preview_appointment.tvServiceName
 import kotlinx.android.synthetic.main.activity_specialist_detail.tvSpeciality
-import org.json.JSONObject
+import kotlinx.android.synthetic.main.custom_toolbar.*
 import java.time.format.DateTimeFormatter
 
 
 internal class PreviewAppointment : AppCompatActivity() {
 
+    val sdkClientInstance = SpriteHealthClient.getInstance(this)
+
     private var eventStartTime: String? = null
     private var eventEndTime: String?=null
     private lateinit var timeSlot: TimePeriodConverter
-
 
     var patientEmail: String? = null
     var patientName:kotlin.String? = null
@@ -31,7 +41,7 @@ internal class PreviewAppointment : AppCompatActivity() {
 
     var displayableAppointmentDateTimeFormatted: String? = null
 
-    var specialist:User?=null;
+    var specialist:Specialist?=null;
     private var service: Service? = null
     private var costBreakUp = CostBreakUp()
 
@@ -42,12 +52,21 @@ internal class PreviewAppointment : AppCompatActivity() {
     var builder: GsonBuilder = GsonBuilder();
     var gson: Gson = builder.create()
 
-    val clientSdkInstance = SpriteHealthClient()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_preview_appointment)
-        setSupportActionBar(findViewById(R.id.toolbar))
+        //setSupportActionBar(findViewById(R.id.toolbar))
+
+        getSupportActionBar()?.displayOptions = ActionBar.DISPLAY_SHOW_CUSTOM;
+        getSupportActionBar()?.setCustomView(R.layout.custom_toolbar);
+
+        val tvPageHeading = supportActionBar!!.customView.findViewById<TextView>(R.id.tvPageHeading)
+        tvPageHeading.text = "Review Appointment"
+
+        imgvBack.setOnClickListener(){
+            this.finish();
+        }
 
         val bundle = intent.extras
         if (bundle != null) {
@@ -60,7 +79,7 @@ internal class PreviewAppointment : AppCompatActivity() {
 
             if (bundle.containsKey("specialistJSON")) {
                 val specialistJSON = bundle.getString("specialistJSON")
-                val type = object : TypeToken<User>() {}.type
+                val type = object : TypeToken<Specialist>() {}.type
                 specialist =gson.fromJson(specialistJSON, type)
             }
 
@@ -170,11 +189,76 @@ internal class PreviewAppointment : AppCompatActivity() {
         mobileEditText.setText(patientMobile)
 
 
+        fetchDeveloperAccount()
 
-        tvNoticeSecondLine.text="At the time of your visit, you and ${specialist?.name} will join the video call. You can join via the Sprite app or website."
 
 
+    /*
+        val appointment=Appointment(5969017979273216)
+        val intent = Intent(this, AppointmentDetails::class.java).apply {
+            if(appointment!=null) {
+                putExtra("appointmentJSON", gson.toJson(appointment))
+            }
+        }
+        this.startActivity(intent)
+    */
     }
+
+    private fun fetchDeveloperAccount() {
+        progressBar.visibility= VISIBLE
+
+        sdkClientInstance.getDeveloperAccount(
+            SpriteHealthClient.client_id,
+            this,
+            object : SpriteHealthClient.Callback<DeveloperAccount> {
+                override fun onSuccess(response: DeveloperAccount) {
+                    readDeveloperAccount(response)
+                    progressBar.visibility = View.GONE
+                }
+
+                override fun onError(error: String?) {
+                    var errorMsg = error
+                    progressBar.visibility = View.GONE
+                }
+            })
+    }
+
+    fun readDeveloperAccount(developerAccount: DeveloperAccount){
+
+        if(developerAccount!=null){
+            val companyName=developerAccount.name
+            var website=developerAccount.website
+            var privacyLink=developerAccount.privacyPolicyLink
+            var termOfUseLink=developerAccount.termsOfUseLink
+            var consentToCareLink=developerAccount.consentToCareLink
+
+            if(website!=null && website.isNotEmpty()) {
+                if (privacyLink == null || privacyLink.isEmpty()) {
+                    privacyLink = website
+                }
+                if (termOfUseLink == null || termOfUseLink.isEmpty()) {
+                    termOfUseLink = website
+                }
+                if (consentToCareLink == null || consentToCareLink.isEmpty()) {
+                    consentToCareLink = website
+                }
+            }
+
+        var msg1="At the time of your visit, you and ${specialist?.name} will join the video call. You can join via the $companyName app or website."
+        var msg2="By confirming your appointment you are agreeing to abide by the <a href='$termOfUseLink'>Terms of Use</a>, <a href='$privacyLink'>Privacy Policy</a>,  <a href=$consentToCareLink'>Consent to Care</a> via Telehealth, and the $companyName’s Cancellation policy."
+        var msg3="$companyName isn't a replacement for your doctor or emergency services. If you think you are having an emergency, immediately contact 911 or your country's emergency services number."
+
+            tvNoticeFirstLine.movementMethod = LinkMovementMethod.getInstance();
+            tvNoticeSecondLine.movementMethod = LinkMovementMethod.getInstance();
+            tvNoticeThirdLine.movementMethod = LinkMovementMethod.getInstance();
+
+            tvNoticeFirstLine.text= Html.fromHtml(msg1)
+            tvNoticeSecondLine.text=Html.fromHtml(msg2)
+            tvNoticeThirdLine.text=Html.fromHtml(msg3)
+
+        }
+    }
+
 
     private fun setPrice() {
         val memberPayment = costBreakUp.insured!!
@@ -183,8 +267,8 @@ internal class PreviewAppointment : AppCompatActivity() {
     }
 
 
+    @Synchronized
     fun bookVisit(view: View){
-
         progressBar.visibility = VISIBLE
         bookButton.visibility = View.GONE
 
@@ -216,45 +300,7 @@ internal class PreviewAppointment : AppCompatActivity() {
         }
     }
 
-
-    @Synchronized
-    fun postAppointmentRequest() {
-        progressBar.visibility = VISIBLE
-        bookButton.visibility = View.GONE
-
-        clientSdkInstance.appointmentBooking(getFormPost(), this, object : SpriteHealthClient.Callback {
-            override fun onSuccess(response: String?) {
-                // do stuff here
-                readAppointmentResponse(response)
-                progressBar.visibility = View.GONE
-            }
-            override fun onError(error: String?)
-            {
-                var errorMsg = error
-                progressBar.visibility = View.GONE
-            }
-        } )
-
-    }
-
-    private fun readAppointmentResponse(responseStr: String?) {
-        val calendarEvent: CalendarEvent =
-            gson.fromJson(responseStr, object : TypeToken<CalendarEvent?>() {}.type)
-
-        var msg="";
-        if (calendarEvent != null && calendarEvent.errors?.size ?:0 >0) {
-            msg="Request failed due to " + calendarEvent.errors!!.get(0).message
-            Toast.makeText(this,  msg, Toast.LENGTH_LONG).show();
-
-            progressBar.visibility = View.GONE
-            bookButton.visibility = VISIBLE
-        } else if (calendarEvent != null && calendarEvent.appointment != null) {
-            msg ="Appointment booked successfully."
-            Toast.makeText(this, msg,Toast.LENGTH_LONG).show();
-        }
-    }
-
-    fun getFormPost(): MutableMap<String, String> {
+    private fun getFormPost(): MutableMap<String, String> {
             val params: MutableMap<String, String> = HashMap()
 
         if(specialist!=null) {
@@ -294,34 +340,50 @@ internal class PreviewAppointment : AppCompatActivity() {
             return params
     }
 
-    private fun onFailedAppointment() {
-        progressBar.visibility = View.GONE
-        bookButton.visibility = VISIBLE
-        bookButton.isEnabled = true
-        bookButton.isClickable = true
-        Toast.makeText(this, "There is some error while booking appointment.", Toast.LENGTH_LONG).show();
+
+
+    fun postAppointmentRequest() {
+        progressBar.visibility = VISIBLE
+        bookButton.visibility = View.GONE
+
+         sdkClientInstance.createAppointment(getFormPost(), this, object : SpriteHealthClient.Callback<CalendarEvent> {
+            override fun onSuccess(response: CalendarEvent) {
+                // do stuff here
+                readAppointmentResponse(response)
+                progressBar.visibility = View.GONE
+            }
+            override fun onError(error: String?)
+            {
+                var errorMsg = error
+                progressBar.visibility = View.GONE
+            }
+        } )
+
     }
 
-     fun readResponse(responseStr: String?) {
-         /*
-        val calendarEvent: CalendarEvent =
-            Gson().fromJson(responseStr, object : TypeToken<CalendarEvent?>() {}.type)
-        launched = false
-        if (calendarEvent != null && !CollectionUtils.isEmpty(calendarEvent.errors)) {
-            WPUtil.showToast(
-                applicationContext,
-                "Request failed due to " + calendarEvent.errors.get(0).message
-            )
+    private fun readAppointmentResponse(calendarEvent: CalendarEvent) {
+
+        var msg = "";
+        if (calendarEvent != null && calendarEvent.errors?.size ?: 0 > 0) {
+            msg = "Request failed due to " + calendarEvent.errors!!.get(0).message
+            Toast.makeText(this, msg, Toast.LENGTH_LONG).show();
+
             progressBar.visibility = View.GONE
             bookButton.visibility = VISIBLE
         } else if (calendarEvent != null && calendarEvent.appointment != null) {
-            val msg =
-                if (isBooking) "Appointment booked successfully." else "Your request has been sent successfully."
-            WPUtil.showToast(applicationContext, msg)
+            msg = "Appointment booked successfully."
+            Toast.makeText(this, msg, Toast.LENGTH_LONG).show();
+            goToAppointmentDetailsPage(Appointment(calendarEvent.appointment!!.id))
         }
-         */
     }
 
-
+    private fun goToAppointmentDetailsPage(appointment: Appointment) {
+        val intent = Intent(this, AppointmentDetails::class.java).apply {
+            if(appointment!=null) {
+                putExtra("appointmentJSON", gson.toJson(appointment))
+            }
+        }
+        this.startActivity(intent)
+    }
 
 }

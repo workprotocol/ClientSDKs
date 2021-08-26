@@ -1,6 +1,7 @@
 
 package com.spritehealth.sdk
 import android.os.Bundle
+import android.text.Html
 import android.view.View
 import android.widget.ProgressBar
 import android.widget.TextView
@@ -121,7 +122,7 @@ internal class SpecialistDetail : AppCompatActivity() {
             for (vendorDescription in specialistUser.descriptions!!) {
                 if (vendorDescription.vendorDescriptionType == VendorDescriptionTypeEnum.PROFESSIONAL_EXPERIENCE && vendorDescription.description != null && !vendorDescription.description!!.isEmpty()) {
                     lloProfExp.visibility = View.VISIBLE
-                    tvProfExp.text = vendorDescription.description
+                    tvProfExp.text = Html.fromHtml(vendorDescription.description)
                 }
                 if (vendorDescription.vendorDescriptionType == VendorDescriptionTypeEnum.EDUCATION && vendorDescription.description != null && !vendorDescription.description!!.isEmpty()) {
                     lloEducation.visibility = View.VISIBLE
@@ -152,7 +153,7 @@ internal class SpecialistDetail : AppCompatActivity() {
                 }
                 if (vendorDescription.vendorDescriptionType == VendorDescriptionTypeEnum.SHORT_DESCRIPTION && vendorDescription.description != null && !vendorDescription.description!!.isEmpty()) {
                     lloProfStatement.visibility = View.VISIBLE
-                    tvProfStatement.text = vendorDescription.description
+                    tvProfStatement.text = Html.fromHtml(vendorDescription.description)
                 }
 
                 if (vendorDescription.vendorDescriptionType == VendorDescriptionTypeEnum.LANGUAGES && vendorDescription.description != null && !vendorDescription.description!!.isEmpty()) {
@@ -161,16 +162,16 @@ internal class SpecialistDetail : AppCompatActivity() {
                 }
                 if (vendorDescription.vendorDescriptionType == VendorDescriptionTypeEnum.REGISTRATION && vendorDescription.description != null && !vendorDescription.description!!.isEmpty()) {
                     lloRegistration.visibility = View.VISIBLE
-                    tvRegistration.text = vendorDescription.description
+                    tvRegistration.text = Html.fromHtml(vendorDescription.description)
                 }
 
                 if (vendorDescription.vendorDescriptionType == VendorDescriptionTypeEnum.AWARDS_AND_RECOGNITIONS && vendorDescription.description != null && !vendorDescription.description!!.isEmpty()) {
                     lloAwards.visibility = View.VISIBLE
-                    tvAwards.setText(vendorDescription.description)
+                    tvAwards.text = Html.fromHtml(vendorDescription.description)
                 }
                 if (vendorDescription.vendorDescriptionType == VendorDescriptionTypeEnum.MEMBERSHIPS && vendorDescription.description != null && !vendorDescription.description!!.isEmpty()) {
                     lloMemberships.visibility = View.VISIBLE
-                    tvMemberships.text = vendorDescription.description
+                    tvMemberships.text = Html.fromHtml(vendorDescription.description)
                 }
                 if (vendorDescription.vendorDescriptionType == VendorDescriptionTypeEnum.QUALIFICATION) {
                     val qualification = vendorDescription.description

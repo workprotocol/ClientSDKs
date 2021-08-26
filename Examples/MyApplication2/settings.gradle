@@ -1,4 +1,0 @@
-include ':com.spritehealth-1.0.0'
-include ':com.spritehealth-1.0.0'
-include ':app'
-rootProject.name = "My Application"

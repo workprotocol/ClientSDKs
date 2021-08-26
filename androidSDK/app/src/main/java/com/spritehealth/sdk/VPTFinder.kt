@@ -79,8 +79,8 @@ internal class VPTFinder : AppCompatActivity() {
             //Toast.makeText(mContext,"State found hence fetching specialsits now...",Toast.LENGTH_SHORT).show()
             fetchSpecialists()
         }
-
-        /*
+/**/
+/*
         //TODO -- move it to Partner app activity
         SpriteHealthClient.storedIntent= Intent(this, VPTFinder::class.java)
         sdkClientInstance=SpriteHealthClient.getInstance(this.applicationContext)
@@ -104,8 +104,8 @@ internal class VPTFinder : AppCompatActivity() {
 
             }
         )
-        */
 
+*/
 
         /*
         val currentActivityIntent=this.intent
